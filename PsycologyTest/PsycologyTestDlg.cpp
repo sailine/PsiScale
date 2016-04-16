@@ -172,7 +172,7 @@ HCURSOR CPsycologyTestDlg::OnQueryDragIcon()
 
 void CPsycologyTestDlg::OnBnClickedStart()
 {
-	_test_manager.LoadPsiScale(_T("D:\\Projects\\PsycologyTest\\PsycologyTest\\TestTemplate.xml"));
+	_test_manager.LoadPsiScale(_T("D:\\Projects\\PsiScale\\PsycologyTest\\TestTemplate.xml"));
 	_psi_scale = &_test_manager.GetPsiScale(_T("1"));
 
 	ShowQuestion(0);
