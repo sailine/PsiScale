@@ -1,0 +1,12 @@
+<Score ParticipantName = "张三">
+<Table Id = "1" Finished = "True">
+<Answers>
+<Item Id = "1" Answer = "A"/>
+<Item Id = "2" Answer = "B"/>
+</Answers>
+<GroupScores>
+<Item Id = "1" Score = "5"/>
+<Item Id = "2" Score = "0"/>
+</GroupScores>
+</Table>
+</Score>

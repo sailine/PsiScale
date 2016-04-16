@@ -1,0 +1,12 @@
+<PsycologyTest Id = "1" Name = "Test1" Description = "Test Description" ItemCount = "2">
+<Prologue Text = "Test."/>
+<Groups>
+<Item Id = "1" Description = "Group1"/>
+<Item Id = "2" Description = "Group2"/>
+</Groups>
+<Questions>
+<Item Id = "1" Text = "Test Test Test" LevelCount = "5" ReverseScore = "false" GroupId = "1"/>
+<Item Id = "2" Text = "I love test." LevelCount = "5" ReverseScore = "false" GroupId = "1"/>
+</Questions>
+
+</PsycologyTest>

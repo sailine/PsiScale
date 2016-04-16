@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PsycologyTest", "PsycologyTest\PsycologyTest.vcxproj", "{363DD303-928C-4D66-9C0C-E35E3DA65216}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E16DDA60-3E14-4E06-92DC-2F28832E7D88} = {E16DDA60-3E14-4E06-92DC-2F28832E7D88}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Utilities", "Utilities\Utilities.vcxproj", "{E16DDA60-3E14-4E06-92DC-2F28832E7D88}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PsiScaleEditor", "PsiScaleEditor\PsiScaleEditor.vcxproj", "{324ED141-6473-46EA-BF96-925EE8EBD103}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{363DD303-928C-4D66-9C0C-E35E3DA65216}.Debug|x64.ActiveCfg = Debug|x64
+		{363DD303-928C-4D66-9C0C-E35E3DA65216}.Debug|x64.Build.0 = Debug|x64
+		{363DD303-928C-4D66-9C0C-E35E3DA65216}.Debug|x86.ActiveCfg = Debug|Win32
+		{363DD303-928C-4D66-9C0C-E35E3DA65216}.Debug|x86.Build.0 = Debug|Win32
+		{363DD303-928C-4D66-9C0C-E35E3DA65216}.Release|x64.ActiveCfg = Release|x64
+		{363DD303-928C-4D66-9C0C-E35E3DA65216}.Release|x64.Build.0 = Release|x64
+		{363DD303-928C-4D66-9C0C-E35E3DA65216}.Release|x86.ActiveCfg = Release|Win32
+		{363DD303-928C-4D66-9C0C-E35E3DA65216}.Release|x86.Build.0 = Release|Win32
+		{E16DDA60-3E14-4E06-92DC-2F28832E7D88}.Debug|x64.ActiveCfg = Debug|Win32
+		{E16DDA60-3E14-4E06-92DC-2F28832E7D88}.Debug|x86.ActiveCfg = Debug|Win32
+		{E16DDA60-3E14-4E06-92DC-2F28832E7D88}.Debug|x86.Build.0 = Debug|Win32
+		{E16DDA60-3E14-4E06-92DC-2F28832E7D88}.Release|x64.ActiveCfg = Release|Win32
+		{E16DDA60-3E14-4E06-92DC-2F28832E7D88}.Release|x86.ActiveCfg = Release|Win32
+		{E16DDA60-3E14-4E06-92DC-2F28832E7D88}.Release|x86.Build.0 = Release|Win32
+		{324ED141-6473-46EA-BF96-925EE8EBD103}.Debug|x64.ActiveCfg = Debug|x64
+		{324ED141-6473-46EA-BF96-925EE8EBD103}.Debug|x64.Build.0 = Debug|x64
+		{324ED141-6473-46EA-BF96-925EE8EBD103}.Debug|x86.ActiveCfg = Debug|Win32
+		{324ED141-6473-46EA-BF96-925EE8EBD103}.Debug|x86.Build.0 = Debug|Win32
+		{324ED141-6473-46EA-BF96-925EE8EBD103}.Release|x64.ActiveCfg = Release|x64
+		{324ED141-6473-46EA-BF96-925EE8EBD103}.Release|x64.Build.0 = Release|x64
+		{324ED141-6473-46EA-BF96-925EE8EBD103}.Release|x86.ActiveCfg = Release|Win32
+		{324ED141-6473-46EA-BF96-925EE8EBD103}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
