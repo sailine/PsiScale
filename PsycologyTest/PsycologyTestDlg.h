@@ -27,7 +27,7 @@ public:
 protected:
 	HICON m_hIcon;
 	CTestManager _test_manager;
-	const PsiScale * _psi_scale;
+	PsiScale * _psi_scale;
 	unsigned _current_question_index;
 
 	// Generated message map functions
