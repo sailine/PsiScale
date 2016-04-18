@@ -27,12 +27,13 @@ public:
 protected:
 	HICON m_hIcon;
 	CTestManager _test_manager;
-	const PsiScale * _psi_scale;
+	PsiScale * _psi_scale;
 	unsigned _current_question_index;
 
 	// Generated message map functions
 	bool ShowQuestion(unsigned question_index);
 	bool ShowRadioButtons(unsigned level_count);
+	void InitialQuestionComBox();
 
 	virtual BOOL OnInitDialog();
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
@@ -59,4 +60,7 @@ protected:
 	afx_msg void OnBnClickedRadioJ();
 
 	void ProcessAnswer(const TCHAR answer);
+public:
+	CComboBox _question_index;
+	afx_msg void OnCbnSelchangeQuestionindext();
 };

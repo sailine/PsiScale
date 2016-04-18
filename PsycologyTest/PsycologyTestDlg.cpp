@@ -62,6 +62,7 @@ void CPsycologyTestDlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_PROLOGUE, _prologue);
 	DDX_Text(pDX, IDC_QUESTION, _question);
+	DDX_Control(pDX, IDC_QUESTIONINDEXT, _question_index);
 }
 
 BEGIN_MESSAGE_MAP(CPsycologyTestDlg, CDialogEx)
@@ -81,6 +82,7 @@ BEGIN_MESSAGE_MAP(CPsycologyTestDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_RADIO_H, &CPsycologyTestDlg::OnBnClickedRadioH)
 	ON_BN_CLICKED(IDC_RADIO_I, &CPsycologyTestDlg::OnBnClickedRadioI)
 	ON_BN_CLICKED(IDC_RADIO_J, &CPsycologyTestDlg::OnBnClickedRadioJ)
+	ON_CBN_SELCHANGE(IDC_QUESTIONINDEXT, &CPsycologyTestDlg::OnCbnSelchangeQuestionindext)
 END_MESSAGE_MAP()
 
 
@@ -117,6 +119,14 @@ BOOL CPsycologyTestDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
+	static int buttons[10] = { IDC_RADIO_A, IDC_RADIO_B, IDC_RADIO_C,
+		IDC_RADIO_D, IDC_RADIO_E, IDC_RADIO_F, IDC_RADIO_G, IDC_RADIO_H, IDC_RADIO_I, IDC_RADIO_J };
+	
+	for (unsigned int i = 0; i < 10; ++i)
+	{
+		GetDlgItem(buttons[i])->ShowWindow(SW_HIDE);
+	}
+
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -172,10 +182,12 @@ HCURSOR CPsycologyTestDlg::OnQueryDragIcon()
 
 void CPsycologyTestDlg::OnBnClickedStart()
 {
-	_test_manager.LoadPsiScale(_T("D:\\Projects\\PsiScale\\PsycologyTest\\TestTemplate.xml"));
+	_test_manager.LoadPsiScale(_T("..\\PsycologyTest\\TestTemplate.xml"));
 	_psi_scale = &_test_manager.GetPsiScale(_T("1"));
 
 	ShowQuestion(0);
+
+	InitialQuestionComBox();
 }
 
 bool CPsycologyTestDlg::ShowQuestion(unsigned question_index)
@@ -183,16 +195,17 @@ bool CPsycologyTestDlg::ShowQuestion(unsigned question_index)
 	if (_psi_scale == nullptr)
 		return false;
 
-	if (question_index >= _psi_scale->questions.size())
+	if (question_index >= _psi_scale->QuestionSize())
 		return false;
 
 	_current_question_index = question_index;
-	_prologue = _psi_scale->prologue.text;
-	_question = _psi_scale->questions[_current_question_index].text;
+	_prologue = _psi_scale->GetPrologue();
+	_question = _psi_scale->GetQuestion(_current_question_index).GetText();
 
-	ShowRadioButtons(_psi_scale->questions[_current_question_index].level_count);
+	ShowRadioButtons(_psi_scale->GetQuestion(_current_question_index).GetLevelCound());
 
 	UpdateData(FALSE);
+	return true;
 }
 
 bool CPsycologyTestDlg::ShowRadioButtons(unsigned level_count)
@@ -210,20 +223,44 @@ bool CPsycologyTestDlg::ShowRadioButtons(unsigned level_count)
 	{
 		GetDlgItem(buttons[i])->ShowWindow(SW_HIDE);
 	}
+
+	return true;
+
 }
 
 
+void CPsycologyTestDlg::InitialQuestionComBox()
+{
+
+	int nums = _psi_scale->QuestionSize();
+	CString str;
+
+	for (int i = 0; i < nums; ++i)
+	{
+		str.Format(_T("第%d题"), i + 1);
+		_question_index.AddString(str);
+	}
+	_question_index.SetCurSel(0);
+}
+
 void CPsycologyTestDlg::OnBnClickedPrev()
 {
-	// TODO: Add your control notification handler code here
+	if (_current_question_index > 0)
+	{
+		ShowQuestion(_current_question_index - 1);
+		_question_index.SetCurSel(_current_question_index);
+	}
 }
 
 
 void CPsycologyTestDlg::OnBnClickedNext()
 {
-	// TODO: Add your control notification handler code here
+	if (_current_question_index < _psi_scale->QuestionSize() - 1)
+	{
+		ShowQuestion(_current_question_index + 1);
+		_question_index.SetCurSel(_current_question_index);
+	}
 }
-
 
 void CPsycologyTestDlg::OnBnClickedRadioA()
 {
@@ -265,14 +302,22 @@ void CPsycologyTestDlg::OnBnClickedRadioI()
 void CPsycologyTestDlg::OnBnClickedRadioJ()
 {
 	ProcessAnswer(_T('J'));
+	
 }
 
 void CPsycologyTestDlg::ProcessAnswer(const TCHAR answer)
 {
 	// 1. 记录
 	// 2. 下一道题。
-	if (_current_question_index < _psi_scale->questions.size() - 1)
+	if (_current_question_index < _psi_scale->QuestionSize() - 1)
 	{
 		ShowQuestion(_current_question_index + 1);
+		_question_index.SetCurSel(_current_question_index);
 	}
+}
+
+
+void CPsycologyTestDlg::OnCbnSelchangeQuestionindext()
+{
+	ShowQuestion(_question_index.GetCurSel());
 }
