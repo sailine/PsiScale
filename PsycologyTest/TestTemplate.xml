@@ -5,8 +5,8 @@
 <Item Id = "2" Description = "Group2"/>
 </Groups>
 <Questions>
-<Item Id = "1" Text = "Test Test Test" LevelCount = "5" ReverseScore = "false" GroupId = "1"/>
-<Item Id = "2" Text = "I love test." LevelCount = "5" ReverseScore = "false" GroupId = "1"/>
+<Item Id = "1" Text = "这是第一个测试。" LevelCount = "5" ReverseScore = "false" GroupId = "1"/>
+<Item Id = "2" Text = "这是第二个测试。" LevelCount = "5" ReverseScore = "false" GroupId = "1"/>
 </Questions>
 
 </PsycologyTest>
