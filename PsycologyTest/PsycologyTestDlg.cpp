@@ -62,6 +62,7 @@ void CPsycologyTestDlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_PROLOGUE, _prologue);
 	DDX_Text(pDX, IDC_QUESTION, _question);
+	DDX_Control(pDX, IDC_QUESTIONINDEXT, _question_index);
 }
 
 BEGIN_MESSAGE_MAP(CPsycologyTestDlg, CDialogEx)
@@ -81,6 +82,7 @@ BEGIN_MESSAGE_MAP(CPsycologyTestDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_RADIO_H, &CPsycologyTestDlg::OnBnClickedRadioH)
 	ON_BN_CLICKED(IDC_RADIO_I, &CPsycologyTestDlg::OnBnClickedRadioI)
 	ON_BN_CLICKED(IDC_RADIO_J, &CPsycologyTestDlg::OnBnClickedRadioJ)
+	ON_CBN_SELCHANGE(IDC_QUESTIONINDEXT, &CPsycologyTestDlg::OnCbnSelchangeQuestionindext)
 END_MESSAGE_MAP()
 
 
@@ -184,6 +186,8 @@ void CPsycologyTestDlg::OnBnClickedStart()
 	_psi_scale = &_test_manager.GetPsiScale(_T("1"));
 
 	ShowQuestion(0);
+
+	InitialQuestionComBox();
 }
 
 bool CPsycologyTestDlg::ShowQuestion(unsigned question_index)
@@ -225,11 +229,26 @@ bool CPsycologyTestDlg::ShowRadioButtons(unsigned level_count)
 }
 
 
+void CPsycologyTestDlg::InitialQuestionComBox()
+{
+
+	int nums = _psi_scale->QuestionSize();
+	CString str;
+
+	for (int i = 0; i < nums; ++i)
+	{
+		str.Format(_T("µÚ%dÌâ"), i + 1);
+		_question_index.AddString(str);
+	}
+	_question_index.SetCurSel(0);
+}
+
 void CPsycologyTestDlg::OnBnClickedPrev()
 {
 	if (_current_question_index > 0)
 	{
 		ShowQuestion(_current_question_index - 1);
+		_question_index.SetCurSel(_current_question_index);
 	}
 }
 
@@ -239,9 +258,9 @@ void CPsycologyTestDlg::OnBnClickedNext()
 	if (_current_question_index < _psi_scale->QuestionSize() - 1)
 	{
 		ShowQuestion(_current_question_index + 1);
+		_question_index.SetCurSel(_current_question_index);
 	}
 }
-
 
 void CPsycologyTestDlg::OnBnClickedRadioA()
 {
@@ -283,6 +302,7 @@ void CPsycologyTestDlg::OnBnClickedRadioI()
 void CPsycologyTestDlg::OnBnClickedRadioJ()
 {
 	ProcessAnswer(_T('J'));
+	
 }
 
 void CPsycologyTestDlg::ProcessAnswer(const TCHAR answer)
@@ -292,5 +312,12 @@ void CPsycologyTestDlg::ProcessAnswer(const TCHAR answer)
 	if (_current_question_index < _psi_scale->QuestionSize() - 1)
 	{
 		ShowQuestion(_current_question_index + 1);
+		_question_index.SetCurSel(_current_question_index);
 	}
+}
+
+
+void CPsycologyTestDlg::OnCbnSelchangeQuestionindext()
+{
+	ShowQuestion(_question_index.GetCurSel());
 }
