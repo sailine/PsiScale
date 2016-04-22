@@ -12,6 +12,9 @@
 #endif
 
 
+static int buttons[10] = { IDC_RADIO_A, IDC_RADIO_B, IDC_RADIO_C,
+IDC_RADIO_D, IDC_RADIO_E, IDC_RADIO_F, IDC_RADIO_G, IDC_RADIO_H, IDC_RADIO_I, IDC_RADIO_J };
+
 // CAboutDlg dialog used for App About
 
 class CAboutDlg : public CDialogEx
@@ -46,7 +49,6 @@ END_MESSAGE_MAP()
 
 
 // CPsycologyTestDlg dialog
-
 
 
 CPsycologyTestDlg::CPsycologyTestDlg(CWnd* pParent /*=NULL*/)
@@ -119,13 +121,15 @@ BOOL CPsycologyTestDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
-	static int buttons[10] = { IDC_RADIO_A, IDC_RADIO_B, IDC_RADIO_C,
-		IDC_RADIO_D, IDC_RADIO_E, IDC_RADIO_F, IDC_RADIO_G, IDC_RADIO_H, IDC_RADIO_I, IDC_RADIO_J };
-	
+	// 让所有的按钮都隐藏掉
+	/*static int buttons[10] = { IDC_RADIO_A, IDC_RADIO_B, IDC_RADIO_C,
+		IDC_RADIO_D, IDC_RADIO_E, IDC_RADIO_F, IDC_RADIO_G, IDC_RADIO_H, IDC_RADIO_I, IDC_RADIO_J };*/
 	for (unsigned int i = 0; i < 10; ++i)
 	{
 		GetDlgItem(buttons[i])->ShowWindow(SW_HIDE);
 	}
+
+	GetDlgItem(IDC_QUESTIONINDEXT)->ShowWindow(SW_HIDE);
 
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
@@ -187,6 +191,7 @@ void CPsycologyTestDlg::OnBnClickedStart()
 
 	ShowQuestion(0);
 
+	GetDlgItem(IDC_QUESTIONINDEXT)->ShowWindow(SW_SHOW);
 	InitialQuestionComBox();
 }
 
@@ -200,18 +205,25 @@ bool CPsycologyTestDlg::ShowQuestion(unsigned question_index)
 
 	_current_question_index = question_index;
 	_prologue = _psi_scale->GetPrologue();
-	_question = _psi_scale->GetQuestion(_current_question_index).GetText();
+	_question = _psi_scale->GetQuestion(_current_question_index)->GetText();
 
-	ShowRadioButtons(_psi_scale->GetQuestion(_current_question_index).GetLevelCound());
-
+	ShowRadioButtons(_psi_scale->GetQuestion(_current_question_index)->GetLevelCound());
+	auto answer = _psi_scale->GetQuestion(_current_question_index)->GetAnswer();
+	if (answer != ' ')
+	{
+		CheckRadioButton(buttons[0], buttons[9], buttons[answer-'A']);
+	}
+	else
+	{
+		CheckRadioButton(buttons[0], buttons[9], buttons[9]);
+	}
+	
 	UpdateData(FALSE);
 	return true;
 }
 
 bool CPsycologyTestDlg::ShowRadioButtons(unsigned level_count)
 {
-	static int buttons[10] = { IDC_RADIO_A, IDC_RADIO_B, IDC_RADIO_C, 
-		IDC_RADIO_D, IDC_RADIO_E, IDC_RADIO_F, IDC_RADIO_G, IDC_RADIO_H, IDC_RADIO_I, IDC_RADIO_J };
 	if (level_count > 10)
 		return false;
 
@@ -225,13 +237,11 @@ bool CPsycologyTestDlg::ShowRadioButtons(unsigned level_count)
 	}
 
 	return true;
-
 }
 
 
 void CPsycologyTestDlg::InitialQuestionComBox()
 {
-
 	int nums = _psi_scale->QuestionSize();
 	CString str;
 
@@ -308,6 +318,8 @@ void CPsycologyTestDlg::OnBnClickedRadioJ()
 void CPsycologyTestDlg::ProcessAnswer(const TCHAR answer)
 {
 	// 1. 记录
+	_psi_scale->GetQuestion(_current_question_index)->SetAnswer(answer);	// GetQuestion need to return the pointer to the question that can then set the answer;		problem: set the answer of question 2 just after selecting the answer of question 1
+
 	// 2. 下一道题。
 	if (_current_question_index < _psi_scale->QuestionSize() - 1)
 	{
