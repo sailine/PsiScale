@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <map>
+#include <TChar.h>
 
 
 struct PsiScaleGroup
@@ -15,7 +16,9 @@ class PsiScaleQuestion
 public:
 	PsiScaleQuestion(CString id, CString text, unsigned short level_count, bool reverse_score, unsigned short group_id):
 		_id(id), _text(text), _level_count(level_count), _reverse_score(reverse_score), _group_id(group_id)
-	{}
+	{
+		_answer = _T(' ');
+	}
 
 	void SetId(CString id) { _id = id; }
 	CString GetId() { return _id; }
@@ -27,12 +30,16 @@ public:
 	bool GetReverseScore() { return _reverse_score; }
 	void SetGroupId(unsigned short group_id) { _group_id= group_id; }
 	unsigned short GetGroupId() { return _group_id; }
+	void SetAnswer(const TCHAR answer) { _answer = answer; }
+	TCHAR GetAnswer() { return _answer; }
+
 private:
 	CString _id;
 	CString _text;
 	unsigned short _level_count;
 	bool _reverse_score;
 	unsigned short _group_id;
+	TCHAR _answer;
 };
 
 class PsiScalePrologue
@@ -68,7 +75,7 @@ public:
 	void AddGroup(PsiScaleGroup group) { _groups.push_back(group); }
 	void AddQuestion(PsiScaleQuestion question) { _questions.push_back(question); }
 	PsiScaleGroup GetGroup(unsigned int index) { return _groups[index]; }
-	PsiScaleQuestion GetQuestion(unsigned int index) { return _questions[index]; }
+	PsiScaleQuestion* GetQuestion(unsigned int index) { return &_questions[index]; }
 
 	unsigned int QuestionSize() { return _questions.size(); }
 
