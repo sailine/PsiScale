@@ -200,7 +200,7 @@ bool CPsycologyTestDlg::ShowQuestion(unsigned question_index)
 	if (_psi_scale == nullptr)
 		return false;
 
-	if (question_index >= _psi_scale->QuestionSize())
+	if (question_index >= _psi_scale->QuestionCount())
 		return false;
 
 	_current_question_index = question_index;
@@ -242,7 +242,7 @@ bool CPsycologyTestDlg::ShowRadioButtons(unsigned level_count)
 
 void CPsycologyTestDlg::InitialQuestionComBox()
 {
-	int nums = _psi_scale->QuestionSize();
+	int nums = _psi_scale->QuestionCount();
 	CString str;
 
 	for (int i = 0; i < nums; ++i)
@@ -265,7 +265,7 @@ void CPsycologyTestDlg::OnBnClickedPrev()
 
 void CPsycologyTestDlg::OnBnClickedNext()
 {
-	if (_current_question_index < _psi_scale->QuestionSize() - 1)
+	if (_current_question_index < _psi_scale->QuestionCount() - 1)
 	{
 		ShowQuestion(_current_question_index + 1);
 		_question_index.SetCurSel(_current_question_index);
@@ -321,7 +321,7 @@ void CPsycologyTestDlg::ProcessAnswer(const TCHAR answer)
 	_psi_scale->GetQuestion(_current_question_index)->SetAnswer(answer);	// GetQuestion need to return the pointer to the question that can then set the answer;		problem: set the answer of question 2 just after selecting the answer of question 1
 
 	// 2. 下一道题。
-	if (_current_question_index < _psi_scale->QuestionSize() - 1)
+	if (_current_question_index < _psi_scale->QuestionCount() - 1)
 	{
 		ShowQuestion(_current_question_index + 1);
 		_question_index.SetCurSel(_current_question_index);

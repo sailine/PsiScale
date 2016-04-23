@@ -94,6 +94,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>$(Solutiondir)debug\utilities.lib;$(Solutiondir)debug\psiCommon.lib;</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -181,6 +182,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="InputStringDialog.h" />
     <ClInclude Include="PsiScaleEditor.h" />
     <ClInclude Include="PsiScaleEditorDlg.h" />
     <ClInclude Include="Resource.h" />
@@ -188,6 +190,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="InputStringDialog.cpp" />
     <ClCompile Include="PsiScaleEditor.cpp" />
     <ClCompile Include="PsiScaleEditorDlg.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -209,4 +212,9 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="PsiScaleEditor.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

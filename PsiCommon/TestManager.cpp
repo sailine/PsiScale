@@ -51,7 +51,7 @@ bool CTestManager::LoadPsiScale(const CString& file_path)
 	for (auto item : group_items)
 	{
 		PsiScaleGroup group;
-		group.id = item->GetAttrib(XML_ID);
+		group.id = item->GetIntegerAttrib(XML_ID);
 		group.description = item->GetAttrib(XML_DESCRIPTION);
 		scale.AddGroup(group);
 	}
@@ -85,4 +85,24 @@ PsiScale & CTestManager::GetPsiScale(const CString& id)
 	{
 		throw CString(_T("¡ø±ÌŒ¥’“µΩ°£"));
 	}
+}
+
+PsiScaleQuestion* PsiScale::GetQuestion(unsigned int index)
+{
+	return (index < _questions.size()) ? &_questions[index] : nullptr;
+}
+
+unsigned int PsiScale::GetGroupCount()
+{
+	return _groups.size();
+}
+
+bool PsiScale::Save(const CString& file_path)
+{
+	return false;
+}
+
+PsiScaleQuestion::PsiScaleQuestion() :
+	_reverse_score(false), _group_id(0)
+{
 }

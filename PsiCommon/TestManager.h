@@ -3,17 +3,24 @@
 #include <vector>
 #include <map>
 #include <TChar.h>
+#include <afxstr.h>
 
+struct QuestionChoice
+{
+	unsigned int id;
+	CString text;
+};
 
 struct PsiScaleGroup
 {
-	CString id;
+	unsigned int id;
 	CString description;
 };
 
 class PsiScaleQuestion
 {
 public:
+	PsiScaleQuestion();
 	PsiScaleQuestion(CString id, CString text, unsigned short level_count, bool reverse_score, unsigned short group_id):
 		_id(id), _text(text), _level_count(level_count), _reverse_score(reverse_score), _group_id(group_id)
 	{
@@ -33,6 +40,7 @@ public:
 	void SetAnswer(const TCHAR answer) { _answer = answer; }
 	TCHAR GetAnswer() { return _answer; }
 
+	std::vector<QuestionChoice> _choices;
 private:
 	CString _id;
 	CString _text;
@@ -75,10 +83,13 @@ public:
 	void AddGroup(PsiScaleGroup group) { _groups.push_back(group); }
 	void AddQuestion(PsiScaleQuestion question) { _questions.push_back(question); }
 	PsiScaleGroup GetGroup(unsigned int index) { return _groups[index]; }
-	PsiScaleQuestion* GetQuestion(unsigned int index) { return &_questions[index]; }
+	PsiScaleQuestion* GetQuestion(unsigned int index);
 
-	unsigned int QuestionSize() { return _questions.size(); }
+	unsigned int QuestionCount() { return _questions.size(); }
+	unsigned int GetGroupCount();
+	bool Save(const CString& file_path);
 
+	std::vector<QuestionChoice> _shared_choices;
 private:
 	CString _id;
 	CString _name;

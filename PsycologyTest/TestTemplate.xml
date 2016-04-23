@@ -1,12 +1,18 @@
-<PsycologyTest Id = "1" Name = "Test1" Description = "Test Description" ItemCount = "2">
+<PsycologyTest Id = "1" Name = "Test1" Description = "Test Description" ItemCount = "2" SameChoices = "True">
+<SharedChoices LevelCount = "5">
+	<Item Id = "1" Text = "ChoiceA"/>
+	<Item Id = "2" Text = "ChoiceB"/>
+	<Item Id = "3" Text = "ChoiceA"/>
+	<Item Id = "4" Text = "ChoiceB"/>
+	<Item Id = "5" Text = "ChoiceA"/>
+</SharedChoices>
 <Prologue Text = "Test."/>
 <Groups>
 <Item Id = "1" Description = "Group1"/>
 <Item Id = "2" Description = "Group2"/>
 </Groups>
 <Questions>
-<Item Id = "1" Text = "这是第一个测试。" LevelCount = "5" ReverseScore = "false" GroupId = "1"/>
-<Item Id = "2" Text = "这是第二个测试。" LevelCount = "5" ReverseScore = "false" GroupId = "1"/>
+<Item Id = "1" Text = "这是第一个测试。" ReverseScore = "false" GroupId = "1"/>
+<Item Id = "2" Text = "这是第二个测试。" ReverseScore = "false" GroupId = "1"/>
 </Questions>
-
 </PsycologyTest>
