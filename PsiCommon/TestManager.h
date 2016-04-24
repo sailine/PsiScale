@@ -21,28 +21,23 @@ class PsiScaleQuestion
 {
 public:
 	PsiScaleQuestion();
-	PsiScaleQuestion(CString id, CString text, unsigned short level_count, bool reverse_score, unsigned short group_id):
-		_id(id), _text(text), _level_count(level_count), _reverse_score(reverse_score), _group_id(group_id)
-	{
-		_answer = _T(' ');
-	}
+	PsiScaleQuestion(unsigned id, const CString& text, bool reverse_score, unsigned short group_id);
 
-	void SetId(CString id) { _id = id; }
-	CString GetId() { return _id; }
-	void SetText(CString text) { _text = text; }
-	CString GetText() { return _text; }
-	void SetLevelCount(unsigned short level_count) { _level_count = level_count; }
-	unsigned short GetLevelCound() { return _level_count; }
-	void SetReverseScore(bool reverse_score) {_reverse_score = reverse_score;}
-	bool GetReverseScore() { return _reverse_score; }
-	void SetGroupId(unsigned short group_id) { _group_id= group_id; }
-	unsigned short GetGroupId() { return _group_id; }
+	void SetId(unsigned id);
+	unsigned GetId() const;
+	void SetText(const CString& text);
+	const CString& GetText() const;
+	void SetReverseScore(bool reverse_score);
+	bool GetReverseScore();
+	void SetGroup(unsigned short group_id);
+	unsigned short GetGroupId();
+
 	void SetAnswer(const TCHAR answer) { _answer = answer; }
 	TCHAR GetAnswer() { return _answer; }
-
-	std::vector<QuestionChoice> _choices;
+	std::vector<QuestionChoice>& Choices();
 private:
-	CString _id;
+	unsigned _id;
+	std::vector<QuestionChoice> _choices;
 	CString _text;
 	unsigned short _level_count;
 	bool _reverse_score;
@@ -50,55 +45,43 @@ private:
 	TCHAR _answer;
 };
 
-class PsiScalePrologue
-{
-public:
-	PsiScalePrologue(CString text = CString(_T(""))) : _text(text) {}
-
-	PsiScalePrologue operator = (PsiScalePrologue prologue) { _text = prologue.GetText(); return *this; }
-
-	void SetText(CString text) { _text = text; }
-	CString GetText() {return _text; }
-
-private:
-	CString _text;
-};
-
 class PsiScale
 {
 public:
-	PsiScale(CString id = CString(_T("1")), CString name = CString(_T("")), CString description = CString(_T(""))):
-		_id(id), _name(name), _description(description)
-	{}
+	PsiScale();
+	PsiScale(unsigned id, const TCHAR* name, const TCHAR* description, const TCHAR* prologue);
 
-	void SetId(CString id) { _id = id; }
-	CString GetId() { return _id; }
-	void SetName(CString name) { _name = name; }
-	CString GetName() { return _name; }
-	void SetDescription(CString description) { _description = description; }
-	CString GetDescription() { return _description; }
-	void SetPrologue(PsiScalePrologue prologue) { _prologue = prologue; }
-	CString GetPrologue() { return _prologue.GetText(); }
+	void SetId(unsigned id);
+	unsigned GetId() const;
+	void SetName(const TCHAR* name);
+	const CString& GetName() const;
+	void SetDescription(const TCHAR* description);
+	const CString& GetDescription() const;
+	void SetPrologue(const TCHAR* prologue);
+	const CString& GetPrologue() const;
 
-	void AddGroup(PsiScaleGroup group) { _groups.push_back(group); }
-	void AddQuestion(PsiScaleQuestion question) { _questions.push_back(question); }
-	PsiScaleGroup GetGroup(unsigned int index) { return _groups[index]; }
-	PsiScaleQuestion* GetQuestion(unsigned int index);
+	void AddGroup(const PsiScaleGroup& group);
+	const PsiScaleGroup& GetGroup(unsigned index) const;
+	PsiScaleGroup& Group(unsigned int index);
+	unsigned int GetGroupCount() const;
 
-	unsigned int QuestionCount() { return _questions.size(); }
-	unsigned int GetGroupCount();
+	void AddQuestion(const PsiScaleQuestion& question);
+	const PsiScaleQuestion& GetQuestion(unsigned int index) const;
+	PsiScaleQuestion& Question(unsigned index);
+	unsigned int GetQuestionCount() const;
+
 	bool Save(const CString& file_path);
 
-	std::vector<QuestionChoice> _shared_choices;
+	std::vector<QuestionChoice>& Choices();
 private:
-	CString _id;
+	unsigned _id;
 	CString _name;
 	CString _description;
+	CString _prologue;
 
-	PsiScalePrologue _prologue;
-	
 	std::vector<PsiScaleGroup> _groups;
 	std::vector<PsiScaleQuestion> _questions;
+	std::vector<QuestionChoice> _shared_choices;
 };
 
 struct Score
@@ -114,8 +97,8 @@ public:
 	~CTestManager();
 
 	bool LoadPsiScale(const CString& file_path);
-	PsiScale & GetPsiScale(const CString& id);
+	PsiScale & GetPsiScale(unsigned id);
 protected:
-	std::map<CString, PsiScale> _scales;
+	std::map<unsigned, PsiScale> _scales;
 };
 
