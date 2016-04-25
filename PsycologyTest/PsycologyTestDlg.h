@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "TestManager.h"
+#include "../PsiCommon/TestManager.h"
 #include "afxwin.h"
 
 // CPsycologyTestDlg dialog

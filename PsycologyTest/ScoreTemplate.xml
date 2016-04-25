@@ -9,4 +9,14 @@
 <Item Id = "2" Score = "0"/>
 </GroupScores>
 </Table>
+
+<Table Id = "2" Finished = "True">
+<Answers>
+<Item Id = "1" Answer = "A"/>
+<Item Id = "1" Answer = "B"/>
+</Answers>
+<GroupScores>
+<Item Id = "1" Score = "5"/>
+</GroupScores>
+</Table>
 </Score>
