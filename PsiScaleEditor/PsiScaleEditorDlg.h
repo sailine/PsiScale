@@ -4,6 +4,11 @@
 
 #pragma once
 
+#include <memory>
+#include "afxwin.h"
+
+class PsiScale;
+class PsiScaleQuestion;
 
 // CPsiScaleEditorDlg 对话框
 class CPsiScaleEditorDlg : public CDialogEx
@@ -24,6 +29,9 @@ public:
 // 实现
 protected:
 	HICON m_hIcon;
+	std::shared_ptr<PsiScale> _scale;
+	std::shared_ptr<PsiScaleQuestion> _question;
+	int _current_question;
 
 	// 生成的消息映射函数
 	virtual BOOL OnInitDialog();
@@ -31,4 +39,22 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnBnClickedCheckSameChoice();
+	afx_msg void OnBnClickedButtonNew();
+
+	UINT _scale_id;
+	CString _scale_name;
+	CString _prologue_text;
+	CString _question_text;
+	BOOL _use_same_choices;
+	CListBox _question_list;
+	CListBox _choice_list;
+	CListBox _group_list;
+	afx_msg void OnBnClickedButtonAddQuestion();
+	void UpdateUi();
+	afx_msg void OnBnClickedButtonAddGroup();
+	afx_msg void OnBnClickedButtonAddChoice();
+	afx_msg void OnEnChangeEditQuestion();
+	afx_msg void OnLbnSelchangeListQuestions();
 };
