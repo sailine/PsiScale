@@ -87,6 +87,7 @@ BEGIN_MESSAGE_MAP(CPsiScaleEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_ADD_CHOICE, &CPsiScaleEditorDlg::OnBnClickedButtonAddChoice)
 	ON_EN_CHANGE(IDC_EDIT_QUESTION, &CPsiScaleEditorDlg::OnEnChangeEditQuestion)
 	ON_LBN_SELCHANGE(IDC_LIST_QUESTIONS, &CPsiScaleEditorDlg::OnLbnSelchangeListQuestions)
+	ON_BN_CLICKED(ID_BUTTON_SAVE, &CPsiScaleEditorDlg::OnBnClickedButtonSave)
 END_MESSAGE_MAP()
 
 
@@ -179,7 +180,12 @@ HCURSOR CPsiScaleEditorDlg::OnQueryDragIcon()
 
 void CPsiScaleEditorDlg::OnBnClickedCheckSameChoice()
 {
-	// TODO: Add your control notification handler code here
+
+	// TODO: Add your control notification handler code 
+	
+	_use_same_choices = !_use_same_choices;
+	UpdateData(FALSE);
+
 }
 
 
@@ -211,6 +217,11 @@ void CPsiScaleEditorDlg::OnBnClickedButtonAddQuestion()
 void CPsiScaleEditorDlg::UpdateUi()
 {
 	UpdateData();
+
+	_scale->SetId(_scale_id);
+	_scale->SetName(_scale_name);
+	_scale->SetPrologue(_prologue_text);
+	_scale->SetSameChoice(_use_same_choices);
 
 	if (!_scale)
 		return;
@@ -297,8 +308,7 @@ void CPsiScaleEditorDlg::OnEnChangeEditQuestion()
 	// TODO:  Add your control notification handler code here
 	UpdateData();
 
-	auto question = _scale->GetQuestion(_current_question);
-	question.SetText(_question_text);
+	_scale->Question(_current_question).SetText(_question_text);
 
 	CString new_text;
 	new_text.Format(_T("%d. %s"), _current_question + 1,
@@ -317,4 +327,11 @@ void CPsiScaleEditorDlg::OnLbnSelchangeListQuestions()
 	_current_question = _question_list.GetCurSel();
 
 	UpdateUi();
+}
+
+
+void CPsiScaleEditorDlg::OnBnClickedButtonSave()
+{
+	UpdateUi();
+	_test_manager.SavePsiScale(_T("..\\PsycologyTest\\TestTemplate1.xml"), *_scale);
 }

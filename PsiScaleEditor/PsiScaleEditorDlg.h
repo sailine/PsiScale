@@ -6,9 +6,11 @@
 
 #include <memory>
 #include "afxwin.h"
+#include "../PsiCommon/TestManager.h"
 
 class PsiScale;
 class PsiScaleQuestion;
+
 
 // CPsiScaleEditorDlg 对话框
 class CPsiScaleEditorDlg : public CDialogEx
@@ -32,6 +34,7 @@ protected:
 	std::shared_ptr<PsiScale> _scale;
 	std::shared_ptr<PsiScaleQuestion> _question;
 	int _current_question;
+	CTestManager _test_manager;
 
 	// 生成的消息映射函数
 	virtual BOOL OnInitDialog();
@@ -57,4 +60,5 @@ public:
 	afx_msg void OnBnClickedButtonAddChoice();
 	afx_msg void OnEnChangeEditQuestion();
 	afx_msg void OnLbnSelchangeListQuestions();
+	afx_msg void OnBnClickedButtonSave();
 };
