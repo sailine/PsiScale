@@ -108,6 +108,7 @@ shared_ptr<PsiScale> CTestManager::LoadPsiScale(const CString& file_path)
 	return scale;
 }
 
+bool CTestManager::SavePsiScale(const CString& file_path, PsiScale& scale)
 {
 	CXml xml(XML_PSYCOLOGYTEST);
 	xml.SetIntegerAttrib(XML_ID, scale.GetId());
