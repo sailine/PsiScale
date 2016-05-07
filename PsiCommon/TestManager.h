@@ -32,9 +32,6 @@ public:
 	bool GetReverseScore();
 	void SetGroup(unsigned short group_id);
 	unsigned short GetGroupId();
-
-	void SetAnswer(const TCHAR answer) { _answer = answer; }
-	TCHAR GetAnswer() { return _answer; }
 	std::vector<QuestionChoice>& Choices();
 private:
 	unsigned _id;
@@ -43,8 +40,6 @@ private:
 	unsigned short _level_count;
 	bool _reverse_score;
 	unsigned short _group_id;
-
-	TCHAR _answer;
 };
 
 class PsiScale
