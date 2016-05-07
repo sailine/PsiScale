@@ -4,6 +4,7 @@
 #include <map>
 #include <TChar.h>
 #include <afxstr.h>
+#include <memory>
 
 struct QuestionChoice
 {
@@ -42,6 +43,7 @@ private:
 	unsigned short _level_count;
 	bool _reverse_score;
 	unsigned short _group_id;
+
 	TCHAR _answer;
 };
 
@@ -96,9 +98,13 @@ public:
 	CTestManager();
 	~CTestManager();
 
-	bool LoadPsiScale(const CString& file_path);
+	std::shared_ptr<PsiScale> LoadPsiScale(const CString& file_path);
+	bool SavePsiScale(const CString& file_path, const PsiScale& scale);
+
+	bool AddScale(std::shared_ptr<PsiScale> scale);
+
 	PsiScale & GetPsiScale(unsigned id);
 protected:
-	std::map<unsigned, PsiScale> _scales;
+	std::map<unsigned, std::shared_ptr<PsiScale>> _scales;
 };
 
