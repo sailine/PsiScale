@@ -65,7 +65,7 @@ CPsiScaleEditorDlg::CPsiScaleEditorDlg(CWnd* pParent /*=NULL*/)
 
 void CPsiScaleEditorDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialogEx::DoDataExchange(pDX);
+	__super::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_ID, _scale_id);
 	DDX_Text(pDX, IDC_NAME, _scale_name);
 	DDX_Text(pDX, IDC_EDIT_PROLOGUE, _prologue_text);
@@ -74,6 +74,22 @@ void CPsiScaleEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LIST_QUESTIONS, _question_list);
 	DDX_Control(pDX, IDC_LIST_CHOICES, _choice_list);
 	DDX_Control(pDX, IDC_LIST_GROUP, _group_list);
+	DDX_Control(pDX, IDC_BUTTON_ADD_QUESTION, _add_question_button);
+	DDX_Control(pDX, IDC_BUTTON_DELETE_QUESTION, _delete_question_button);
+	DDX_Control(pDX, IDC_ID, _scale_id_edit);
+	DDX_Control(pDX, IDC_NAME, _scale_name_edit);
+	DDX_Control(pDX, IDC_EDIT_PROLOGUE, _prologue_text_edit);
+	DDX_Control(pDX, IDC_EDIT_QUESTION, _question_text_edit);
+	DDX_Control(pDX, IDC_CHECK_SAME_CHOICE, _shared_choices_checkbox);
+	DDX_Control(pDX, IDC_BUTTON_ADD_CHOICE, _add_choice_button);
+	DDX_Control(pDX, IDC_BUTTON_DELETE_CHOICE, _delete_choice_button);
+	DDX_Control(pDX, IDC_BUTTON_MODIFY_CHOICE2, _modify_choice_button);
+	DDX_Control(pDX, IDC_BUTTON_ADD_GROUP, _add_group_button);
+	DDX_Control(pDX, IDC_BUTTON_DELETE_GROUP, _delete_group_button);
+	DDX_Control(pDX, IDC_BUTTON_MODIFY_GROUP2, _modify_group_button);
+	DDX_Control(pDX, IDC_BUTTON_NEW, _new_scale_table_button);
+	DDX_Control(pDX, ID_BUTTON_SAVE, _save_scale_button);
+	DDX_Control(pDX, IDCANCEL, _exit_button);
 }
 
 BEGIN_MESSAGE_MAP(CPsiScaleEditorDlg, CDialogEx)
@@ -95,7 +111,7 @@ END_MESSAGE_MAP()
 
 BOOL CPsiScaleEditorDlg::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
+	__super::OnInitDialog();
 
 	// 将“关于...”菜单项添加到系统菜单中。
 
@@ -136,7 +152,7 @@ void CPsiScaleEditorDlg::OnSysCommand(UINT nID, LPARAM lParam)
 	}
 	else
 	{
-		CDialogEx::OnSysCommand(nID, lParam);
+		__super::OnSysCommand(nID, lParam);
 	}
 }
 
@@ -165,7 +181,7 @@ void CPsiScaleEditorDlg::OnPaint()
 	}
 	else
 	{
-		CDialogEx::OnPaint();
+		__super::OnPaint();
 	}
 }
 

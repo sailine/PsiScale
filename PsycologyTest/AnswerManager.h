@@ -9,6 +9,8 @@ public:
 	bool AddAnswer(unsigned table_id, unsigned question_id, unsigned answer);
 	unsigned GetAnswer(unsigned table_id, unsigned question_id);
 
+	bool IsAnswered(unsigned table_id, unsigned question_id);
+
 	void SetSubjectId(const TCHAR* subject_id);
 	const CString& GetSubjectId() const;
 

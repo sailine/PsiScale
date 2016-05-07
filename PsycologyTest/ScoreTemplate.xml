@@ -3,7 +3,7 @@
 <Answers>
 <Item Id = "1" Answer = "1"/>
 <Item Id = "2" Answer = "2"/>
-<Item Id = "3" Answer = "Unknown"/>
+<!-- <Item Id = "3" Answer = "Unknown"/> !-->
 </Answers>
 <GroupScores>
 <Item Id = "1" Score = "5"/>
