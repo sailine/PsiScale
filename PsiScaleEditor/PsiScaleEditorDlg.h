@@ -48,6 +48,7 @@ public:
 	CString _prologue_text;
 	CString _question_text;
 	BOOL _use_same_choices;
+	
 	CListBox _question_list;
 	CListBox _choice_list;
 	CListBox _group_list;
@@ -57,4 +58,20 @@ public:
 	afx_msg void OnBnClickedButtonAddChoice();
 	afx_msg void OnEnChangeEditQuestion();
 	afx_msg void OnLbnSelchangeListQuestions();
+	CButton _add_question_button;
+	CButton _delete_question_button;
+	CEdit _scale_id_edit;
+	CEdit _scale_name_edit;
+	CEdit _prologue_text_edit;
+	CEdit _question_text_edit;
+	CButton _shared_choices_checkbox;
+	CButton _add_choice_button;
+	CButton _delete_choice_button;
+	CButton _modify_choice_button;
+	CButton _add_group_button;
+	CButton _delete_group_button;
+	CButton _modify_group_button;
+	CButton _new_scale_table_button;
+	CButton _save_scale_button;
+	CButton _exit_button;
 };

@@ -6,6 +6,8 @@
 
 #include "../PsiCommon/TestManager.h"
 #include "afxwin.h"
+#include <memory>
+#include "AnswerManager.h"
 
 // CPsycologyTestDlg dialog
 class CPsycologyTestDlg : public CDialogEx
@@ -27,7 +29,8 @@ public:
 protected:
 	HICON m_hIcon;
 	CTestManager _test_manager;
-	PsiScale * _psi_scale;
+	CAnswerManager _answer_manager;
+	std::shared_ptr<PsiScale> _psi_scale;
 	unsigned _current_question_index;
 
 	// Generated message map functions
