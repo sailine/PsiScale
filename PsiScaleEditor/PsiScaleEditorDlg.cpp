@@ -313,8 +313,7 @@ void CPsiScaleEditorDlg::OnEnChangeEditQuestion()
 	// TODO:  Add your control notification handler code here
 	UpdateData();
 
-	auto question = _scale->GetQuestion(_current_question);
-	question.SetText(_question_text);
+	_scale->Question(_current_question).SetText(_question_text);
 
 	CString new_text;
 	new_text.Format(_T("%d. %s"), _current_question + 1,

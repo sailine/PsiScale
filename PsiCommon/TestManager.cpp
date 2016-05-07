@@ -241,7 +241,6 @@ PsiScaleQuestion::PsiScaleQuestion(unsigned id,
 	unsigned short group_id) :
 	_id(id), _text(text), _reverse_score(reverse_score), _group_id(group_id)
 {
-	_answer = _T(' ');
 }
 
 void PsiScaleQuestion::SetId(unsigned id)
