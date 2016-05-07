@@ -6,7 +6,6 @@ CAnswerManager::CAnswerManager()
 {
 }
 
-
 CAnswerManager::~CAnswerManager()
 {
 }
@@ -31,6 +30,22 @@ unsigned CAnswerManager::GetAnswer(unsigned table_id, unsigned question_id)
 	}
 
 	return question->second;
+}
+
+bool CAnswerManager::IsAnswered(unsigned table_id, unsigned question_id)
+{
+	auto table = _answers.find(table_id);
+	if (table == _answers.end())
+	{
+		return false;
+	}
+	auto question = table->second.find(question_id);
+	if (question == table->second.end())
+	{
+		return false;
+	}
+
+	return true;
 }
 
 void CAnswerManager::SetSubjectId(const TCHAR* subject_id)

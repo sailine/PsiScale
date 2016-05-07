@@ -190,6 +190,8 @@ void CPsycologyTestDlg::OnBnClickedStart()
 	// _test_manager.AddScale(_test_manager.LoadPsiScale(_T("..\\PsycologyTest\\TestTemplate.xml")));
 	// _psi_scale = &_test_manager.GetPsiScale(1);
 
+	//_test_manager = shared_ptr<CAnswerManager>(new CAnswerManager(_psi_scale));
+
 	ShowQuestion(0);
 
 	GetDlgItem(IDC_QUESTIONINDEXT)->ShowWindow(SW_SHOW);
@@ -209,10 +211,10 @@ bool CPsycologyTestDlg::ShowQuestion(unsigned question_index)
 	_question = _psi_scale->Question(_current_question_index).GetText();
 
 	ShowRadioButtons(_psi_scale->Choices().size());
-	auto answer = _psi_scale->Question(_current_question_index).GetAnswer();
-	if (answer != ' ')
+
+	if (_answer_manager.IsAnswered(_psi_scale->GetId(), _current_question_index))
 	{
-		CheckRadioButton(buttons[0], buttons[9], buttons[answer-'A']);
+		CheckRadioButton(buttons[0], buttons[9], buttons[_answer_manager.GetAnswer(_psi_scale->GetId(), _current_question_index)]);
 	}
 	else
 	{
@@ -277,7 +279,6 @@ void CPsycologyTestDlg::OnBnClickedRadioA()
 {
 	ProcessAnswer(_T('A'));
 }
-
 void CPsycologyTestDlg::OnBnClickedRadioB()
 {
 	ProcessAnswer(_T('B'));
@@ -319,7 +320,7 @@ void CPsycologyTestDlg::OnBnClickedRadioJ()
 void CPsycologyTestDlg::ProcessAnswer(const TCHAR answer)
 {
 	// 1. 记录
-	_psi_scale->Question(_current_question_index).SetAnswer(answer);	// GetQuestion need to return the pointer to the question that can then set the answer;		problem: set the answer of question 2 just after selecting the answer of question 1
+	_answer_manager.AddAnswer(_psi_scale->GetId(), _current_question_index, answer - _T('A'));
 
 	// 2. 下一道题。
 	if (_current_question_index < _psi_scale->GetQuestionCount() - 1)
