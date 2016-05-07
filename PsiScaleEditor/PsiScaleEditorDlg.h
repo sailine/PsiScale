@@ -6,9 +6,11 @@
 
 #include <memory>
 #include "afxwin.h"
+#include "../PsiCommon/TestManager.h"
 
 class PsiScale;
 class PsiScaleQuestion;
+
 
 // CPsiScaleEditorDlg 对话框
 class CPsiScaleEditorDlg : public CDialogEx
@@ -32,6 +34,7 @@ protected:
 	std::shared_ptr<PsiScale> _scale;
 	std::shared_ptr<PsiScaleQuestion> _question;
 	int _current_question;
+	CTestManager _test_manager;
 
 	// 生成的消息映射函数
 	virtual BOOL OnInitDialog();
@@ -58,20 +61,23 @@ public:
 	afx_msg void OnBnClickedButtonAddChoice();
 	afx_msg void OnEnChangeEditQuestion();
 	afx_msg void OnLbnSelchangeListQuestions();
-	CMFCButton _add_question_button;
-	CMFCButton _delete_question_button;
+	afx_msg void OnBnClickedButtonSave();
+
+	CButton _add_question_button;
+	CButton _delete_question_button;
 	CEdit _scale_id_edit;
 	CEdit _scale_name_edit;
 	CEdit _prologue_text_edit;
 	CEdit _question_text_edit;
-	CMFCButton _shared_choices_checkbox;
-	CMFCButton _add_choice_button;
-	CMFCButton _delete_choice_button;
-	CMFCButton _modify_choice_button;
-	CMFCButton _add_group_button;
-	CMFCButton _delete_group_button;
-	CMFCButton _modify_group_button;
-	CMFCButton _new_scale_table_button;
-	CMFCButton _save_scale_button;
-	CMFCButton _exit_button;
+	CButton _shared_choices_checkbox;
+	CButton _add_choice_button;
+	CButton _delete_choice_button;
+	CButton _modify_choice_button;
+	CButton _add_group_button;
+	CButton _delete_group_button;
+	CButton _modify_group_button;
+	CButton _new_scale_table_button;
+	CButton _save_scale_button;
+	CButton _exit_button;
+
 };

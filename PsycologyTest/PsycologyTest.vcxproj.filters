@@ -70,4 +70,9 @@
     <Xml Include="TestTemplate.xml" />
     <Xml Include="ScoreTemplate.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="res\PsycolgyTest.manifest">
+      <Filter>Resource Files</Filter>
+    </Manifest>
+  </ItemGroup>
 </Project>

@@ -39,6 +39,8 @@ CPsycologyTestApp theApp;
 
 BOOL CPsycologyTestApp::InitInstance()
 {
+	InitCommonControls();
+
 	CWinApp::InitInstance();
 
 
