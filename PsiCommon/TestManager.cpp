@@ -29,26 +29,40 @@ CTestManager::~CTestManager()
 {
 }
 
-bool CTestManager::LoadPsiScale(const CString& file_path)
+bool CTestManager::AddScale(std::shared_ptr<PsiScale> scale)
+{
+	if (!scale)
+		return false;
+
+	if (_scales.find(scale->GetId()) != _scales.end())
+		return false;
+
+	_scales.insert(make_pair(scale->GetId(), scale));
+
+	return true;
+}
+
+shared_ptr<PsiScale> CTestManager::LoadPsiScale(const CString& file_path)
 {
 	CXml xml;
 	if (!xml.Load(file_path))
-		return false;
+		return shared_ptr<PsiScale>();
 
-	PsiScale scale;
-	scale.SetId(xml.GetIntegerAttrib(XML_ID));
-	scale.SetName(xml.GetAttrib(XML_NAME));
-	scale.SetDescription(xml.GetAttrib(XML_DESCRIPTION));
+	auto scale = shared_ptr<PsiScale>(new PsiScale);
+
+	scale->SetId(xml.GetIntegerAttrib(XML_ID));
+	scale->SetName(xml.GetAttrib(XML_NAME));
+	scale->SetDescription(xml.GetAttrib(XML_DESCRIPTION));
 
 	auto prologue_element = xml.GetElement(XML_PROLOGUE);
 	if (prologue_element == nullptr)
-		return false;
+		return shared_ptr<PsiScale>();
 
-	scale.SetPrologue(prologue_element->GetAttrib(XML_TEXT));
+	scale->SetPrologue(prologue_element->GetAttrib(XML_TEXT));
 
 	auto groups_element = xml.GetElement(XML_GROUPS);
 	if (groups_element == nullptr)
-		return false;
+		return shared_ptr<PsiScale>();
 
 	auto& group_items = groups_element->GetChildElements();
 	for (auto item : group_items)
@@ -56,7 +70,7 @@ bool CTestManager::LoadPsiScale(const CString& file_path)
 		PsiScaleGroup group;
 		group.id = item->GetIntegerAttrib(XML_ID);
 		group.description = item->GetAttrib(XML_DESCRIPTION);
-		scale.AddGroup(group);
+		scale->AddGroup(group);
 	}
 
 	bool same_choices = xml.GetBoolAttrib(XML_SAME_CHOICES);
@@ -64,20 +78,20 @@ bool CTestManager::LoadPsiScale(const CString& file_path)
 	{
 		auto choices_element = xml.GetElement(XML_CHOICES);
 		if (choices_element == nullptr)
-			return false;
+			return shared_ptr<PsiScale>();
 
 		for (auto item : choices_element->GetChildElements())
 		{
 			QuestionChoice choice;
 			choice.id = item->GetIntegerAttrib(XML_ID);
 			choice.text = item->GetAttrib(XML_TEXT);
-			scale.Choices().push_back(choice);
+			scale->Choices().push_back(choice);
 		}
 	}
 
 	auto questions_element = xml.GetElement(XML_QUESTIONS);
 	if (questions_element == nullptr)
-		return false;
+		return shared_ptr<PsiScale>();
 
 	auto& question_items = questions_element->GetChildElements();
 	for (auto item : question_items)
@@ -87,12 +101,15 @@ bool CTestManager::LoadPsiScale(const CString& file_path)
 			item->GetBoolAttrib(XML_REVERSE_SCORE),
 			item->GetIntegerAttrib(XML_GROUP_ID));
 
-		scale.AddQuestion(question);
+		scale->AddQuestion(question);
 	}
 
-	_scales.insert(make_pair(scale.GetId(), scale));
+	return scale;
+}
 
-	return true;
+bool CTestManager::SavePsiScale(const CString& file_path, const PsiScale& scale)
+{
+	return false;
 }
 
 PsiScale & CTestManager::GetPsiScale(unsigned id)
@@ -100,7 +117,7 @@ PsiScale & CTestManager::GetPsiScale(unsigned id)
 	auto iter = _scales.find(id);
 	if (iter != _scales.end())
 	{
-		return iter->second;
+		return *(iter->second);
 	}
 	else
 	{
