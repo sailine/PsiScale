@@ -87,6 +87,7 @@ BEGIN_MESSAGE_MAP(CPsiScaleEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_ADD_CHOICE, &CPsiScaleEditorDlg::OnBnClickedButtonAddChoice)
 	ON_EN_CHANGE(IDC_EDIT_QUESTION, &CPsiScaleEditorDlg::OnEnChangeEditQuestion)
 	ON_LBN_SELCHANGE(IDC_LIST_QUESTIONS, &CPsiScaleEditorDlg::OnLbnSelchangeListQuestions)
+	ON_BN_CLICKED(ID_BUTTON_SAVE, &CPsiScaleEditorDlg::OnBnClickedButtonSave)
 END_MESSAGE_MAP()
 
 
@@ -203,6 +204,7 @@ void CPsiScaleEditorDlg::OnBnClickedButtonAddQuestion()
 	PsiScaleQuestion new_question;
 	_scale->AddQuestion(new_question);
 	_current_question = _scale->GetQuestionCount() - 1;
+	_scale->Question(_current_question).SetId(_current_question+1);
 	_question_list.AddString(_T("ÐÂÌâÄ¿"));
 
 	UpdateUi();
@@ -212,6 +214,10 @@ void CPsiScaleEditorDlg::UpdateUi()
 {
 	UpdateData();
 
+	_scale->SetId(_scale_id);
+	_scale->SetName(_scale_name);
+	_scale->SetPrologue(_prologue_text);
+	
 	if (!_scale)
 		return;
 
@@ -316,4 +322,11 @@ void CPsiScaleEditorDlg::OnLbnSelchangeListQuestions()
 	_current_question = _question_list.GetCurSel();
 
 	UpdateUi();
+}
+
+
+void CPsiScaleEditorDlg::OnBnClickedButtonSave()
+{
+	_test_manager.SavePsiScale(_T("..\\PsycologyTest\\SaveTest.xml"), *_scale);
+	// TODO: Add your control notification handler code here
 }

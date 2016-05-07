@@ -94,7 +94,7 @@ public:
 	~CTestManager();
 
 	std::shared_ptr<PsiScale> LoadPsiScale(const CString& file_path);
-	bool SavePsiScale(const CString& file_path, const PsiScale& scale);
+	bool SavePsiScale(const CString& file_path, PsiScale& scale);
 
 	bool AddScale(std::shared_ptr<PsiScale> scale);
 

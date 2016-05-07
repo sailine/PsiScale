@@ -19,6 +19,7 @@ const TCHAR * XML_REVERSE_SCORE = _T("ReverseScore");
 const TCHAR * XML_GROUP_ID = _T("GroupId");
 const TCHAR * XML_CHOICES = _T("Choices");
 const TCHAR * XML_SAME_CHOICES = _T("SameChoices");
+const TCHAR * XML_PSYCOLOGYTEST = _T("PsycologyTest");
 
 CTestManager::CTestManager()
 {
@@ -107,8 +108,48 @@ shared_ptr<PsiScale> CTestManager::LoadPsiScale(const CString& file_path)
 	return scale;
 }
 
-bool CTestManager::SavePsiScale(const CString& file_path, const PsiScale& scale)
+bool CTestManager::SavePsiScale(const CString& file_path, PsiScale& scale)
 {
+	CXml xml(XML_PSYCOLOGYTEST);
+
+	xml.SetIntegerAttrib(XML_ID, scale.GetId());
+	xml.SetAttrib(XML_NAME, scale.GetName());
+	xml.SetAttrib(XML_DESCRIPTION, scale.GetDescription());
+	xml.SetIntegerAttrib(_T("ItemCount"), scale.GetQuestionCount());
+	xml.SetBoolAttrib(_T("SameChoices"), true);
+
+	auto item = xml.AddElement(XML_PROLOGUE);
+	item->SetAttrib(XML_TEXT, scale.GetPrologue());
+
+	auto choices = xml.AddElement(XML_CHOICES);
+	choices->SetIntegerAttrib(XML_LEVEL_COUNT, scale.Choices().size());
+	for (auto iter : scale.Choices())
+	{ 
+		auto item = choices->AddElement(_T("Item"));
+		item->SetIntegerAttrib(XML_ID, iter.id);
+		item->SetAttrib(XML_TEXT, iter.text);
+	}
+
+	auto groups = xml.AddElement(XML_GROUPS);
+	for (unsigned int i = 0; i < scale.GetGroupCount(); ++i)
+	{
+		auto item = groups->AddElement(_T("Item"));
+		item->SetIntegerAttrib(XML_ID, scale.Group(i).id);
+		item->SetAttrib(XML_DESCRIPTION, scale.Group(i).description);
+	}
+
+	auto question = xml.AddElement(XML_QUESTIONS);
+	for (unsigned int i = 0; i < scale.GetQuestionCount(); ++i)
+	{
+		auto item = question->AddElement(_T("Item"));
+		item->SetIntegerAttrib(XML_ID, scale.Question(i).GetId());
+		item->SetAttrib(XML_TEXT, scale.Question(i).GetText());
+		item->SetBoolAttrib(XML_REVERSE_SCORE, scale.Question(i).GetReverseScore());
+		item->SetIntegerAttrib(XML_GROUP_ID, scale.Question(i).GetGroupId());
+	}
+
+	xml.Save(file_path);
+
 	return false;
 }
 

@@ -189,9 +189,7 @@ void CPsycologyTestDlg::OnBnClickedStart()
 	_psi_scale = _test_manager.LoadPsiScale(_T("..\\PsycologyTest\\TestTemplate.xml"));
 	// _test_manager.AddScale(_test_manager.LoadPsiScale(_T("..\\PsycologyTest\\TestTemplate.xml")));
 	// _psi_scale = &_test_manager.GetPsiScale(1);
-
-	//_test_manager = shared_ptr<CAnswerManager>(new CAnswerManager(_psi_scale));
-
+		
 	ShowQuestion(0);
 
 	GetDlgItem(IDC_QUESTIONINDEXT)->ShowWindow(SW_SHOW);
