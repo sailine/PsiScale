@@ -64,18 +64,22 @@ public:
 
 	CMFCButton _add_question_button;
 	CMFCButton _delete_question_button;
+
+	CButton _add_question_button;
+	CButton _delete_question_button;
+
 	CEdit _scale_id_edit;
 	CEdit _scale_name_edit;
 	CEdit _prologue_text_edit;
 	CEdit _question_text_edit;
-	CMFCButton _shared_choices_checkbox;
-	CMFCButton _add_choice_button;
-	CMFCButton _delete_choice_button;
-	CMFCButton _modify_choice_button;
-	CMFCButton _add_group_button;
-	CMFCButton _delete_group_button;
-	CMFCButton _modify_group_button;
-	CMFCButton _new_scale_table_button;
-	CMFCButton _save_scale_button;
-	CMFCButton _exit_button;
+	CButton _shared_choices_checkbox;
+	CButton _add_choice_button;
+	CButton _delete_choice_button;
+	CButton _modify_choice_button;
+	CButton _add_group_button;
+	CButton _delete_group_button;
+	CButton _modify_group_button;
+	CButton _new_scale_table_button;
+	CButton _save_scale_button;
+	CButton _exit_button;
 };

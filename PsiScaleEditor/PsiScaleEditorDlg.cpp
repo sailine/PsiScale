@@ -65,7 +65,7 @@ CPsiScaleEditorDlg::CPsiScaleEditorDlg(CWnd* pParent /*=NULL*/)
 
 void CPsiScaleEditorDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialogEx::DoDataExchange(pDX);
+	__super::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_ID, _scale_id);
 	DDX_Text(pDX, IDC_NAME, _scale_name);
 	DDX_Text(pDX, IDC_EDIT_PROLOGUE, _prologue_text);
@@ -111,7 +111,7 @@ END_MESSAGE_MAP()
 
 BOOL CPsiScaleEditorDlg::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
+	__super::OnInitDialog();
 
 	// 将“关于...”菜单项添加到系统菜单中。
 
@@ -152,7 +152,7 @@ void CPsiScaleEditorDlg::OnSysCommand(UINT nID, LPARAM lParam)
 	}
 	else
 	{
-		CDialogEx::OnSysCommand(nID, lParam);
+		__super::OnSysCommand(nID, lParam);
 	}
 }
 
@@ -181,7 +181,7 @@ void CPsiScaleEditorDlg::OnPaint()
 	}
 	else
 	{
-		CDialogEx::OnPaint();
+		__super::OnPaint();
 	}
 }
 

@@ -209,6 +209,9 @@
   <ItemGroup>
     <Image Include="res\PsiScaleEditor.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="res\PsiScaleEditor.manifest" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
