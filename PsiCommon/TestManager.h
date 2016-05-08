@@ -29,9 +29,10 @@ public:
 	void SetText(const CString& text);
 	const CString& GetText() const;
 	void SetReverseScore(bool reverse_score);
-	bool GetReverseScore();
+	const bool GetReverseScore() const;
 	void SetGroup(unsigned short group_id);
-	unsigned short GetGroupId();
+	const unsigned short GetGroupId() const;
+
 	std::vector<QuestionChoice>& Choices();
 private:
 	unsigned _id;
@@ -46,7 +47,7 @@ class PsiScale
 {
 public:
 	PsiScale();
-	PsiScale(unsigned id, const TCHAR* name, const TCHAR* description, const TCHAR* prologue);
+	PsiScale(unsigned id, const TCHAR* name, const TCHAR* description, const TCHAR* prologue, bool samechoice);
 
 	void SetId(unsigned id);
 	unsigned GetId() const;
@@ -68,19 +69,20 @@ public:
 	unsigned int GetQuestionCount() const;
 
 	bool Save(const CString& file_path);
-	bool AreChoicesShared() const;
-	void EnableSharedChoices(bool enable);
+	const bool IsSameChoice() const;
+	void SetSameChoice(bool samechoice);;
 	std::vector<QuestionChoice>& Choices();
 private:
 	unsigned _id;
 	CString _name;
 	CString _description;
 	CString _prologue;
-	bool _choices_shared;
 
 	std::vector<PsiScaleGroup> _groups;
 	std::vector<PsiScaleQuestion> _questions;
 	std::vector<QuestionChoice> _choices;
+
+	bool _same_choice;
 };
 
 struct Score
@@ -96,9 +98,10 @@ public:
 	~CTestManager();
 
 	std::shared_ptr<PsiScale> LoadPsiScale(const CString& file_path);
-	bool SavePsiScale(const CString& file_path, const PsiScale& scale);
+	bool SavePsiScale(const CString& file_path, PsiScale& scale);
 
 	bool AddScale(std::shared_ptr<PsiScale> scale);
+
 
 	PsiScale & GetPsiScale(unsigned id);
 protected:

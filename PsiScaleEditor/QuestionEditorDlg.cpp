@@ -142,7 +142,7 @@ void CQuestionEditorDlg::UpdateUi()
 	auto question = _scale->GetQuestion(_current_question);
 
 	_question_text = question.GetText();
-	if (!_scale->AreChoicesShared())
+	if (!_scale->IsSameChoice())
 	{
 		// 更新当前问题的选择。
 

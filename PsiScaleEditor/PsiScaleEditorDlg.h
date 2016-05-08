@@ -7,9 +7,11 @@
 #include <memory>
 #include "afxwin.h"
 #include "afxvslistbox.h"
+#include "../PsiCommon/TestManager.h"
 
 class PsiScale;
 class PsiScaleQuestion;
+
 
 // CPsiScaleEditorDlg 对话框
 class CPsiScaleEditorDlg : public CDialogEx
@@ -30,6 +32,7 @@ public:
 protected:
 	HICON m_hIcon;
 	std::shared_ptr<PsiScale> _scale;
+	CTestManager _test_manager;
 
 	// 生成的消息映射函数
 	virtual BOOL OnInitDialog();
@@ -49,12 +52,15 @@ public:
 	void UpdateUi();
 
 	afx_msg void OnBnClickedButtonAddQuestion();
-	afx_msg void OnBnClickedButtonAddGroup();
-	afx_msg void OnBnClickedButtonAddChoice();
-	afx_msg void OnEnChangeEditQuestion();
+// 	afx_msg void OnBnClickedButtonAddGroup();
+// 	afx_msg void OnBnClickedButtonAddChoice();
+// 	afx_msg void OnEnChangeEditQuestion();
 	afx_msg void OnLbnSelchangeListQuestions();
 	afx_msg void OnEnChangeName();
+	afx_msg void OnBnClickedButtonSave();
 
+	CButton _add_question_button;
+	CButton _delete_question_button;
 	CEdit _scale_id_edit;
 	CEdit _scale_name_edit;
 	CEdit _prologue_text_edit;
@@ -62,6 +68,7 @@ public:
 	CButton _new_scale_table_button;
 	CButton _save_scale_button;
 	CButton _exit_button;
+
 	CVSListBox _question_list;
 	CVSListBox _group_list;
 	CVSListBox _choice_list;
