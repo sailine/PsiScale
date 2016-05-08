@@ -47,17 +47,11 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
 END_MESSAGE_MAP()
 
-
-// CPsiScaleEditorDlg 对话框
-
-
-
 CPsiScaleEditorDlg::CPsiScaleEditorDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(IDD_PSISCALEEDITOR_DIALOG, pParent)
+	: CDialogEx(IDD_PSI_SCALE_EDITOR, pParent)
 	, _scale_id(0)
 	, _scale_name(_T(""))
 	, _prologue_text(_T(""))
-	, _question_text(_T(""))
 	, _use_same_choices(FALSE)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
@@ -69,27 +63,19 @@ void CPsiScaleEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_ID, _scale_id);
 	DDX_Text(pDX, IDC_NAME, _scale_name);
 	DDX_Text(pDX, IDC_EDIT_PROLOGUE, _prologue_text);
-	DDX_Text(pDX, IDC_EDIT_QUESTION, _question_text);
 	DDX_Check(pDX, IDC_CHECK_SAME_CHOICE, _use_same_choices);
-	DDX_Control(pDX, IDC_LIST_QUESTIONS, _question_list);
 	DDX_Control(pDX, IDC_LIST_CHOICES, _choice_list);
 	DDX_Control(pDX, IDC_LIST_GROUP, _group_list);
-	DDX_Control(pDX, IDC_BUTTON_ADD_QUESTION, _add_question_button);
-	DDX_Control(pDX, IDC_BUTTON_DELETE_QUESTION, _delete_question_button);
 	DDX_Control(pDX, IDC_ID, _scale_id_edit);
 	DDX_Control(pDX, IDC_NAME, _scale_name_edit);
 	DDX_Control(pDX, IDC_EDIT_PROLOGUE, _prologue_text_edit);
-	DDX_Control(pDX, IDC_EDIT_QUESTION, _question_text_edit);
 	DDX_Control(pDX, IDC_CHECK_SAME_CHOICE, _shared_choices_checkbox);
-	DDX_Control(pDX, IDC_BUTTON_ADD_CHOICE, _add_choice_button);
-	DDX_Control(pDX, IDC_BUTTON_DELETE_CHOICE, _delete_choice_button);
-	DDX_Control(pDX, IDC_BUTTON_MODIFY_CHOICE2, _modify_choice_button);
-	DDX_Control(pDX, IDC_BUTTON_ADD_GROUP, _add_group_button);
-	DDX_Control(pDX, IDC_BUTTON_DELETE_GROUP, _delete_group_button);
-	DDX_Control(pDX, IDC_BUTTON_MODIFY_GROUP2, _modify_group_button);
 	DDX_Control(pDX, IDC_BUTTON_NEW, _new_scale_table_button);
 	DDX_Control(pDX, ID_BUTTON_SAVE, _save_scale_button);
 	DDX_Control(pDX, IDCANCEL, _exit_button);
+	DDX_Control(pDX, IDC_QUESTION_LIST, _question_list);
+	DDX_Control(pDX, IDC_GROUP_LIST, _group_list);
+	DDX_Control(pDX, IDC_CHOICE_LIST, _choice_list);
 }
 
 BEGIN_MESSAGE_MAP(CPsiScaleEditorDlg, CDialogEx)
@@ -98,11 +84,8 @@ BEGIN_MESSAGE_MAP(CPsiScaleEditorDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_CHECK_SAME_CHOICE, &CPsiScaleEditorDlg::OnBnClickedCheckSameChoice)
 	ON_BN_CLICKED(IDC_BUTTON_NEW, &CPsiScaleEditorDlg::OnBnClickedButtonNew)
-	ON_BN_CLICKED(IDC_BUTTON_ADD_QUESTION, &CPsiScaleEditorDlg::OnBnClickedButtonAddQuestion)
-	ON_BN_CLICKED(IDC_BUTTON_ADD_GROUP, &CPsiScaleEditorDlg::OnBnClickedButtonAddGroup)
-	ON_BN_CLICKED(IDC_BUTTON_ADD_CHOICE, &CPsiScaleEditorDlg::OnBnClickedButtonAddChoice)
-	ON_EN_CHANGE(IDC_EDIT_QUESTION, &CPsiScaleEditorDlg::OnEnChangeEditQuestion)
 	ON_LBN_SELCHANGE(IDC_LIST_QUESTIONS, &CPsiScaleEditorDlg::OnLbnSelchangeListQuestions)
+	ON_EN_CHANGE(IDC_NAME, &CPsiScaleEditorDlg::OnEnChangeName)
 END_MESSAGE_MAP()
 
 
@@ -218,8 +201,7 @@ void CPsiScaleEditorDlg::OnBnClickedButtonAddQuestion()
 
 	PsiScaleQuestion new_question;
 	_scale->AddQuestion(new_question);
-	_current_question = _scale->GetQuestionCount() - 1;
-	_question_list.AddString(_T("新题目"));
+	_question_list.AddItem(_T("新题目"));
 
 	UpdateUi();
 }
@@ -231,105 +213,123 @@ void CPsiScaleEditorDlg::UpdateUi()
 	if (!_scale)
 		return;
 
-	_question_list.SetCurSel(_current_question);
-	auto question = _scale->GetQuestion(_current_question);
-
-	_question_text = question.GetText();
-	if (_use_same_choices == FALSE)
+	int selected = _question_list.GetSelItem();
+	if (selected != -1)
 	{
-		// 更新当前问题的选择。
-	}
+		auto question = _scale->GetQuestion(selected);
+		if (_use_same_choices == FALSE)
+		{
+			// 更新当前问题的选择。
+			while (_choice_list.GetCount() != 0)
+			{
+				_choice_list.RemoveItem(0);
+			}
+			for (auto choice : question.Choices())
+			{
+				_choice_list.AddItem(choice.text, choice.id);
+			}
+		}
 
-	_group_list.SetCurSel(question.GetGroupId() - 1);
+		_group_list.SelectItem(question.GetGroupId() - 1);
+	}
 
 	UpdateData(FALSE);
 }
 
-void CPsiScaleEditorDlg::OnBnClickedButtonAddGroup()
-{
-	CInputStringDialog dlg(_T("新增分组"), _T("输入分组的名称"));
-	if (dlg.DoModal() == IDOK)
-	{
-		PsiScaleGroup group;
-		group.description = dlg.GetText();
-		if (!_scale)
-		{
-			_scale = shared_ptr<PsiScale>(new PsiScale);
-		}
-		group.id = _scale->GetGroupCount();
-		_scale->AddGroup(group);
+// void CPsiScaleEditorDlg::OnBnClickedButtonAddGroup()
+// {
+// 	CInputStringDialog dlg(_T("新增分组"), _T("输入分组的名称"));
+// 	if (dlg.DoModal() == IDOK)
+// 	{
+// 		PsiScaleGroup group;
+// 		group.description = dlg.GetText();
+// 		if (!_scale)
+// 		{
+// 			_scale = shared_ptr<PsiScale>(new PsiScale);
+// 		}
+// 		group.id = _scale->GetGroupCount();
+// 		_scale->AddGroup(group);
+// 
+// 		_group_list.AddString(group.description);
+// 	}
+// 
+// 	UpdateUi();
+// }
 
-		_group_list.AddString(group.description);
-	}
+
+// void CPsiScaleEditorDlg::OnBnClickedButtonAddChoice()
+// {
+// 	UpdateData();
+// 
+// 	CInputStringDialog dlg(_T("增加题目的选项"), _T("输入选项的内容："));
+// 
+// 	if (dlg.DoModal() == IDOK)
+// 	{
+// 		if (!_scale)
+// 		{
+// 			_scale = shared_ptr<PsiScale>(new PsiScale);
+// 		}
+// 
+// 		if (_use_same_choices)
+// 		{
+// 			QuestionChoice choice;
+// 			choice.id = _scale->Choices().size() + 1;
+// 			choice.text = dlg.GetText();
+// 
+// 			_scale->Choices().push_back(choice);
+// 		}
+// 		else
+// 		{
+// 			QuestionChoice choice;
+// 			auto& question = _scale->Question(_current_question);
+// 			choice.id = question.Choices().size() + 1;
+// 			choice.text = dlg.GetText();
+// 
+// 			question.Choices().push_back(choice);
+// 		}
+// 		_choice_list.AddString(dlg.GetText());
+// 	}
+// }
+// 
+// 
+// void CPsiScaleEditorDlg::OnEnChangeEditQuestion()
+// {
+// 	ASSERT(_scale);
+// 	ASSERT(_current_question < int(_scale->GetQuestionCount()) && _current_question >= 0);
+// 	// TODO:  If this is a RICHEDIT control, the control will not
+// 	// send this notification unless you override the CDialogEx::OnInitDialog()
+// 	// function and call CRichEditCtrl().SetEventMask()
+// 	// with the ENM_CHANGE flag ORed into the mask.
+// 
+// 	// TODO:  Add your control notification handler code here
+// 	UpdateData();
+// 
+// 	_scale->Question(_current_question).SetText(_question_text);
+// 
+// 	CString new_text;
+// 	new_text.Format(_T("%d. %s"), _current_question + 1,
+// 		(_question_text.GetLength() > 10) ? (_question_text.Left(10) + _T("...")) : _question_text);
+// 
+// 	_question_list.InsertString(_current_question, new_text);
+// 	_question_list.DeleteString(_current_question + 1);
+// }
+// 
+// 
+void CPsiScaleEditorDlg::OnLbnSelchangeListQuestions()
+{
+	if (_question_list.GetSelItem() == LB_ERR)
+		return;
 
 	UpdateUi();
 }
 
 
-void CPsiScaleEditorDlg::OnBnClickedButtonAddChoice()
+void CPsiScaleEditorDlg::OnEnChangeName()
 {
-	UpdateData();
-
-	CInputStringDialog dlg(_T("增加题目的选项"), _T("输入选项的内容："));
-
-	if (dlg.DoModal() == IDOK)
-	{
-		if (!_scale)
-		{
-			_scale = shared_ptr<PsiScale>(new PsiScale);
-		}
-
-		if (_use_same_choices)
-		{
-			QuestionChoice choice;
-			choice.id = _scale->Choices().size() + 1;
-			choice.text = dlg.GetText();
-
-			_scale->Choices().push_back(choice);
-		}
-		else
-		{
-			QuestionChoice choice;
-			auto& question = _scale->Question(_current_question);
-			choice.id = question.Choices().size() + 1;
-			choice.text = dlg.GetText();
-
-			question.Choices().push_back(choice);
-		}
-		_choice_list.AddString(dlg.GetText());
-	}
-}
-
-
-void CPsiScaleEditorDlg::OnEnChangeEditQuestion()
-{
-	ASSERT(_scale);
-	ASSERT(_current_question < int(_scale->GetQuestionCount()) && _current_question >= 0);
 	// TODO:  If this is a RICHEDIT control, the control will not
 	// send this notification unless you override the CDialogEx::OnInitDialog()
 	// function and call CRichEditCtrl().SetEventMask()
 	// with the ENM_CHANGE flag ORed into the mask.
 
 	// TODO:  Add your control notification handler code here
-	UpdateData();
-
-	_scale->Question(_current_question).SetText(_question_text);
-
-	CString new_text;
-	new_text.Format(_T("%d. %s"), _current_question + 1,
-		(_question_text.GetLength() > 10) ? (_question_text.Left(10) + _T("...")) : _question_text);
-
-	_question_list.InsertString(_current_question, new_text);
-	_question_list.DeleteString(_current_question + 1);
-}
-
-
-void CPsiScaleEditorDlg::OnLbnSelchangeListQuestions()
-{
-	if (_question_list.GetCurSel() == LB_ERR)
-		return;
-
-	_current_question = _question_list.GetCurSel();
-
-	UpdateUi();
 }

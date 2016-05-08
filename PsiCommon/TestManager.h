@@ -68,17 +68,19 @@ public:
 	unsigned int GetQuestionCount() const;
 
 	bool Save(const CString& file_path);
-
+	bool AreChoicesShared() const;
+	void EnableSharedChoices(bool enable);
 	std::vector<QuestionChoice>& Choices();
 private:
 	unsigned _id;
 	CString _name;
 	CString _description;
 	CString _prologue;
+	bool _choices_shared;
 
 	std::vector<PsiScaleGroup> _groups;
 	std::vector<PsiScaleQuestion> _questions;
-	std::vector<QuestionChoice> _shared_choices;
+	std::vector<QuestionChoice> _choices;
 };
 
 struct Score

@@ -225,9 +225,19 @@ bool PsiScale::Save(const CString& file_path)
 	return false;
 }
 
+bool PsiScale::AreChoicesShared() const
+{
+	return _choices_shared;
+}
+
+void PsiScale::EnableSharedChoices(bool enable)
+{
+	_choices_shared = enable;
+}
+
 std::vector<QuestionChoice>& PsiScale::Choices()
 {
-	return _shared_choices;
+	return _choices;
 }
 
 PsiScaleQuestion::PsiScaleQuestion() :
