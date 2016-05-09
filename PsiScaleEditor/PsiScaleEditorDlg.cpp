@@ -53,6 +53,7 @@ CPsiScaleEditorDlg::CPsiScaleEditorDlg(CWnd* pParent /*=NULL*/)
 	, _scale_name(_T(""))
 	, _prologue_text(_T(""))
 	, _use_same_choices(FALSE)
+	, _working_folder(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -64,18 +65,19 @@ void CPsiScaleEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_NAME, _scale_name);
 	DDX_Text(pDX, IDC_EDIT_PROLOGUE, _prologue_text);
 	DDX_Check(pDX, IDC_CHECK_SAME_CHOICE, _use_same_choices);
-	DDX_Control(pDX, IDC_LIST_CHOICES, _choice_list);
-	DDX_Control(pDX, IDC_LIST_GROUP, _group_list);
 	DDX_Control(pDX, IDC_ID, _scale_id_edit);
 	DDX_Control(pDX, IDC_NAME, _scale_name_edit);
 	DDX_Control(pDX, IDC_EDIT_PROLOGUE, _prologue_text_edit);
 	DDX_Control(pDX, IDC_CHECK_SAME_CHOICE, _shared_choices_checkbox);
-	DDX_Control(pDX, IDC_BUTTON_NEW, _new_scale_table_button);
-	DDX_Control(pDX, ID_BUTTON_SAVE, _save_scale_button);
+	DDX_Control(pDX, IDC_NEW_SCALE, _new_scale_table_button);
+	DDX_Control(pDX, IDC_BUTTON_SAVE, _save_scale_button);
 	DDX_Control(pDX, IDCANCEL, _exit_button);
 	DDX_Control(pDX, IDC_QUESTION_LIST, _question_list);
 	DDX_Control(pDX, IDC_GROUP_LIST, _group_list);
 	DDX_Control(pDX, IDC_CHOICE_LIST, _choice_list);
+	DDX_Control(pDX, IDC_EDIT_WORKING_FOLDER, _working_folder_edit);
+	DDX_Control(pDX, IDC_COMBO_SCALES, _scales_combo);
+	DDX_Text(pDX, IDC_EDIT_WORKING_FOLDER, _working_folder);
 }
 
 BEGIN_MESSAGE_MAP(CPsiScaleEditorDlg, CDialogEx)
@@ -87,6 +89,7 @@ BEGIN_MESSAGE_MAP(CPsiScaleEditorDlg, CDialogEx)
 	ON_LBN_SELCHANGE(IDC_LIST_QUESTIONS, &CPsiScaleEditorDlg::OnLbnSelchangeListQuestions)
 	ON_EN_CHANGE(IDC_NAME, &CPsiScaleEditorDlg::OnEnChangeName)
 	ON_BN_CLICKED(ID_BUTTON_SAVE, &CPsiScaleEditorDlg::OnBnClickedButtonSave)
+	ON_EN_CHANGE(IDC_EDIT_WORKING_FOLDER, &CPsiScaleEditorDlg::OnEnChangeEditWorkingFolder)
 END_MESSAGE_MAP()
 
 
@@ -350,4 +353,17 @@ void CPsiScaleEditorDlg::OnBnClickedButtonSave()
 {
 	UpdateUi();
 	_test_manager.SavePsiScale(_T("..\\PsycologyTest\\TestTemplate1.xml"), *_scale);
+}
+
+
+void CPsiScaleEditorDlg::OnEnChangeEditWorkingFolder()
+{
+	// TODO:  If this is a RICHEDIT control, the control will not
+	// send this notification unless you override the CDialogEx::OnInitDialog()
+	// function and call CRichEditCtrl().SetEventMask()
+	// with the ENM_CHANGE flag ORed into the mask.
+
+	UpdateData();
+
+	_working_folder 
 }
