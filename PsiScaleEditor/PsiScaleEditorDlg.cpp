@@ -64,13 +64,11 @@ void CPsiScaleEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_NAME, _scale_name);
 	DDX_Text(pDX, IDC_EDIT_PROLOGUE, _prologue_text);
 	DDX_Check(pDX, IDC_CHECK_SAME_CHOICE, _use_same_choices);
-	DDX_Control(pDX, IDC_LIST_CHOICES, _choice_list);
-	DDX_Control(pDX, IDC_LIST_GROUP, _group_list);
 	DDX_Control(pDX, IDC_ID, _scale_id_edit);
 	DDX_Control(pDX, IDC_NAME, _scale_name_edit);
 	DDX_Control(pDX, IDC_EDIT_PROLOGUE, _prologue_text_edit);
 	DDX_Control(pDX, IDC_CHECK_SAME_CHOICE, _shared_choices_checkbox);
-	DDX_Control(pDX, IDC_BUTTON_NEW, _new_scale_table_button);
+	DDX_Control(pDX, IDC_NEW_SCALE, _new_scale_table_button);
 	DDX_Control(pDX, ID_BUTTON_SAVE, _save_scale_button);
 	DDX_Control(pDX, IDCANCEL, _exit_button);
 	DDX_Control(pDX, IDC_QUESTION_LIST, _question_list);
@@ -83,7 +81,7 @@ BEGIN_MESSAGE_MAP(CPsiScaleEditorDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_CHECK_SAME_CHOICE, &CPsiScaleEditorDlg::OnBnClickedCheckSameChoice)
-	ON_BN_CLICKED(IDC_BUTTON_NEW, &CPsiScaleEditorDlg::OnBnClickedButtonNew)
+	ON_BN_CLICKED(IDC_NEW_SCALE, &CPsiScaleEditorDlg::OnBnClickedButtonNew)
 	ON_LBN_SELCHANGE(IDC_LIST_QUESTIONS, &CPsiScaleEditorDlg::OnLbnSelchangeListQuestions)
 	ON_EN_CHANGE(IDC_NAME, &CPsiScaleEditorDlg::OnEnChangeName)
 	ON_BN_CLICKED(ID_BUTTON_SAVE, &CPsiScaleEditorDlg::OnBnClickedButtonSave)
