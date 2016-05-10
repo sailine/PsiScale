@@ -8,6 +8,8 @@
 #include "afxwin.h"
 #include "afxvslistbox.h"
 #include "../PsiCommon/TestManager.h"
+#include "QuestionListBox.h"
+#include "afxeditbrowsectrl.h"
 
 class PsiScale;
 class PsiScaleQuestion;
@@ -69,7 +71,11 @@ public:
 	CButton _save_scale_button;
 	CButton _exit_button;
 
-	CVSListBox _question_list;
+	CQuestionListBox _question_list;
 	CVSListBox _group_list;
 	CVSListBox _choice_list;
+	CMFCEditBrowseCtrl _working_folder_edit;
+	CComboBox _scales_combo;
+	afx_msg void OnEnChangeEditWorkingFolder();
+	CString _working_folder;
 };
