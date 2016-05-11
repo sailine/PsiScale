@@ -27,10 +27,10 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FolderTool.cpp">
+    <ClCompile Include="scrrun.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="scrrun.c">
+    <ClCompile Include="FileSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -53,10 +53,10 @@
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FolderTool.h">
+    <ClInclude Include="scrrun.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scrrun.h">
+    <ClInclude Include="FileSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

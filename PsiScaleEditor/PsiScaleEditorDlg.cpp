@@ -8,12 +8,14 @@
 #include "afxdialogex.h"
 #include "../PsiCommon/TestManager.h"
 #include "InputStringDialog.h"
+#include "../Utilities/FileSystem.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
 using namespace std;
+using namespace FileSystem;
 
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
 
@@ -90,6 +92,7 @@ BEGIN_MESSAGE_MAP(CPsiScaleEditorDlg, CDialogEx)
 	ON_EN_CHANGE(IDC_NAME, &CPsiScaleEditorDlg::OnEnChangeName)
 	ON_BN_CLICKED(ID_BUTTON_SAVE, &CPsiScaleEditorDlg::OnBnClickedButtonSave)
 	ON_EN_CHANGE(IDC_EDIT_WORKING_FOLDER, &CPsiScaleEditorDlg::OnEnChangeEditWorkingFolder)
+	ON_CBN_SELCHANGE(IDC_COMBO_SCALES, &CPsiScaleEditorDlg::OnCbnSelchangeComboScales)
 END_MESSAGE_MAP()
 
 
@@ -125,6 +128,8 @@ BOOL CPsiScaleEditorDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	_scale = shared_ptr<PsiScale>(new PsiScale);
+
+	_working_folder_edit.EnableFolderBrowseButton();
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -250,6 +255,22 @@ void CPsiScaleEditorDlg::UpdateUi()
 	UpdateData(FALSE);
 }
 
+void CPsiScaleEditorDlg::ClearLists()
+{
+	while (_question_list.GetCount() > 0)
+	{
+		_question_list.RemoveItem(0);
+	}
+	while (_choice_list.GetCount() > 0)
+	{
+		_choice_list.RemoveItem(0);
+	}
+	while (_group_list.GetCount() > 0)
+	{
+		_group_list.RemoveItem(0);
+	}
+}
+
 // void CPsiScaleEditorDlg::OnBnClickedButtonAddGroup()
 // {
 // 	CInputStringDialog dlg(_T("新增分组"), _T("输入分组的名称"));
@@ -364,6 +385,63 @@ void CPsiScaleEditorDlg::OnEnChangeEditWorkingFolder()
 	// with the ENM_CHANGE flag ORed into the mask.
 
 	UpdateData();
+	if (::FileExists(_working_folder))
+	{
+		::ForEachFile(_working_folder, _T("*.scale"), false, [this](const CString& file) {
+			CString filename = ::GetFileNameFromPath(file);
+			this->_scales_combo.AddString(filename);
+		});
 
-	_working_folder 
+		if (_scales_combo.GetCount() > 0)
+		{
+			_scales_combo.SetCurSel(0);
+			OnCbnSelchangeComboScales();
+		}
+	}
+}
+
+
+void CPsiScaleEditorDlg::OnCbnSelchangeComboScales()
+{
+	if (_scales_combo.GetCurSel() == LB_ERR)
+		return;
+
+	// 根据ScaleCombo中选择的内容打开相关的量表
+	CString selected_text;
+	_scales_combo.GetLBText(_scales_combo.GetCurSel(), selected_text);
+	CString file_path = _working_folder + _T("\\") + selected_text + _T(".scale");
+	_scale = _test_manager.LoadPsiScale(file_path);
+
+	if (!_scale)
+	{
+		CString error_message;
+		error_message.Format(_T("无法加载量表文件：%s"), file_path);
+		AfxMessageBox(error_message);
+		return;
+	}
+
+	_scale_id = _scale->GetId();
+	_scale_name = _scale->GetName();
+	_prologue_text = _scale->GetPrologue();
+
+	ClearLists();
+
+	for (unsigned int i = 0; i < _scale->GetQuestionCount(); ++i)
+	{
+		auto question = _scale->GetQuestion(i);
+		_question_list.AddItem(question.GetText(), question.GetId());
+	}
+
+	for (unsigned int i = 0; i < _scale->GetGroupCount(); ++i)
+	{
+		auto group = _scale->GetGroup(i);
+		_group_list.AddItem(group.description, group.id);
+	}
+
+	for (auto choice : _scale->Choices())
+	{
+		_choice_list.AddItem(choice.text, choice.id);
+	}
+
+	UpdateData(FALSE);
 }

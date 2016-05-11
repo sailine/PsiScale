@@ -52,7 +52,7 @@ public:
 	BOOL _use_same_choices;
 	
 	void UpdateUi();
-
+	void ClearLists();
 	afx_msg void OnBnClickedButtonAddQuestion();
 // 	afx_msg void OnBnClickedButtonAddGroup();
 // 	afx_msg void OnBnClickedButtonAddChoice();
@@ -78,4 +78,5 @@ public:
 	CComboBox _scales_combo;
 	afx_msg void OnEnChangeEditWorkingFolder();
 	CString _working_folder;
+	afx_msg void OnCbnSelchangeComboScales();
 };

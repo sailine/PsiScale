@@ -1,7 +1,7 @@
 // Yang Guang, reviewed 2007-03-20
 
 #include "stdafx.h"
-#include "foldertool.h"
+#include "FileSystem.h"
 
 #include <string>
 #include <fstream>
@@ -445,7 +445,7 @@ namespace FileSystem
 	// ·µ»ØMbytes
 	typedef BOOL(WINAPI *PGETDISKFREESPACEEX)(LPCSTR, PULARGE_INTEGER, PULARGE_INTEGER, PULARGE_INTEGER);
 
-	int MyGetDiskFreeSpaceEx(LPCSTR pszDrive)
+	int GetDiskFreeSpace(LPCSTR pszDrive)
 	{
 		PGETDISKFREESPACEEX pGetDiskFreeSpaceEx;
 		__int64 i64FreeBytesToCaller, i64TotalBytes, i64FreeBytes;
