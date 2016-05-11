@@ -62,9 +62,6 @@ public:
 	afx_msg void OnLbnSelchangeListQuestions();
 	afx_msg void OnBnClickedButtonSave();
 
-	CMFCButton _add_question_button;
-	CMFCButton _delete_question_button;
-
 	CButton _add_question_button;
 	CButton _delete_question_button;
 
