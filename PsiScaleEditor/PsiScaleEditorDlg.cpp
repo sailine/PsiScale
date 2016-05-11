@@ -130,6 +130,27 @@ BOOL CPsiScaleEditorDlg::OnInitDialog()
 	_scale = shared_ptr<PsiScale>(new PsiScale);
 
 	_working_folder_edit.EnableFolderBrowseButton();
+	CRegKey regkey;
+	if (regkey.Open(HKEY_CURRENT_USER, _T("Software\\SKMR\\PsiScale"), KEY_READ) == ERROR_SUCCESS)
+	{
+		static TCHAR buffer[512];
+		ULONG count = 512;
+		if (regkey.QueryStringValue(_T("WorkingFolder"), buffer, &count) == ERROR_SUCCESS)
+		{
+			if (::FileExists(buffer))
+			{
+				_working_folder_edit.SetWindowText(buffer);
+			}
+// 			DWORD selected_scale = 0;
+// 			if (regkey.QueryDWORDValue(_T("LastScale"), selected_scale) == ERROR_SUCCESS &&
+// 				_scales_combo.GetCount() > selected_scale)
+// 			{
+// 				_scales_combo.SetCurSel(selected_scale);
+// 			}
+		}
+		regkey.Close();
+	}
+
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -397,6 +418,14 @@ void CPsiScaleEditorDlg::OnEnChangeEditWorkingFolder()
 			_scales_combo.SetCurSel(0);
 			OnCbnSelchangeComboScales();
 		}
+
+		CRegKey regkey;
+		if (regkey.Open(HKEY_CURRENT_USER, _T("Software\\SKMR\\PsiScale"), KEY_WRITE) == ERROR_SUCCESS ||
+			regkey.Create(HKEY_CURRENT_USER, _T("Software\\SKMR\\PsiScale")) == ERROR_SUCCESS)
+		{
+			regkey.SetStringValue(_T("WorkingFolder"), _working_folder);
+			regkey.Close();
+		}
 	}
 }
 
@@ -424,7 +453,6 @@ void CPsiScaleEditorDlg::OnCbnSelchangeComboScales()
 	_scale_name = _scale->GetName();
 	_prologue_text = _scale->GetPrologue();
 
-<<<<<<< HEAD
 	ClearLists();
 
 	for (unsigned int i = 0; i < _scale->GetQuestionCount(); ++i)
@@ -445,7 +473,4 @@ void CPsiScaleEditorDlg::OnCbnSelchangeComboScales()
 	}
 
 	UpdateData(FALSE);
-=======
-//	_working_folder
->>>>>>> origin/master
 }
