@@ -87,7 +87,7 @@ BEGIN_MESSAGE_MAP(CPsiScaleEditorDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_CHECK_SAME_CHOICE, &CPsiScaleEditorDlg::OnBnClickedCheckSameChoice)
-	ON_BN_CLICKED(IDC_BUTTON_NEW, &CPsiScaleEditorDlg::OnBnClickedButtonNew)
+	ON_BN_CLICKED(IDC_NEW_SCALE, &CPsiScaleEditorDlg::OnBnClickedButtonNew)
 	ON_LBN_SELCHANGE(IDC_LIST_QUESTIONS, &CPsiScaleEditorDlg::OnLbnSelchangeListQuestions)
 	ON_EN_CHANGE(IDC_NAME, &CPsiScaleEditorDlg::OnEnChangeName)
 	ON_BN_CLICKED(ID_BUTTON_SAVE, &CPsiScaleEditorDlg::OnBnClickedButtonSave)
@@ -424,6 +424,7 @@ void CPsiScaleEditorDlg::OnCbnSelchangeComboScales()
 	_scale_name = _scale->GetName();
 	_prologue_text = _scale->GetPrologue();
 
+<<<<<<< HEAD
 	ClearLists();
 
 	for (unsigned int i = 0; i < _scale->GetQuestionCount(); ++i)
@@ -444,4 +445,7 @@ void CPsiScaleEditorDlg::OnCbnSelchangeComboScales()
 	}
 
 	UpdateData(FALSE);
+=======
+//	_working_folder
+>>>>>>> origin/master
 }
