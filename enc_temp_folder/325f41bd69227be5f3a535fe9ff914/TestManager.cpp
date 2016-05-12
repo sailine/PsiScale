@@ -155,7 +155,7 @@ bool CTestManager::SavePsiScale(const CString& file_path, PsiScale& scale)
 
 	}
 	xml.Save(file_path);
-	return true;
+	return false;
 }
 
 PsiScale & CTestManager::GetPsiScale(unsigned id)

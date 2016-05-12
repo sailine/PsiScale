@@ -90,7 +90,7 @@ BEGIN_MESSAGE_MAP(CPsiScaleEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_NEW_SCALE, &CPsiScaleEditorDlg::OnBnClickedButtonNew)
 	ON_LBN_SELCHANGE(IDC_LIST_QUESTIONS, &CPsiScaleEditorDlg::OnLbnSelchangeListQuestions)
 	ON_EN_CHANGE(IDC_NAME, &CPsiScaleEditorDlg::OnEnChangeName)
-	ON_BN_CLICKED(ID_BUTTON_SAVE, &CPsiScaleEditorDlg::OnBnClickedButtonSave)
+	ON_BN_CLICKED(IDC_BUTTON_SAVE, &CPsiScaleEditorDlg::OnBnClickedButtonSave)
 	ON_EN_CHANGE(IDC_EDIT_WORKING_FOLDER, &CPsiScaleEditorDlg::OnEnChangeEditWorkingFolder)
 	ON_CBN_SELCHANGE(IDC_COMBO_SCALES, &CPsiScaleEditorDlg::OnCbnSelchangeComboScales)
 END_MESSAGE_MAP()
@@ -208,27 +208,50 @@ HCURSOR CPsiScaleEditorDlg::OnQueryDragIcon()
 
 void CPsiScaleEditorDlg::OnBnClickedCheckSameChoice()
 {
-
-	// TODO: Add your control notification handler code 
-	
-	_use_same_choices = !_use_same_choices;
-	UpdateData(FALSE);
-
+	UpdateData(TRUE);
 }
 
+CString CPsiScaleEditorDlg::GetScalePath(const PsiScale& scale)
+{
+	CString path = _working_folder + _T("\\");
+	path.Format(path + _T("%d.%s.scale"), scale.GetId(), scale.GetName());
+
+	return path;
+}
 
 void CPsiScaleEditorDlg::OnBnClickedButtonNew()
 {
 	if (_scale)
 	{
-		CString file_path;
-		_scale->Save(file_path);
+		UpdateScaleComboCurrentItem();
+		_scale->Save(GetScalePath(*_scale));
 	}
 	_scale = shared_ptr<PsiScale>(new PsiScale);
+	_scales_combo.AddString(_T("新建量表"));
+	_scales_combo.SelectString(0, _T("新建量表"));
+
+	UpdateUi();
 
 	UpdateData(FALSE);
 }
 
+
+void CPsiScaleEditorDlg::UpdateScaleComboCurrentItem()
+{
+	CString file_path = GetScalePath(*_scale);
+	if (_scales_combo.GetCurSel() != LB_ERR)
+	{
+		CString combo_text;
+		_scales_combo.GetLBText(_scales_combo.GetCurSel(), combo_text);
+		if (combo_text != GetFileNameFromPath(file_path))
+		{
+			_scales_combo.DeleteString(_scales_combo.GetCurSel());
+			auto index = _scales_combo.AddString(GetFileNameFromPath(file_path));
+			_scales_combo.SetCurSel(index);
+		}
+
+	}
+}
 
 void CPsiScaleEditorDlg::OnBnClickedButtonAddQuestion()
 {
@@ -241,15 +264,51 @@ void CPsiScaleEditorDlg::OnBnClickedButtonAddQuestion()
 	UpdateUi();
 }
 
-void CPsiScaleEditorDlg::UpdateUi()
+void CPsiScaleEditorDlg::UpdateScale()
 {
+	if (!_scale)
+		return;
+
 	UpdateData();
 
 	_scale->SetId(_scale_id);
 	_scale->SetName(_scale_name);
 	_scale->SetPrologue(_prologue_text);
 	_scale->SetSameChoice(_use_same_choices != FALSE);
+}
 
+void CPsiScaleEditorDlg::UpdateUi()
+{
+	_scale_id = _scale->GetId();
+	_scale_name = _scale->GetName();
+	_prologue_text = _scale->GetPrologue();
+
+	ClearLists();
+
+	for (unsigned int i = 0; i < _scale->GetQuestionCount(); ++i)
+	{
+		auto question = _scale->GetQuestion(i);
+		_question_list.AddItem(question.GetText(), question.GetId());
+	}
+
+	for (unsigned int i = 0; i < _scale->GetGroupCount(); ++i)
+	{
+		auto group = _scale->GetGroup(i);
+		_group_list.AddItem(group.description, group.id);
+	}
+
+	for (auto choice : _scale->Choices())
+	{
+		_choice_list.AddItem(choice.text, choice.id);
+	}
+
+	OnQuestionChange();
+
+	UpdateData(FALSE);
+}
+
+void CPsiScaleEditorDlg::OnQuestionChange()
+{
 	if (!_scale)
 		return;
 
@@ -260,7 +319,7 @@ void CPsiScaleEditorDlg::UpdateUi()
 		if (_use_same_choices == FALSE)
 		{
 			// 更新当前问题的选择。
-			while (_choice_list.GetCount() != 0)
+			while (_choice_list.GetCount() > 0)
 			{
 				_choice_list.RemoveItem(0);
 			}
@@ -376,7 +435,7 @@ void CPsiScaleEditorDlg::OnLbnSelchangeListQuestions()
 	if (_question_list.GetSelItem() == LB_ERR)
 		return;
 
-	UpdateUi();
+	OnQuestionChange();
 }
 
 
@@ -393,8 +452,28 @@ void CPsiScaleEditorDlg::OnEnChangeName()
 
 void CPsiScaleEditorDlg::OnBnClickedButtonSave()
 {
-	UpdateUi();
-	_test_manager.SavePsiScale(_T("..\\PsycologyTest\\TestTemplate1.xml"), *_scale);
+	if (!_scale)
+		return;
+
+	UpdateScale();
+
+	CString scale_combo_text;
+	if (_scales_combo.GetCurSel() != LB_ERR)
+	{
+		_scales_combo.GetLBText(_scales_combo.GetCurSel(), scale_combo_text);
+	}
+
+	if (!scale_combo_text.IsEmpty())
+	{
+		CString old_path = _working_folder + _T("\\") + scale_combo_text + _T(".scale");
+		if (::FileExists(old_path))
+		{
+			CFile::Remove(old_path);
+		}
+	}
+
+	_test_manager.SavePsiScale(GetScalePath(*_scale), *_scale);
+	UpdateScaleComboCurrentItem();
 }
 
 
@@ -449,28 +528,5 @@ void CPsiScaleEditorDlg::OnCbnSelchangeComboScales()
 		return;
 	}
 
-	_scale_id = _scale->GetId();
-	_scale_name = _scale->GetName();
-	_prologue_text = _scale->GetPrologue();
-
-	ClearLists();
-
-	for (unsigned int i = 0; i < _scale->GetQuestionCount(); ++i)
-	{
-		auto question = _scale->GetQuestion(i);
-		_question_list.AddItem(question.GetText(), question.GetId());
-	}
-
-	for (unsigned int i = 0; i < _scale->GetGroupCount(); ++i)
-	{
-		auto group = _scale->GetGroup(i);
-		_group_list.AddItem(group.description, group.id);
-	}
-
-	for (auto choice : _scale->Choices())
-	{
-		_choice_list.AddItem(choice.text, choice.id);
-	}
-
-	UpdateData(FALSE);
+	UpdateUi();
 }
