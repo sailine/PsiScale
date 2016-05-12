@@ -49,12 +49,12 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 
-	afx_msg void OnBnClickedButtonNew();
-	afx_msg void OnBnClickedButtonAddQuestion();
+	afx_msg void OnBnClickedAddQuestion();
 	afx_msg void OnEnChangeEditQuestion();
 	afx_msg void OnBnClickedButtonNext();
 	afx_msg void OnBnClickedButtonPrev();
 	afx_msg void OnBnClickedDeleteQuestion();
+	void UpdateQuestion();
 public:
 	CButton _delete_button;
 	CButton _prev_button;
@@ -62,4 +62,5 @@ public:
 	CButton _new_button;
 	CButton _return_button;
 	CStatic _choice_list_label;
+	CStatic _group_label;
 };

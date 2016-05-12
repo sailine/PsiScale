@@ -75,6 +75,7 @@ shared_ptr<PsiScale> CTestManager::LoadPsiScale(const CString& file_path)
 	}
 
 	bool same_choices = xml.GetBoolAttrib(XML_SAME_CHOICES);
+	scale->SetSameChoice(same_choices);
 	if (same_choices)
 	{
 		auto choices_element = xml.GetElement(XML_CHOICES);
@@ -131,8 +132,8 @@ bool CTestManager::SavePsiScale(const CString& file_path, PsiScale& scale)
 	for (unsigned int i = 0; i < scale.GetGroupCount(); ++i)
 	{
 		auto Item = Groups->AddElement(_T("Item"));
-		Item->SetIntegerAttrib(XML_ID, scale.Group(i).id);
-		Item->SetAttrib(XML_DESCRIPTION, scale.Group(i).description);
+		Item->SetIntegerAttrib(XML_ID, scale.Groups()[i].id);
+		Item->SetAttrib(XML_DESCRIPTION, scale.Groups()[i].description);
 	}
 	auto Question = xml.AddElement(XML_QUESTIONS);
 	for (unsigned int i = 0; i < scale.GetQuestionCount(); ++i)
@@ -246,19 +247,27 @@ const PsiScaleGroup& PsiScale::GetGroup(unsigned index) const
 	return _groups[index];
 }
 
-PsiScaleGroup& PsiScale::Group(unsigned int index)
-{
-	return _groups[index];
-}
-
 unsigned int PsiScale::GetGroupCount() const
 {
 	return _groups.size();
 }
 
+std::vector<PsiScaleGroup>& PsiScale::Groups()
+{
+	return _groups;
+}
+
 void PsiScale::AddQuestion(const PsiScaleQuestion& question)
 {
 	_questions.push_back(question);
+}
+
+void PsiScale::DeleteQuestion(unsigned int index)
+{
+	if (index < _questions.size())
+	{
+		_questions.erase(_questions.begin() + index);
+	}
 }
 
 unsigned int PsiScale::GetQuestionCount() const

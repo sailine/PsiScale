@@ -33,23 +33,24 @@ void CQuestionEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_GROUPS, _group_combo);
 	DDX_Control(pDX, IDC_CHOICE_LIST, _choice_list);
 	DDX_Check(pDX, IDC_CHECK_REVERSE_SCORE, _reverse_score);
-	DDX_Control(pDX, IDC_DELETE_QUESTION, _delete_button);
+	DDX_Control(pDX, IDC_BUTTON_DELETE, _delete_button);
 	DDX_Control(pDX, IDC_BUTTON_PREV, _prev_button);
 	DDX_Control(pDX, IDC_BUTTON_NEXT, _next_button);
 	DDX_Control(pDX, IDC_BUTTON_NEW, _new_button);
 	DDX_Control(pDX, IDOK, _return_button);
 	DDX_Control(pDX, IDC_STATIC_CHOICE_LIST_LABEL, _choice_list_label);
+	DDX_Control(pDX, IDC_GROUP_LABEL, _group_label);
 }
 
 BEGIN_MESSAGE_MAP(CQuestionEditorDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_BUTTON_ADD_QUESTION, &CQuestionEditorDlg::OnBnClickedButtonAddQuestion)
+	ON_BN_CLICKED(IDC_BUTTON_ADD, &CQuestionEditorDlg::OnBnClickedAddQuestion)
 	ON_EN_CHANGE(IDC_EDIT_QUESTION, &CQuestionEditorDlg::OnEnChangeEditQuestion)
 	ON_BN_CLICKED(IDC_BUTTON_NEXT, &CQuestionEditorDlg::OnBnClickedButtonNext)
 	ON_BN_CLICKED(IDC_BUTTON_PREV, &CQuestionEditorDlg::OnBnClickedButtonPrev)
-	ON_BN_CLICKED(IDC_DELETE_QUESTION, &CQuestionEditorDlg::OnBnClickedDeleteQuestion)
+	ON_BN_CLICKED(IDC_BUTTON_DELETE, &CQuestionEditorDlg::OnBnClickedDeleteQuestion)
 END_MESSAGE_MAP()
 
 
@@ -89,6 +90,28 @@ BOOL CQuestionEditorDlg::OnInitDialog()
 	if (_scale->IsSameChoice())
 	{
 		Shrink();
+	}
+	if (_scale->GetGroupCount() != 0)
+	{
+		for (auto group : _scale->Groups())
+		{
+			_group_combo.AddString(group.description);
+		}
+	}
+	else
+	{
+		_group_combo.ShowWindow(SW_HIDE);
+		_group_label.ShowWindow(SW_HIDE);
+	}
+
+	if (_scale->GetQuestionCount() == 0)
+	{
+		OnBnClickedAddQuestion();
+	}
+	else
+	{
+		_current_question = 0;
+		UpdateUi();
 	}
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
@@ -179,7 +202,7 @@ HCURSOR CQuestionEditorDlg::OnQueryDragIcon()
 }
 
 
-void CQuestionEditorDlg::OnBnClickedButtonAddQuestion()
+void CQuestionEditorDlg::OnBnClickedAddQuestion()
 {
 	PsiScaleQuestion new_question;
 
@@ -189,24 +212,26 @@ void CQuestionEditorDlg::OnBnClickedButtonAddQuestion()
 	UpdateData(FALSE);
 }
 
-void CQuestionEditorDlg::OnBnClickedButtonNew()
-{
-}
-
 void CQuestionEditorDlg::UpdateUi()
 {
-	UpdateData();
-
 	if (!_scale)
 		return;
+
+	ASSERT(_current_question < _scale->GetQuestionCount());
 
 	auto question = _scale->GetQuestion(_current_question);
 
 	_question_text = question.GetText();
+	_reverse_score = question.GetReverseScore();
+	_group_combo.SetCurSel(question.GetGroupId() - 1);
+
 	if (!_scale->IsSameChoice())
 	{
 		// 更新当前问题的选择。
-
+		for (auto choice : question.Choices())
+		{
+			_choice_list.AddItem(choice.text, choice.id);
+		}
 	}
 
 	UpdateData(FALSE);
@@ -231,17 +256,73 @@ void CQuestionEditorDlg::OnEnChangeEditQuestion()
 
 void CQuestionEditorDlg::OnBnClickedButtonNext()
 {
-	// TODO: Add your control notification handler code here
+	UpdateQuestion(); // 保存当前的问题
+
+	if (_current_question < _scale->GetQuestionCount() - 1)
+	{
+		++_current_question;
+	}
+	UpdateUi();
 }
 
 
 void CQuestionEditorDlg::OnBnClickedButtonPrev()
 {
-	// TODO: Add your control notification handler code here
+	UpdateQuestion(); // 保存当前的问题
+
+	if (_current_question > 0)
+	{
+		--_current_question;
+	}
+	UpdateUi();
 }
 
 
 void CQuestionEditorDlg::OnBnClickedDeleteQuestion()
 {
-	// TODO: Add your control notification handler code here
+	if (AfxMessageBox(_T("是否确定要删除当前的问题？"), MB_OK | MB_OKCANCEL) == IDOK)
+	{
+		_scale->DeleteQuestion(_current_question);
+		if (_current_question >= _scale->GetQuestionCount())
+		{
+			_current_question = _scale->GetQuestionCount() - 1;
+		}
+		UpdateUi();
+	}
+}
+
+void CQuestionEditorDlg::UpdateQuestion()
+{
+	ASSERT(_scale);
+	if (_current_question < 0)
+		return;
+
+	UpdateData();
+
+	ASSERT(_current_question < _scale->GetQuestionCount());
+	auto& question = _scale->Question(_current_question);
+
+	question.SetText(_question_text);
+	question.SetReverseScore(_reverse_score != FALSE);
+	if (_group_combo.GetCurSel() == LB_ERR)
+	{
+		question.SetGroup(1);
+	}
+	else
+	{
+		question.SetGroup(_group_combo.GetCurSel() + 1);
+	}
+
+	if (!_scale->IsSameChoice())
+	{
+		// 更新当前问题的选择。
+		auto& choices = question.Choices();
+		choices.resize(_choice_list.GetCount());
+
+		for (unsigned int i = 0; i < _choice_list.GetCount(); ++i)
+		{
+			choices[i].id = i + 1;
+			choices[i].text = _choice_list.GetItemText(i);
+		}
+	}
 }

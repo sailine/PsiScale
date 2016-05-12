@@ -129,8 +129,6 @@ BOOL CPsiScaleEditorDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// 设置大图标
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
-	_scale = shared_ptr<PsiScale>(new PsiScale);
-
 	_working_folder_edit.EnableFolderBrowseButton();
 	CRegKey regkey;
 	if (regkey.Open(HKEY_CURRENT_USER, _T("Software\\SKMR\\PsiScale"), KEY_READ) == ERROR_SUCCESS)
@@ -153,6 +151,15 @@ BOOL CPsiScaleEditorDlg::OnInitDialog()
 		regkey.Close();
 	}
 
+	if (!_scale)
+	{
+		OnBnClickedButtonNew();
+	}
+	else
+	{
+		OnCbnSelchangeComboScales();
+	}
+	// _question_list.SetStandardButtons(AFX_VSLISTBOX_BTN_UP | AFX_VSLISTBOX_BTN_DOWN);
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -276,6 +283,24 @@ void CPsiScaleEditorDlg::UpdateScale()
 	_scale->SetName(_scale_name);
 	_scale->SetPrologue(_prologue_text);
 	_scale->SetSameChoice(_use_same_choices != FALSE);
+	if (_use_same_choices != FALSE)
+	{
+		auto& choices = _scale->Choices();
+		choices.resize(_choice_list.GetCount());
+		for (unsigned int i = 0; i < _choice_list.GetCount(); ++i)
+		{
+			choices[i].id = i + 1;
+			choices[i].text = _choice_list.GetItemText(i);
+		}
+	}
+
+	auto& groups = _scale->Groups();
+	groups.resize(_group_list.GetCount());
+	for (unsigned int i = 0; i < _group_list.GetCount(); ++i)
+	{
+		groups[i].description = _group_list.GetItemText(i);
+		groups[i].id = i + 1;
+	}
 }
 
 void CPsiScaleEditorDlg::UpdateUi()
@@ -283,6 +308,7 @@ void CPsiScaleEditorDlg::UpdateUi()
 	_scale_id = _scale->GetId();
 	_scale_name = _scale->GetName();
 	_prologue_text = _scale->GetPrologue();
+	_use_same_choices = _scale->IsSameChoice();
 
 	ClearLists();
 
