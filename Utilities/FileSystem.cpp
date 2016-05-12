@@ -198,6 +198,7 @@ namespace FileSystem
 	bool FileExists(const CString& filename)
 	{
 		CString str = filename;
+	
 		str.TrimRight(_T('\\'));	// for root directory.
 
 		if (str[str.GetLength() - 1] == _T(':'))
@@ -217,9 +218,12 @@ namespace FileSystem
 				return false;
 			}
 		}
+		else if (str.GetLength() <= 3)
+		{
+			return false;
+		}
 		else
 		{
-			assert(str.GetLength() > 3);
 			CFileStatus status;
 			return (CFile::GetStatus(filename, status) != 0);
 		}

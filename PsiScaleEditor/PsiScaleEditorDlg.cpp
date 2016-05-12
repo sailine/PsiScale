@@ -9,6 +9,7 @@
 #include "../PsiCommon/TestManager.h"
 #include "InputStringDialog.h"
 #include "../Utilities/FileSystem.h"
+#include "QuestionEditorDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -93,6 +94,7 @@ BEGIN_MESSAGE_MAP(CPsiScaleEditorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_SAVE, &CPsiScaleEditorDlg::OnBnClickedButtonSave)
 	ON_EN_CHANGE(IDC_EDIT_WORKING_FOLDER, &CPsiScaleEditorDlg::OnEnChangeEditWorkingFolder)
 	ON_CBN_SELCHANGE(IDC_COMBO_SCALES, &CPsiScaleEditorDlg::OnCbnSelchangeComboScales)
+	ON_BN_CLICKED(IDC_EDIT_QUESTIONS, &CPsiScaleEditorDlg::OnBnClickedEditQuestions)
 END_MESSAGE_MAP()
 
 
@@ -270,7 +272,6 @@ void CPsiScaleEditorDlg::UpdateScale()
 		return;
 
 	UpdateData();
-
 	_scale->SetId(_scale_id);
 	_scale->SetName(_scale_name);
 	_scale->SetPrologue(_prologue_text);
@@ -529,4 +530,22 @@ void CPsiScaleEditorDlg::OnCbnSelchangeComboScales()
 	}
 
 	UpdateUi();
+}
+
+
+void CPsiScaleEditorDlg::OnBnClickedEditQuestions()
+{
+	if (!_scale)
+	{
+		AfxMessageBox(_T("请先打开一份量表或者创建一份新的量表。"));
+		return;
+	}
+
+	UpdateScale();
+
+	CQuestionEditorDlg dlg(_scale, this);
+	if (dlg.DoModal() == IDOK)
+	{
+		UpdateUi();
+	}
 }

@@ -90,4 +90,5 @@ public:
 
 	afx_msg void OnEnChangeEditWorkingFolder();
 	afx_msg void OnCbnSelchangeComboScales();
+	afx_msg void OnBnClickedEditQuestions();
 };
