@@ -95,7 +95,7 @@ BOOL CQuestionEditorDlg::OnInitDialog()
 	{
 		for (auto group : _scale->Groups())
 		{
-			_group_combo.AddString(group.description);
+			_group_combo.AddString(group);
 		}
 	}
 	else
@@ -217,13 +217,13 @@ void CQuestionEditorDlg::UpdateUi()
 	if (!_scale)
 		return;
 
-	ASSERT(_current_question < _scale->GetQuestionCount());
+	ASSERT(_current_question < int(_scale->GetQuestionCount()));
 
 	auto question = _scale->GetQuestion(_current_question);
 
 	_question_text = question.GetText();
 	_reverse_score = question.GetReverseScore();
-	_group_combo.SetCurSel(question.GetGroupId() - 1);
+	_group_combo.SelectString(0, question.GetGroup());
 
 	if (!_scale->IsSameChoice())
 	{
@@ -258,7 +258,7 @@ void CQuestionEditorDlg::OnBnClickedButtonNext()
 {
 	UpdateQuestion(); // 保存当前的问题
 
-	if (_current_question < _scale->GetQuestionCount() - 1)
+	if (_current_question < int(_scale->GetQuestionCount()) - 1)
 	{
 		++_current_question;
 	}
@@ -283,7 +283,7 @@ void CQuestionEditorDlg::OnBnClickedDeleteQuestion()
 	if (AfxMessageBox(_T("是否确定要删除当前的问题？"), MB_OK | MB_OKCANCEL) == IDOK)
 	{
 		_scale->DeleteQuestion(_current_question);
-		if (_current_question >= _scale->GetQuestionCount())
+		if (_current_question >= int(_scale->GetQuestionCount()))
 		{
 			_current_question = _scale->GetQuestionCount() - 1;
 		}
@@ -299,18 +299,16 @@ void CQuestionEditorDlg::UpdateQuestion()
 
 	UpdateData();
 
-	ASSERT(_current_question < _scale->GetQuestionCount());
+	ASSERT(_current_question < int(_scale->GetQuestionCount()));
 	auto& question = _scale->Question(_current_question);
 
 	question.SetText(_question_text);
 	question.SetReverseScore(_reverse_score != FALSE);
-	if (_group_combo.GetCurSel() == LB_ERR)
+	if (_group_combo.GetCurSel() != LB_ERR)
 	{
-		question.SetGroup(1);
-	}
-	else
-	{
-		question.SetGroup(_group_combo.GetCurSel() + 1);
+		CString group;
+		_group_combo.GetLBText(_group_combo.GetCurSel(), group);
+		question.SetGroup(group);
 	}
 
 	if (!_scale->IsSameChoice())
@@ -319,7 +317,7 @@ void CQuestionEditorDlg::UpdateQuestion()
 		auto& choices = question.Choices();
 		choices.resize(_choice_list.GetCount());
 
-		for (unsigned int i = 0; i < _choice_list.GetCount(); ++i)
+		for (int i = 0; i < _choice_list.GetCount(); ++i)
 		{
 			choices[i].id = i + 1;
 			choices[i].text = _choice_list.GetItemText(i);

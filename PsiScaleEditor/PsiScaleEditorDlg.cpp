@@ -286,7 +286,7 @@ void CPsiScaleEditorDlg::UpdateScale()
 	{
 		auto& choices = _scale->Choices();
 		choices.resize(_choice_list.GetCount());
-		for (unsigned int i = 0; i < _choice_list.GetCount(); ++i)
+		for (int i = 0; i < _choice_list.GetCount(); ++i)
 		{
 			choices[i].id = i + 1;
 			choices[i].text = _choice_list.GetItemText(i);
@@ -295,10 +295,9 @@ void CPsiScaleEditorDlg::UpdateScale()
 
 	auto& groups = _scale->Groups();
 	groups.resize(_group_list.GetCount());
-	for (unsigned int i = 0; i < _group_list.GetCount(); ++i)
+	for (int i = 0; i < _group_list.GetCount(); ++i)
 	{
-		groups[i].description = _group_list.GetItemText(i);
-		groups[i].id = i + 1;
+		groups[i] = _group_list.GetItemText(i);
 	}
 }
 
@@ -322,7 +321,7 @@ void CPsiScaleEditorDlg::UpdateUi()
 	for (unsigned int i = 0; i < _scale->GetGroupCount(); ++i)
 	{
 		auto group = _scale->GetGroup(i);
-		_group_list.AddItem(group.description, group.id);
+		_group_list.AddItem(group);
 	}
 
 	for (auto choice : _scale->Choices())
@@ -356,8 +355,7 @@ void CPsiScaleEditorDlg::OnQuestionChange()
 				_choice_list.AddItem(choice.text, choice.id);
 			}
 		}
-
-		_group_list.SelectItem(question.GetGroupId() - 1);
+		_group_list.SelectString(question.GetGroup());
 	}
 
 	UpdateData(FALSE);

@@ -21,6 +21,20 @@ CGroupList::~CGroupList()
 }
 
 
+bool CGroupList::SelectString(const CString& text)
+{
+	for (int i = 0; i < GetCount(); ++i)
+	{
+		if (GetItemText(i) == text)
+		{
+			SelectItem(i);
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void CGroupList::OnSelectionChanged()
 {
 }

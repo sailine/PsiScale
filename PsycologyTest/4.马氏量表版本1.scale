@@ -1,0 +1,27 @@
+<PsycologyTest Id="4" Name="马氏量表版本1" SameChoices="1">
+<Choices>
+<Item Id="1" Text="完全不同意"/>
+<Item Id="2" Text="不同意"/>
+<Item Id="3" Text="有点不同意"/>
+<Item Id="4" Text="不确定"/>
+<Item Id="5" Text="有点同意"/>
+<Item Id="6" Text="同意"/>
+<Item Id="7" Text="完全同意"/>
+</Choices>
+<Prologue Text="下面有一些陈述，每一陈述代表一种观点，答案没有正确与错误之分。你可能不同意其中的某些观点，
+但同意另一些观点。我们感兴趣的是你对这些观点同意或不同意的程度。仔细阅读每一陈述，然后表明
+你对每一陈述同意或不同意的程度。第一印象往往最为恰当。阅读每一陈述，决定自己同意还是不同意
+以及同意或不同意的程度，然后在该陈述之前标出相应的数值。对每一陈述均应发表你的见解。"/>
+<Groups>
+<Item>Tactics</Item>
+<Item>Morality</Item>
+<Item>Views</Item>
+</Groups>
+<Questions>
+<Item Id="0" Text="决不要告诉任何人你做某事的真正原因，除非你另有目的。" ReverseScore="0"/>
+<Item Id="1" Text="与人相处的最好方法是说出他们想知道的事。" ReverseScore="1"/>
+<Item Id="2" Text="只有确信符合道德时才能采取行动。" ReverseScore="0"/>
+<Item Id="3" Text="多数人基本上是好的和善良的。" ReverseScore="1"/>
+<Item Id="4" Text="最安全的处世原则是假定所有人均有邪恶的一面，如有机会人们的邪恶就会暴露出来。" ReverseScore="0"/>
+</Questions>
+</PsycologyTest>
