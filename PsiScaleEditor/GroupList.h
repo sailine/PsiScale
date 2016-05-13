@@ -14,8 +14,6 @@ public:
 protected:
 	DECLARE_MESSAGE_MAP()
 
-	virtual void OnEndEditLabel(LPCTSTR lpszLabel) override;
-
 	virtual void OnSelectionChanged() override;
 
 	virtual BOOL OnBeforeRemoveItem(int) override;

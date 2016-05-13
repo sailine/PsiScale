@@ -213,11 +213,10 @@ HCURSOR CPsiScaleEditorDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-
-
 void CPsiScaleEditorDlg::OnBnClickedCheckSameChoice()
 {
 	UpdateData(TRUE);
+	_choice_list.EnableWindow(_use_same_choices);
 }
 
 CString CPsiScaleEditorDlg::GetScalePath(const PsiScale& scale)
@@ -309,6 +308,8 @@ void CPsiScaleEditorDlg::UpdateUi()
 	_scale_name = _scale->GetName();
 	_prologue_text = _scale->GetPrologue();
 	_use_same_choices = _scale->IsSameChoice();
+
+	_choice_list.EnableWindow(_use_same_choices);
 
 	ClearLists();
 
