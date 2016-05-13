@@ -21,6 +21,7 @@ CQuestionEditorDlg::CQuestionEditorDlg(shared_ptr<PsiScale> scale, CWnd* pParent
 	, _scale(scale)
 	, _reverse_score(FALSE)
 	, _current_question(-1)
+	, _question_number(_T(""))
 {
 	ASSERT(_scale);
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
@@ -40,17 +41,19 @@ void CQuestionEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDOK, _return_button);
 	DDX_Control(pDX, IDC_STATIC_CHOICE_LIST_LABEL, _choice_list_label);
 	DDX_Control(pDX, IDC_GROUP_LABEL, _group_label);
+	DDX_Text(pDX, IDC_STATIC_QUESTION_NUMBER, _question_number);
 }
 
 BEGIN_MESSAGE_MAP(CQuestionEditorDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_BUTTON_ADD, &CQuestionEditorDlg::OnBnClickedAddQuestion)
+	ON_BN_CLICKED(IDC_BUTTON_NEW, &CQuestionEditorDlg::OnBnClickedButtonNew)
 	ON_EN_CHANGE(IDC_EDIT_QUESTION, &CQuestionEditorDlg::OnEnChangeEditQuestion)
 	ON_BN_CLICKED(IDC_BUTTON_NEXT, &CQuestionEditorDlg::OnBnClickedButtonNext)
 	ON_BN_CLICKED(IDC_BUTTON_PREV, &CQuestionEditorDlg::OnBnClickedButtonPrev)
 	ON_BN_CLICKED(IDC_BUTTON_DELETE, &CQuestionEditorDlg::OnBnClickedDeleteQuestion)
+	ON_BN_CLICKED(IDOK, &CQuestionEditorDlg::OnBnClickedOk)
 END_MESSAGE_MAP()
 
 
@@ -106,7 +109,7 @@ BOOL CQuestionEditorDlg::OnInitDialog()
 
 	if (_scale->GetQuestionCount() == 0)
 	{
-		OnBnClickedAddQuestion();
+		OnBnClickedButtonNew();
 	}
 	else
 	{
@@ -202,14 +205,14 @@ HCURSOR CQuestionEditorDlg::OnQueryDragIcon()
 }
 
 
-void CQuestionEditorDlg::OnBnClickedAddQuestion()
+void CQuestionEditorDlg::OnBnClickedButtonNew()
 {
 	PsiScaleQuestion new_question;
 
 	_scale->AddQuestion(new_question);
 	_current_question = _scale->GetQuestionCount() - 1;
+
 	UpdateUi();
-	UpdateData(FALSE);
 }
 
 void CQuestionEditorDlg::UpdateUi()
@@ -233,7 +236,11 @@ void CQuestionEditorDlg::UpdateUi()
 			_choice_list.AddItem(choice.text, choice.id);
 		}
 	}
+	_next_button.EnableWindow(_current_question < _scale->GetQuestionCount() - 1);
+	_prev_button.EnableWindow(_current_question > 0);
 
+	_question_number.Format(_T("%d / %d"), _current_question + 1, _scale->GetQuestionCount());
+	GetDlgItem(IDC_STATIC_QUESTION_NUMBER)->SetWindowText(_question_number);
 	UpdateData(FALSE);
 }
 
@@ -323,4 +330,11 @@ void CQuestionEditorDlg::UpdateQuestion()
 			choices[i].text = _choice_list.GetItemText(i);
 		}
 	}
+}
+
+
+void CQuestionEditorDlg::OnBnClickedOk()
+{
+	UpdateQuestion();
+	CDialogEx::OnOK();
 }

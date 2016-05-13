@@ -46,7 +46,6 @@ BOOL CGroupList::OnBeforeRemoveItem(int)
 
 void CGroupList::OnAfterAddItem(int)
 {
-	AfxMessageBox(_T("Test"));
 }
 
 void CGroupList::OnAfterRenameItem(int)
