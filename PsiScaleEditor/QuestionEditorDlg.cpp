@@ -230,6 +230,11 @@ void CQuestionEditorDlg::UpdateUi()
 
 	if (!_scale->IsSameChoice())
 	{
+		while (_choice_list.GetCount() > 0)
+		{
+			_choice_list.RemoveItem(0);
+		}
+
 		// 更新当前问题的选择。
 		for (auto choice : question.Choices())
 		{

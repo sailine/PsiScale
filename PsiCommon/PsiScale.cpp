@@ -64,15 +64,38 @@ bool CPsiScale::Load(const CString& file_path)
 	if (questions_element == nullptr)
 		return false;
 
-	auto& question_items = questions_element->GetChildElements();
-	for (auto item : question_items)
+	for (auto question_item : questions_element->GetChildElements())
 	{
-		CPsiScaleQuestion question(item->GetIntegerAttrib(XML_ID), 
-			item->GetData(), 
-			item->GetBoolAttrib(XML_REVERSE_SCORE),
-			item->GetAttrib(XML_SUB_SCALE));
+		if (_same_choice)
+		{
+			CPsiScaleQuestion question(question_item->GetIntegerAttrib(XML_ID),
+				question_item->GetData(),
+				question_item->GetBoolAttrib(XML_REVERSE_SCORE),
+				question_item->GetAttrib(XML_SUB_SCALE));
+			_questions.push_back(question);
+		}
+		else
+		{
+			CPsiScaleQuestion question(question_item->GetIntegerAttrib(XML_ID),
+				question_item->GetElementData(XML_TEXT),
+				question_item->GetBoolAttrib(XML_REVERSE_SCORE),
+				question_item->GetAttrib(XML_SUB_SCALE));
 
-		_questions.push_back(question);
+			auto choices_element = question_item->GetElement(XML_CHOICES);
+			if (choices_element == nullptr)
+				return false;
+
+			for (auto choice_item : choices_element->GetChildElements())
+			{
+				CQuestionChoice choice;
+				choice.id = choice_item->GetIntegerAttrib(XML_ID);
+				choice.text = choice_item->GetData();
+				question.Choices().push_back(choice);
+			}
+
+			_questions.push_back(question);
+		}
+
 	}
 
 	return true;
@@ -166,6 +189,7 @@ std::vector<CString>& CPsiScale::Groups()
 void CPsiScale::AddQuestion(const CPsiScaleQuestion& question)
 {
 	_questions.push_back(question);
+	_questions[_questions.size() - 1].SetId(_questions.size());
 }
 
 void CPsiScale::DeleteQuestion(unsigned int index)
@@ -206,21 +230,25 @@ bool CPsiScale::Save(const CString& file_path)
 		auto group_element = groups->AddElement(_T("Item"));
 		group_element->SetData(_groups[i]);
 	}
-	auto Question = xml.AddElement(XML_QUESTIONS);
-	for (unsigned int i = 0; i < _questions.size(); ++i)
+	auto questions_element = xml.AddElement(XML_QUESTIONS);
+	for (auto& question : _questions)
 	{
-		auto question_element = Question->AddElement(_T("Item"), _questions[i].GetText());
-		question_element->SetIntegerAttrib(XML_ID, i + 1);
-		question_element->SetBoolAttrib(XML_REVERSE_SCORE, _questions[i].GetReverseScore());
-		question_element->SetAttrib(XML_SUB_SCALE, _questions[i].GetGroup());
-		if (!_same_choice)
+		auto item_element = questions_element->AddElement(_T("Item"));
+		item_element->SetIntegerAttrib(XML_ID, question.GetId());
+		item_element->SetBoolAttrib(XML_REVERSE_SCORE, question.GetReverseScore());
+		item_element->SetAttrib(XML_SUB_SCALE, question.GetGroup());
+		if (_same_choice)
 		{
-			auto choices = question_element->AddElement(XML_CHOICES);
-			for (auto choice : _choices)
+			item_element->SetData(question.GetText());
+		}
+		else
+		{
+			item_element->AddElement(XML_TEXT, question.GetText());
+			auto choices = item_element->AddElement(XML_CHOICES);
+			for (auto choice : question.Choices())
 			{
-				auto choice_element = choices->AddElement(_T("Item"));
+				auto choice_element = choices->AddElement(_T("Item"), choice.text);
 				choice_element->SetIntegerAttrib(XML_ID, choice.id);
-				choice_element->SetAttrib(XML_TEXT, choice.text);
 			}
 		}
 	}

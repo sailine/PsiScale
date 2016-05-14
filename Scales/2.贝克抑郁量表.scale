@@ -1,0 +1,24 @@
+<PsycologyTest Id="2" Name="贝克抑郁量表" SameChoices="0">
+<Prologue>这个问卷由许多组项目组成，请仔细看每组的项目，然后再每组内选择最适合你现在情况[最近一周，包括今天]的一项描述，并将那个数字圈出。请先读完一组内的各项叙述，然后选择。</Prologue>
+<Groups/>
+<Questions>
+<Item Id="1" ReverseScore="0">
+<Text>选择最适合你现在情况[最近一周，包括今天]的一项描述</Text>
+<Choices>
+<Item Id="1">我不感到忧愁</Item>
+<Item Id="2">我感到忧愁</Item>
+<Item Id="3">我整天都感到忧愁，且不能改变这种情绪</Item>
+<Item Id="4">我非常忧伤或不愉快，以致我不能忍受</Item>
+</Choices>
+</Item>
+<Item Id="2" ReverseScore="0">
+<Text>选择最适合你现在情况[最近一周，包括今天]的一项描述：</Text>
+<Choices>
+<Item Id="1">对于将来我不感到悲观</Item>
+<Item Id="2">我对将来感到悲观</Item>
+<Item Id="3">我感到没有什么可指望的</Item>
+<Item Id="4">我感到将来无望，事事都不能变好</Item>
+</Choices>
+</Item>
+</Questions>
+</PsycologyTest>
