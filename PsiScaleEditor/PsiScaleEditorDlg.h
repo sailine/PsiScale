@@ -10,6 +10,8 @@
 #include "../PsiCommon/TestManager.h"
 #include "QuestionListBox.h"
 #include "afxeditbrowsectrl.h"
+#include "ChoiceList.h"
+#include "GroupList.h"
 
 class PsiScale;
 class PsiScaleQuestion;
@@ -46,17 +48,21 @@ public:
 	afx_msg void OnBnClickedCheckSameChoice();
 	afx_msg void OnBnClickedButtonNew();
 
+	void UpdateScaleComboCurrentItem();
+
 	UINT _scale_id;
 	CString _scale_name;
 	CString _prologue_text;
 	BOOL _use_same_choices;
 	
 	void UpdateUi();
+	void OnQuestionChange();
+
+	void UpdateScale();
+	void ClearLists();
+	CString GetScalePath(const PsiScale& scale);
 
 	afx_msg void OnBnClickedButtonAddQuestion();
-// 	afx_msg void OnBnClickedButtonAddGroup();
-// 	afx_msg void OnBnClickedButtonAddChoice();
-// 	afx_msg void OnEnChangeEditQuestion();
 	afx_msg void OnLbnSelchangeListQuestions();
 	afx_msg void OnEnChangeName();
 	afx_msg void OnBnClickedButtonSave();
@@ -73,10 +79,15 @@ public:
 	CButton _exit_button;
 
 	CQuestionListBox _question_list;
-	CVSListBox _group_list;
-	CVSListBox _choice_list;
+	CGroupList _group_list;
+	CChoiceList _choice_list;
+
 	CMFCEditBrowseCtrl _working_folder_edit;
 	CComboBox _scales_combo;
-	afx_msg void OnEnChangeEditWorkingFolder();
 	CString _working_folder;
+
+	afx_msg void OnEnChangeEditWorkingFolder();
+	afx_msg void OnCbnSelchangeComboScales();
+	afx_msg void OnBnClickedEditQuestions();
+	afx_msg void OnBnClickedExit();
 };

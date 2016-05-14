@@ -25,7 +25,6 @@ protected:
 	virtual void OnAfterMoveItemDown(int) override;
 
 	virtual void CreateNewItem() override;
-
 };
 
 

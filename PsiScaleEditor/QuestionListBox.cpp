@@ -23,32 +23,27 @@ CQuestionListBox::~CQuestionListBox()
 
 void CQuestionListBox::OnEndEditLabel(LPCTSTR lpszLabel)
 {
-	throw std::logic_error("The method or operation is not implemented.");
 }
 
 BOOL CQuestionListBox::OnBeforeRemoveItem(int)
 {
-	throw std::logic_error("The method or operation is not implemented.");
+	return TRUE;
 }
 
 void CQuestionListBox::OnAfterAddItem(int)
 {
-	throw std::logic_error("The method or operation is not implemented.");
 }
 
 void CQuestionListBox::OnAfterMoveItemUp(int)
 {
-	throw std::logic_error("The method or operation is not implemented.");
 }
 
 void CQuestionListBox::OnAfterMoveItemDown(int)
 {
-	throw std::logic_error("The method or operation is not implemented.");
 }
 
 void CQuestionListBox::CreateNewItem()
 {
-	throw std::logic_error("The method or operation is not implemented.");
 }
 
 BEGIN_MESSAGE_MAP(CQuestionListBox, CVSListBox)
