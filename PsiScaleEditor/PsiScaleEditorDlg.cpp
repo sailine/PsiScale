@@ -6,7 +6,7 @@
 #include "PsiScaleEditor.h"
 #include "PsiScaleEditorDlg.h"
 #include "afxdialogex.h"
-#include "../PsiCommon/TestManager.h"
+#include "../PsiCommon/PsiScale.h"
 #include "InputStringDialog.h"
 #include "../Utilities/FileSystem.h"
 #include "QuestionEditorDlg.h"
@@ -220,7 +220,7 @@ void CPsiScaleEditorDlg::OnBnClickedCheckSameChoice()
 	_choice_list.EnableWindow(_use_same_choices);
 }
 
-CString CPsiScaleEditorDlg::GetScalePath(const PsiScale& scale)
+CString CPsiScaleEditorDlg::GetScalePath(const CPsiScale& scale)
 {
 	CString path = _working_folder + _T("\\");
 	path.Format(path + _T("%d.%s.scale"), scale.GetId(), scale.GetName());
@@ -235,7 +235,7 @@ void CPsiScaleEditorDlg::OnBnClickedButtonNew()
 		UpdateScaleComboCurrentItem();
 		_scale->Save(GetScalePath(*_scale));
 	}
-	_scale = shared_ptr<PsiScale>(new PsiScale);
+	_scale = shared_ptr<CPsiScale>(new CPsiScale);
 	_scales_combo.AddString(_T("新建量表"));
 	_scales_combo.SelectString(0, _T("新建量表"));
 
@@ -266,7 +266,7 @@ void CPsiScaleEditorDlg::OnBnClickedButtonAddQuestion()
 {
 	ASSERT(_scale);
 
-	PsiScaleQuestion new_question;
+	CPsiScaleQuestion new_question;
 	_scale->AddQuestion(new_question);
 	_question_list.AddItem(_T("新题目"));
 
@@ -420,7 +420,7 @@ void CPsiScaleEditorDlg::OnBnClickedButtonSave()
 		}
 	}
 
-	_test_manager.SavePsiScale(GetScalePath(*_scale), *_scale);
+	_scale->Save(GetScalePath(*_scale));
 	UpdateScaleComboCurrentItem();
 }
 
@@ -466,7 +466,20 @@ void CPsiScaleEditorDlg::OnCbnSelchangeComboScales()
 	CString selected_text;
 	_scales_combo.GetLBText(_scales_combo.GetCurSel(), selected_text);
 	CString file_path = _working_folder + _T("\\") + selected_text + _T(".scale");
-	_scale = _test_manager.LoadPsiScale(file_path);
+
+	if (!_scale)
+	{
+		try
+		{
+			_scale = shared_ptr<CPsiScale>(new CPsiScale);
+		}
+		catch (CMemoryException* )
+		{
+			return;
+		}
+	}
+
+	_scale->Load(file_path);
 
 	if (!_scale)
 	{

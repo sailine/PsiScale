@@ -4,7 +4,7 @@
 #include "ScaleList.h"
 #include <memory>
 
-class PsiScale;
+class CPsiScale;
 // CTestOverviewDialog dialog
 
 class CTestOverviewDialog : public CDialogEx
@@ -37,7 +37,7 @@ public:
 	virtual void OnCancel() override;
 
 	CScaleList _scale_list;
-	std::shared_ptr<PsiScale> _scale;
+	std::shared_ptr<CPsiScale> _scale;
 
 	afx_msg void OnBnClickedStart();
 };

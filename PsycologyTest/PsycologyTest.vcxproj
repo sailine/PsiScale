@@ -219,7 +219,6 @@
   </ItemGroup>
   <ItemGroup>
     <Xml Include="ScoreTemplate.xml" />
-    <Xml Include="TestTemplate.xml" />
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="res\PsycolgyTest.manifest" />

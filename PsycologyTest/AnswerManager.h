@@ -1,6 +1,8 @@
 #pragma once
 #include <map>
 
+class CPsiScale;
+
 class CAnswerManager
 {
 public:
@@ -13,7 +15,7 @@ public:
 
 	void SetSubjectId(const TCHAR* subject_id);
 	const CString& GetSubjectId() const;
-
+	int CheckForUnansweredQuestion(CPsiScale& scale);
 private:
 	std::map<unsigned, std::map<unsigned, unsigned>> _answers;
 	CString _subject_id;

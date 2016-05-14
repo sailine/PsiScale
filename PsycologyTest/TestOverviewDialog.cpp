@@ -6,8 +6,10 @@
 #include "TestOverviewDialog.h"
 #include "afxdialogex.h"
 #include "../Utilities/FileSystem.h"
-#include "../PsiCommon/TestManager.h"
+#include "../PsiCommon/PsiScale.h"
 #include "PsycologyTestDlg.h"
+
+using namespace std;
 
 // CTestOverviewDialog dialog
 
@@ -110,13 +112,22 @@ void CTestOverviewDialog::OnBnClickedStart()
 	POSITION position = _scale_list.GetFirstSelectedItemPosition();
 	int index = _scale_list.GetNextSelectedItem(position);
 	
-	CTestManager test_manager;
-
 	CString file_path = _working_folder + _T("\\");
 	file_path += _scale_list.GetItemText(index, 0) + _T(".scale");
-	_scale = test_manager.LoadPsiScale(file_path);
 
 	if (!_scale)
+	{
+		try
+		{
+			_scale = shared_ptr<CPsiScale>(new CPsiScale);
+		}
+		catch (CMemoryException*)
+		{
+			return;
+		}
+	}
+
+	if (!_scale->Load(file_path))
 	{
 		AfxMessageBox(_T("无法打开量表文件。"));
 	}

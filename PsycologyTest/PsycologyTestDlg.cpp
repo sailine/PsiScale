@@ -6,6 +6,7 @@
 #include "PsycologyTest.h"
 #include "PsycologyTestDlg.h"
 #include "afxdialogex.h"
+#include "../PsiCommon/PsiScale.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -59,7 +60,7 @@ END_MESSAGE_MAP()
 // CPsycologyTestDlg dialog
 
 
-CPsycologyTestDlg::CPsycologyTestDlg(shared_ptr<PsiScale> scale, 
+CPsycologyTestDlg::CPsycologyTestDlg(shared_ptr<CPsiScale> scale, 
 	CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_PSYCOLOGYTEST_DIALOG, pParent),
 	_psi_scale(scale),
@@ -185,8 +186,7 @@ HCURSOR CPsycologyTestDlg::OnQueryDragIcon()
 
 bool CPsycologyTestDlg::ShowQuestion(unsigned question_index)
 {
-	if (_psi_scale == nullptr)
-		return false;
+	ASSERT(_psi_scale);
 
 	if (question_index >= _psi_scale->GetQuestionCount())
 		return false;
@@ -303,6 +303,30 @@ void CPsycologyTestDlg::ProcessAnswer(unsigned int answer)
 	{
 		ShowQuestion(_current_question_index + 1);
 	}
+	else
+	{
+		int unanswer_question = _answer_manager.CheckForUnansweredQuestion(*_psi_scale);
+		if (unanswer_question == -1)
+		{
+			if (AfxMessageBox(_T("您已经完成了该问卷，点击“确认”按钮返回。"), MB_OKCANCEL) ==
+				IDOK)
+			{
+				__super::OnOK();
+			}
+		}
+		else
+		{
+			if (AfxMessageBox(_T("还有尚未回答的问题，点击“确认”跳转到问题。"),
+				MB_OKCANCEL) == IDOK)
+			{
+				ShowQuestion(unanswer_question);
+			}
+			else
+			{
+				__super::OnOK();
+			}
+		}
+	}
 }
 
 void CPsycologyTestDlg::OnBnClickedButton1()
@@ -347,7 +371,6 @@ void CPsycologyTestDlg::AdjustSize(int last_button)
 	auto button = GetDlgItem(last_button);
 	if (button == nullptr)
 		return;
-
 
 	button->GetWindowRect(&button_rect);
 	ScreenToClient(&button_rect);

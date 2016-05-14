@@ -79,7 +79,6 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="TestTemplate.xml" />
     <Xml Include="ScoreTemplate.xml" />
   </ItemGroup>
   <ItemGroup>
