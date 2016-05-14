@@ -70,7 +70,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Clipboard.cpp" />
-    <ClCompile Include="FolderTool.cpp" />
+    <ClCompile Include="FileSystem.cpp" />
     <ClCompile Include="Markup.cpp" />
     <ClCompile Include="scrrun.c" />
     <ClCompile Include="stdafx.cpp" />
@@ -78,7 +78,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Clipboard.h" />
-    <ClInclude Include="FolderTool.h" />
+    <ClInclude Include="FileSystem.h" />
     <ClInclude Include="gdiplusHelper.h" />
     <ClInclude Include="macros.h" />
     <ClInclude Include="Markup.h" />

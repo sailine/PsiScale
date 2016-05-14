@@ -1,7 +1,7 @@
 // Yang Guang, reviewed 2007-03-20
 
 #include "stdafx.h"
-#include "foldertool.h"
+#include "FileSystem.h"
 
 #include <string>
 #include <fstream>
@@ -198,6 +198,7 @@ namespace FileSystem
 	bool FileExists(const CString& filename)
 	{
 		CString str = filename;
+	
 		str.TrimRight(_T('\\'));	// for root directory.
 
 		if (str[str.GetLength() - 1] == _T(':'))
@@ -217,9 +218,12 @@ namespace FileSystem
 				return false;
 			}
 		}
+		else if (str.GetLength() <= 3)
+		{
+			return false;
+		}
 		else
 		{
-			assert(str.GetLength() > 3);
 			CFileStatus status;
 			return (CFile::GetStatus(filename, status) != 0);
 		}
@@ -309,14 +313,7 @@ namespace FileSystem
 		{
 			finder.FindNextFile();
 
-			if (finder.IsDirectory()) // found, already exist
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			return (finder.IsDirectory()); // found, already exist
 		}
 
 		return (::CreateDirectory(folder_path, NULL) != 0);
@@ -445,7 +442,7 @@ namespace FileSystem
 	// ·µ»ØMbytes
 	typedef BOOL(WINAPI *PGETDISKFREESPACEEX)(LPCSTR, PULARGE_INTEGER, PULARGE_INTEGER, PULARGE_INTEGER);
 
-	int MyGetDiskFreeSpaceEx(LPCSTR pszDrive)
+	int GetDiskFreeSpace(LPCSTR pszDrive)
 	{
 		PGETDISKFREESPACEEX pGetDiskFreeSpaceEx;
 		__int64 i64FreeBytesToCaller, i64TotalBytes, i64FreeBytes;

@@ -42,7 +42,7 @@ namespace FileSystem
 	CString GetFileNameFromPath(const CString& path);
 	CString GetFileExtensionFromPath(const CString& path);
 
-	int MyGetDiskFreeSpaceEx(LPCSTR pszDrive);
+	int GetDiskFreeSpace(LPCSTR pszDrive);
 	bool IsValidPath(const CString& path);
 	bool IsFolderEqual(const CString& dir1, const CString& dir2);
 
@@ -51,6 +51,46 @@ namespace FileSystem
 	CString GetStartPath();
 
 	CString GetTempFilePath(const CString& prefix);
+
+	template <class Processor>
+	void ForEachFile(const TCHAR* directory_path, const TCHAR* filename, 
+		bool include_subdirectory, Processor processor)
+	{
+		CString file_name(filename);
+		CString path(directory_path);
+		path += _T("\\");
+		path +=  (file_name.IsEmpty() ? TEXT("*.*") : file_name);
+
+		CFileFind finder;
+		bool working = (finder.FindFile(path) == TRUE);
+		while (working)
+		{
+			working = (finder.FindNextFile() == TRUE);
+			if (!finder.IsDirectory())
+			{
+				processor(finder.GetFilePath());
+			}
+		}
+
+		if (include_subdirectory)
+		{
+			CFileFind folder_finder;
+			bool folder_finder_working = (folder_finder.FindFile(CString(directory_path) + _T("\\*.*")) == TRUE);
+			while (folder_finder_working)
+			{
+				folder_finder_working = (folder_finder.FindNextFile() == TRUE);
+				if (folder_finder.IsDots())
+				{
+					continue;
+				}
+				else if (folder_finder.IsDirectory())
+				{
+					ForEachFile(folder_finder.GetFilePath(), file_name, true, processor);
+				}
+			}
+		}
+	}
+
 #ifndef NO_BOOST
 	CString SimplifyPath(const CString& path);
 #endif
