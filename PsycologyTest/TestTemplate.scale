@@ -1,4 +1,4 @@
-<PsycologyTest Id = "1" Name = "Test1" Description = "Test Description" ItemCount = "2" SameChoices = "True">
+<PsycologyTest Id = "1" Name = "Test1" Description = "Test Description" ItemCount = "2" SameChoices = "1">
 <Prologue Text = "Test."/>
 <Choices LevelCount = "5">
 	<Item Id = "1" Text = "ChoiceA"/>
@@ -9,8 +9,6 @@
 </Choices>
 
 <Groups>
-<Item Id = "1" Description = "Group1"/>
-<Item Id = "2" Description = "Group2"/>
 </Groups>
 
 <Questions>

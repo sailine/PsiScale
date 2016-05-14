@@ -11,6 +11,7 @@
 #define new DEBUG_NEW
 #endif
 
+using namespace std;
 
 static int buttons[10] = { IDC_RADIO_A, IDC_RADIO_B, IDC_RADIO_C,
 IDC_RADIO_D, IDC_RADIO_E, IDC_RADIO_F, IDC_RADIO_G, IDC_RADIO_H, IDC_RADIO_I, IDC_RADIO_J };
@@ -51,9 +52,10 @@ END_MESSAGE_MAP()
 // CPsycologyTestDlg dialog
 
 
-CPsycologyTestDlg::CPsycologyTestDlg(CWnd* pParent /*=NULL*/)
+CPsycologyTestDlg::CPsycologyTestDlg(shared_ptr<PsiScale> scale, 
+	CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_PSYCOLOGYTEST_DIALOG, pParent),
-	_psi_scale(nullptr),
+	_psi_scale(scale),
 	_current_question_index(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
@@ -186,9 +188,7 @@ HCURSOR CPsycologyTestDlg::OnQueryDragIcon()
 
 void CPsycologyTestDlg::OnBnClickedStart()
 {
-	_psi_scale = _test_manager.LoadPsiScale(_T("..\\PsycologyTest\\TestTemplate.xml"));
-	// _test_manager.AddScale(_test_manager.LoadPsiScale(_T("..\\PsycologyTest\\TestTemplate.xml")));
-	// _psi_scale = &_test_manager.GetPsiScale(1);
+	ASSERT(_psi_scale);
 
 	ShowQuestion(0);
 
@@ -209,10 +209,10 @@ bool CPsycologyTestDlg::ShowQuestion(unsigned question_index)
 	_question = _psi_scale->Question(_current_question_index).GetText();
 
 	ShowRadioButtons(_psi_scale->Choices().size());
-	auto answer = _psi_scale->Question(_current_question_index).GetAnswer();
-	if (answer != ' ')
+
+	if (_answer_manager.IsAnswered(_psi_scale->GetId(), _current_question_index))
 	{
-		CheckRadioButton(buttons[0], buttons[9], buttons[answer-'A']);
+		CheckRadioButton(buttons[0], buttons[9], buttons[_answer_manager.GetAnswer(_psi_scale->GetId(), _current_question_index)]);
 	}
 	else
 	{
@@ -266,6 +266,7 @@ void CPsycologyTestDlg::OnBnClickedPrev()
 
 void CPsycologyTestDlg::OnBnClickedNext()
 {
+	ASSERT(_psi_scale);
 	if (_current_question_index < _psi_scale->GetQuestionCount() - 1)
 	{
 		ShowQuestion(_current_question_index + 1);
@@ -277,7 +278,6 @@ void CPsycologyTestDlg::OnBnClickedRadioA()
 {
 	ProcessAnswer(_T('A'));
 }
-
 void CPsycologyTestDlg::OnBnClickedRadioB()
 {
 	ProcessAnswer(_T('B'));
@@ -319,7 +319,7 @@ void CPsycologyTestDlg::OnBnClickedRadioJ()
 void CPsycologyTestDlg::ProcessAnswer(const TCHAR answer)
 {
 	// 1. 记录
-	_psi_scale->Question(_current_question_index).SetAnswer(answer);	// GetQuestion need to return the pointer to the question that can then set the answer;		problem: set the answer of question 2 just after selecting the answer of question 1
+	_answer_manager.AddAnswer(_psi_scale->GetId(), _current_question_index, answer - _T('A'));
 
 	// 2. 下一道题。
 	if (_current_question_index < _psi_scale->GetQuestionCount() - 1)
