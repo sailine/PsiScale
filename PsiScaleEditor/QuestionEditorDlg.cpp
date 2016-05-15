@@ -226,7 +226,10 @@ void CQuestionEditorDlg::UpdateUi()
 
 	_question_text = question.GetText();
 	_reverse_score = question.GetReverseScore();
-	_group_combo.SelectString(0, question.GetGroup());
+	if (_group_combo.SelectString(0, question.GetGroup()) == CB_ERR)
+	{
+		_group_combo.SetCurSel(CB_ERR);
+	}
 
 	if (!_scale->IsSameChoice())
 	{
