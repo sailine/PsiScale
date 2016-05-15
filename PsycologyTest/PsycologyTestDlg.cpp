@@ -7,6 +7,7 @@
 #include "PsycologyTestDlg.h"
 #include "afxdialogex.h"
 #include "../PsiCommon/PsiScale.h"
+#include "afxwin.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -42,15 +43,32 @@ public:
 // Implementation
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
+	CString _user_name;
+	CString _password;
+	CString _password2;
+	CStatic _confirm_password_label;
+	CEdit _password2_edit;
+	BOOL _first_time;
 };
 
 CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
+, _user_name(_T(""))
+, _password(_T(""))
+, _password2(_T(""))
+, _first_time(FALSE)
 {
 }
 
 void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Text(pDX, IDC_EDIT_NAME, _user_name);
+	DDX_Text(pDX, IDC_EDIT_PASSWORD, _password);
+	DDX_Text(pDX, IDC_EDIT_PASSWORD2, _password2);
+	DDX_Control(pDX, IDC_PASSWORD_LABEL, _confirm_password_label);
+	DDX_Control(pDX, IDC_EDIT_PASSWORD2, _password2_edit);
+	DDX_Check(pDX, IDC_CHECK_FIRST_TIME, _first_time);
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)

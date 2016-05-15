@@ -8,6 +8,8 @@ class CAnswerManager
 public:
 	CAnswerManager();
 	~CAnswerManager();
+
+
 	bool AddAnswer(unsigned table_id, unsigned question_id, unsigned answer);
 	unsigned GetAnswer(unsigned table_id, unsigned question_id);
 
@@ -18,6 +20,7 @@ public:
 	int CheckForUnansweredQuestion(CPsiScale& scale);
 private:
 	std::map<unsigned, std::map<unsigned, unsigned>> _answers;
+
 	CString _subject_id;
 };
 
