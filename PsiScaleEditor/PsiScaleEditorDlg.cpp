@@ -10,7 +10,7 @@
 #include "InputStringDialog.h"
 #include "../Utilities/FileSystem.h"
 #include "QuestionEditorDlg.h"
-
+#include <algorithm>
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -18,6 +18,10 @@
 using namespace std;
 using namespace FileSystem;
 
+bool IsShort(const CString& s1, const CString& s2)
+{
+	return (_ttoi(s1.Left(s1.Find(_T("."))).GetBuffer()) < _ttoi(s2.Left(s2.Find(_T("."))).GetBuffer()));
+}
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
 
 class CAboutDlg : public CDialogEx
@@ -435,10 +439,15 @@ void CPsiScaleEditorDlg::OnEnChangeEditWorkingFolder()
 	UpdateData();
 	if (::FileExists(_working_folder))
 	{
-		::ForEachFile(_working_folder, _T("*.scale"), false, [this](const CString& file) {
+		std::vector<CString> files;
+		::ForEachFile(_working_folder, _T("*.scale"), false, [&](const CString& file) {
 			CString filename = ::GetFileNameFromPath(file);
-			this->_scales_combo.AddString(filename);
+			files.push_back(filename);
 		});
+
+		std::sort(files.begin(), files.end(), IsShort);
+		std::for_each(files.begin(), files.end(), [this](CString item){
+			_scales_combo.AddString(item); });
 
 		if (_scales_combo.GetCount() > 0)
 		{
