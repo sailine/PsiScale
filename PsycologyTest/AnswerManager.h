@@ -9,7 +9,6 @@ public:
 	CAnswerManager();
 	~CAnswerManager();
 
-
 	bool AddAnswer(unsigned table_id, unsigned question_id, unsigned answer);
 	unsigned GetAnswer(unsigned table_id, unsigned question_id);
 

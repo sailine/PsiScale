@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "User.h"
+#include "..\Utilities\FileSystem.h"
 
 using namespace std;
 
@@ -33,6 +34,11 @@ const CString& CUser::GetPassword() const
 void CUser::SetPassword(const CString& passoword)
 {
 	_password = passoword;
+}
+
+void CUser::SetUid(const CString& uid)
+{
+	_uid = uid;
 }
 
 const CString& CUser::GetUid()

@@ -87,6 +87,11 @@ void CLogonDialog::OnBnClickedLogon()
 		else
 		{
 			auto user = _user_manager->CreateUser(_user_name, _password);
+			if (!user)
+			{
+				AfxMessageBox(_T("不是第一次登陆，该用户名和密码已存在，若需重新生成账号，请修改用户名或密码。"));
+				return;
+			}
 			RunScale(user);
 		}
 	}
@@ -105,6 +110,11 @@ void CLogonDialog::OnBnClickedLogon()
 
 void CLogonDialog::RunScale(std::shared_ptr<CUser> user)
 {
+	if (_first_time)
+	{
+		_user_manager->Save();
+	}
+
 	CScaleOverviewDialog dlg(*user);
 	if (dlg.DoModal() == IDOK)
 	{
@@ -114,6 +124,7 @@ void CLogonDialog::RunScale(std::shared_ptr<CUser> user)
 
 		UpdateData(FALSE);
 	}
+
 }
 
 
@@ -123,7 +134,7 @@ BOOL CLogonDialog::OnInitDialog()
 
 	_first_time = true;
 	UpdateData(FALSE);
-
+	_user_manager->Init();
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }

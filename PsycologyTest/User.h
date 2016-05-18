@@ -12,6 +12,7 @@ public:
 	const CString& GetPassword() const;
 	void SetPassword(const CString& passoword);
 
+	void SetUid(const CString& uid);
 	const CString& GetUid();
 	void SetWorkingFolder(const CString& folder);
 	const CString& GetWorkingFolder() const;
