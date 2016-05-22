@@ -78,12 +78,18 @@ END_MESSAGE_MAP()
 // CPsycologyTestDlg dialog
 
 
-CPsycologyTestDlg::CPsycologyTestDlg(shared_ptr<CPsiScale> scale, 
+CPsycologyTestDlg::CPsycologyTestDlg(shared_ptr<CPsiScale> scale,
+	CAnswerManager& answer_manager,
+	HWND notify_wnd, 
 	CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_PSYCOLOGYTEST_DIALOG, pParent),
 	_psi_scale(scale),
 	_current_question_index(0)
 	, _question_number(_T(""))
+	, _answer_manager(answer_manager)
+	, _notify_wnd(notify_wnd)
+	, _timer_text(_T(""))
+	, _timer(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -93,6 +99,7 @@ void CPsycologyTestDlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_QUESTION, _question);
 	DDX_Text(pDX, IDC_STATIC_QUESTION_NUMBER, _question_number);
+	DDX_Text(pDX, IDC_TIMER, _timer_text);
 }
 
 BEGIN_MESSAGE_MAP(CPsycologyTestDlg, CDialogEx)
@@ -108,6 +115,9 @@ BEGIN_MESSAGE_MAP(CPsycologyTestDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_5, &CPsycologyTestDlg::OnBnClickedButton5)
 	ON_BN_CLICKED(IDC_BUTTON_6, &CPsycologyTestDlg::OnBnClickedButton6)
 	ON_BN_CLICKED(IDC_BUTTON_7, &CPsycologyTestDlg::OnBnClickedButton7)
+	ON_WM_CLOSE()
+	ON_WM_TIMER()
+	ON_STN_CLICKED(IDC_TIMER, &CPsycologyTestDlg::OnStnClickedTimer)
 END_MESSAGE_MAP()
 
 
@@ -147,8 +157,11 @@ BOOL CPsycologyTestDlg::OnInitDialog()
 	{
 		GetDlgItem(buttons[i])->ShowWindow(SW_HIDE);
 	}
+//	ShowQuestion(0);
+	auto un_answered_question =_answer_manager.CheckForUnansweredQuestion(*_psi_scale);
+	ShowQuestion((un_answered_question == -1) ? _psi_scale->GetQuestionCount() - 1 : un_answered_question);
 
-	ShowQuestion(0);
+	SetTimer(1, 1000, NULL);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -202,6 +215,7 @@ HCURSOR CPsycologyTestDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
 bool CPsycologyTestDlg::ShowQuestion(unsigned question_index)
 {
 	ASSERT(_psi_scale);
@@ -216,31 +230,17 @@ bool CPsycologyTestDlg::ShowQuestion(unsigned question_index)
 	{
 		if (_current_question_index == 0)
 		{
-			auto& choices = _psi_scale->Choices();
-			for (unsigned int i = 0; i < choices.size(); ++i)
-			{
-				CString button_text;
-				button_text.Format(_T("    %c. %s"), _T('A') + i, choices[i].text);
-				GetDlgItem(buttons[i])->SetWindowText(button_text);
-			}
+			UpdateSelectionButtons(_psi_scale->Choices());
 		}
 	}
 	else
 	{
-		auto& choices = _psi_scale->Question(_current_question_index).Choices();
-		for (unsigned int i = 0; i < choices.size(); ++i)
-		{
-			CString button_text;
-			button_text.Format(_T("    %c. %s"), _T('A') + i, choices[i].text);
-			GetDlgItem(buttons[i])->SetWindowText(button_text);
-		}
+		UpdateSelectionButtons(_psi_scale->Question(_current_question_index).Choices());
 	}
 
-	ShowButtons(_psi_scale->Choices().size());
-
-	if (_answer_manager.IsAnswered(_psi_scale->GetId(), _current_question_index))
+	if (_answer_manager.IsAnswered(_psi_scale->GetName(), _current_question_index))
 	{
-		Check(_answer_manager.GetAnswer(_psi_scale->GetId(), 
+		Check(_answer_manager.GetAnswer(_psi_scale->GetName(), 
 			_current_question_index) - 1);
 	}
 	else
@@ -253,6 +253,17 @@ bool CPsycologyTestDlg::ShowQuestion(unsigned question_index)
 	UpdateData(FALSE);
 
 	return true;
+}
+
+void CPsycologyTestDlg::UpdateSelectionButtons(std::vector<CQuestionChoice> &choices)
+{
+	for (unsigned int i = 0; i < choices.size(); ++i)
+	{
+		CString button_text;
+		button_text.Format(_T("    %c. %s"), _T('A') + i, choices[i].text);
+		GetDlgItem(buttons[i])->SetWindowText(button_text);
+	}
+	ShowButtons(choices.size());
 }
 
 bool CPsycologyTestDlg::ShowButtons(unsigned choice_count)
@@ -314,8 +325,8 @@ void CPsycologyTestDlg::OnBnClickedNext()
 void CPsycologyTestDlg::ProcessAnswer(unsigned int answer)
 {
 	// 1. 记录
-	_answer_manager.AddAnswer(_psi_scale->GetId(), _current_question_index, answer);
-
+	_answer_manager.AddAnswer(_psi_scale->GetName(), _current_question_index, answer);
+	_answer_manager.SetScore(_psi_scale->GetName(), _psi_scale->GetQuestion(_current_question_index).GetGroup(), 0); // 分值定义尚未定义。
 	// 2. 下一道题。
 	if (_current_question_index < _psi_scale->GetQuestionCount() - 1)
 	{
@@ -329,6 +340,8 @@ void CPsycologyTestDlg::ProcessAnswer(unsigned int answer)
 			if (AfxMessageBox(_T("您已经完成了该问卷，点击“确认”按钮返回。"), MB_OKCANCEL) ==
 				IDOK)
 			{
+				_answer_manager.FinishScale(_psi_scale->GetName());
+				::SendMessage(_notify_wnd, WM_SCALE_FINISHED, 0, 0);
 				__super::OnOK();
 			}
 		}
@@ -429,4 +442,33 @@ void CPsycologyTestDlg::MoveButtonUp(CWnd& button,
 	rect.bottom = y_pos + rect.Height();
 	rect.top = y_pos;
 	button.MoveWindow(rect);
+}
+
+
+void CPsycologyTestDlg::OnClose()
+{
+	// TODO: Add your message handler code here and/or call default
+	KillTimer(1);
+
+	CDialogEx::OnClose();
+}
+
+
+void CPsycologyTestDlg::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: Add your message handler code here and/or call default
+	if (1 == nIDEvent)
+	{
+		++_timer;
+		_timer_text.Format(_T("用时:%2d分%2d秒"), _timer / 60, _timer % 60);
+	}
+	UpdateData(FALSE);
+
+	CDialogEx::OnTimer(nIDEvent);
+}
+
+
+void CPsycologyTestDlg::OnStnClickedTimer()
+{
+	// TODO: Add your control notification handler code here
 }

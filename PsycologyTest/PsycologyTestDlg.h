@@ -6,17 +6,21 @@
 
 #include "afxwin.h"
 #include <memory>
+#include <vector>
 #include "AnswerManager.h"
 
 class CPsiScale;
+class CAnswerManager;
+struct CQuestionChoice;
 
+#define WM_SCALE_FINISHED WM_APP + 101
 // CPsycologyTestDlg dialog
 class CPsycologyTestDlg : public CDialogEx
 {
+	
 // Construction
 public:
-	CPsycologyTestDlg(std::shared_ptr<CPsiScale> scale, CWnd* pParent = NULL);	// standard constructor
-
+	CPsycologyTestDlg(std::shared_ptr<CPsiScale> scale, CAnswerManager& answer_manager, HWND notify_wnd, CWnd* pParent = NULL);	// standard constructor
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_PSYCOLOGYTEST_DIALOG };
@@ -29,12 +33,16 @@ public:
 // Implementation
 protected:
 	HICON m_hIcon;
-	CAnswerManager _answer_manager;
+	CAnswerManager& _answer_manager;
 	std::shared_ptr<CPsiScale> _psi_scale;
 	unsigned _current_question_index;
+	CString _test_info_path;
 
 	// Generated message map functions
 	bool ShowQuestion(unsigned question_index);
+
+	void UpdateSelectionButtons(std::vector<CQuestionChoice> &choices);
+
 	bool ShowButtons(unsigned choice_count);
 	void MoveButtonUp(CWnd& button, unsigned int y_pos);
 
@@ -50,6 +58,9 @@ protected:
 	CString _question;
 
 	void ProcessAnswer(unsigned int answer);
+
+	CString _timer_text;
+	unsigned int _timer;
 public:
 	afx_msg void OnBnClickedButton1();
 	afx_msg void OnBnClickedButton2();
@@ -63,4 +74,8 @@ public:
 
 	void AdjustSize(int last_button);
 	CString _question_number;
+	HWND _notify_wnd;
+	afx_msg void OnClose();
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void OnStnClickedTimer();
 };
