@@ -6,6 +6,8 @@
 #include "PsycologyTest.h"
 #include "PsycologyTestDlg.h"
 #include "afxdialogex.h"
+#include "../PsiCommon/PsiScale.h"
+#include "afxwin.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -41,15 +43,32 @@ public:
 // Implementation
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
+	CString _user_name;
+	CString _password;
+	CString _password2;
+	CStatic _confirm_password_label;
+	CEdit _password2_edit;
+	BOOL _first_time;
 };
 
 CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
+, _user_name(_T(""))
+, _password(_T(""))
+, _password2(_T(""))
+, _first_time(FALSE)
 {
 }
 
 void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Text(pDX, IDC_EDIT_NAME, _user_name);
+	DDX_Text(pDX, IDC_EDIT_PASSWORD, _password);
+	DDX_Text(pDX, IDC_EDIT_PASSWORD2, _password2);
+	DDX_Control(pDX, IDC_PASSWORD_LABEL, _confirm_password_label);
+	DDX_Control(pDX, IDC_EDIT_PASSWORD2, _password2_edit);
+	DDX_Check(pDX, IDC_CHECK_FIRST_TIME, _first_time);
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
@@ -59,12 +78,16 @@ END_MESSAGE_MAP()
 // CPsycologyTestDlg dialog
 
 
-CPsycologyTestDlg::CPsycologyTestDlg(shared_ptr<PsiScale> scale, 
+CPsycologyTestDlg::CPsycologyTestDlg(shared_ptr<CPsiScale> scale,
+	CAnswerManager& answer_manager,
+	HWND notify_wnd, 
 	CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_PSYCOLOGYTEST_DIALOG, pParent),
 	_psi_scale(scale),
 	_current_question_index(0)
 	, _question_number(_T(""))
+	, _answer_manager(answer_manager)
+	, _notify_wnd(notify_wnd)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -128,8 +151,9 @@ BOOL CPsycologyTestDlg::OnInitDialog()
 	{
 		GetDlgItem(buttons[i])->ShowWindow(SW_HIDE);
 	}
-
-	ShowQuestion(0);
+//	ShowQuestion(0);
+	auto un_answered_question =_answer_manager.CheckForUnansweredQuestion(*_psi_scale);
+	ShowQuestion((un_answered_question == -1) ? _psi_scale->GetQuestionCount() - 1 : un_answered_question);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -186,8 +210,7 @@ HCURSOR CPsycologyTestDlg::OnQueryDragIcon()
 
 bool CPsycologyTestDlg::ShowQuestion(unsigned question_index)
 {
-	if (_psi_scale == nullptr)
-		return false;
+	ASSERT(_psi_scale);
 
 	if (question_index >= _psi_scale->GetQuestionCount())
 		return false;
@@ -221,9 +244,9 @@ bool CPsycologyTestDlg::ShowQuestion(unsigned question_index)
 
 	ShowButtons(_psi_scale->Choices().size());
 
-	if (_answer_manager.IsAnswered(_psi_scale->GetId(), _current_question_index))
+	if (_answer_manager.IsAnswered(_psi_scale->GetName(), _current_question_index))
 	{
-		Check(_answer_manager.GetAnswer(_psi_scale->GetId(), 
+		Check(_answer_manager.GetAnswer(_psi_scale->GetName(), 
 			_current_question_index) - 1);
 	}
 	else
@@ -297,12 +320,38 @@ void CPsycologyTestDlg::OnBnClickedNext()
 void CPsycologyTestDlg::ProcessAnswer(unsigned int answer)
 {
 	// 1. 记录
-	_answer_manager.AddAnswer(_psi_scale->GetId(), _current_question_index, answer);
-
+	_answer_manager.AddAnswer(_psi_scale->GetName(), _current_question_index, answer);
+	_answer_manager.SetScore(_psi_scale->GetName(), _psi_scale->GetQuestion(_current_question_index).GetGroup(), 0); // 分值定义尚未定义。
 	// 2. 下一道题。
 	if (_current_question_index < _psi_scale->GetQuestionCount() - 1)
 	{
 		ShowQuestion(_current_question_index + 1);
+	}
+	else
+	{
+		int unanswer_question = _answer_manager.CheckForUnansweredQuestion(*_psi_scale);
+		if (unanswer_question == -1)
+		{
+			if (AfxMessageBox(_T("您已经完成了该问卷，点击“确认”按钮返回。"), MB_OKCANCEL) ==
+				IDOK)
+			{
+				_answer_manager.FinishScale(_psi_scale->GetName());
+				::SendMessage(_notify_wnd, WM_SCALE_FINISHED, 0, 0);
+				__super::OnOK();
+			}
+		}
+		else
+		{
+			if (AfxMessageBox(_T("还有尚未回答的问题，点击“确认”跳转到问题。"),
+				MB_OKCANCEL) == IDOK)
+			{
+				ShowQuestion(unanswer_question);
+			}
+			else
+			{
+				__super::OnOK();
+			}
+		}
 	}
 }
 
@@ -348,7 +397,6 @@ void CPsycologyTestDlg::AdjustSize(int last_button)
 	auto button = GetDlgItem(last_button);
 	if (button == nullptr)
 		return;
-
 
 	button->GetWindowRect(&button_rect);
 	ScreenToClient(&button_rect);

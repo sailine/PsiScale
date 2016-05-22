@@ -6,25 +6,34 @@
 #include "TestOverviewDialog.h"
 #include "afxdialogex.h"
 #include "../Utilities/FileSystem.h"
-#include "../PsiCommon/TestManager.h"
+#include "../PsiCommon/PsiScale.h"
 #include "PsycologyTestDlg.h"
+#include <algorithm>
+#include "User.h"
+
+using namespace std;
 
 // CTestOverviewDialog dialog
-
-IMPLEMENT_DYNAMIC(CTestOverviewDialog, CDialogEx)
-
-CTestOverviewDialog::CTestOverviewDialog(CWnd* pParent /*=NULL*/)
-	: CDialogEx(IDD_DIALOG_OVERVIEW, pParent)
-	, _working_folder(_T(""))
+bool IsShort(const CString& s1, const CString& s2)
 {
-
+	return (_ttoi(s1.Left(s1.Find(_T("."))).GetBuffer()) < _ttoi(s2.Left(s2.Find(_T("."))).GetBuffer()));
 }
 
-CTestOverviewDialog::~CTestOverviewDialog()
+IMPLEMENT_DYNAMIC(CScaleOverviewDialog, CDialogEx)
+
+CScaleOverviewDialog::CScaleOverviewDialog(CUser& user, 
+	CWnd* pParent /*=NULL*/)
+	: CDialogEx(IDD_DIALOG_OVERVIEW, pParent),
+	_user(user),
+	_working_folder(_T(""))
 {
 }
 
-void CTestOverviewDialog::DoDataExchange(CDataExchange* pDX)
+CScaleOverviewDialog::~CScaleOverviewDialog()
+{
+}
+
+void CScaleOverviewDialog::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_EDIT_WORKING_FOLDER, _working_folder_edit);
@@ -33,16 +42,25 @@ void CTestOverviewDialog::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(CTestOverviewDialog, CDialogEx)
-	ON_EN_CHANGE(IDC_EDIT_WORKING_FOLDER, &CTestOverviewDialog::OnEnChangeEditWorkingFolder)
-	ON_BN_CLICKED(IDC_START, &CTestOverviewDialog::OnBnClickedStart)
+BEGIN_MESSAGE_MAP(CScaleOverviewDialog, CDialogEx)
+	ON_EN_CHANGE(IDC_EDIT_WORKING_FOLDER, &CScaleOverviewDialog::OnEnChangeEditWorkingFolder)
+	ON_BN_CLICKED(IDC_START, &CScaleOverviewDialog::OnBnClickedStart)
+	ON_MESSAGE(WM_SCALE_FINISHED, OnScaleFinished)
 END_MESSAGE_MAP()
 
 
 // CTestOverviewDialog message handlers
 
+void CScaleOverviewDialog::GetTestInfoAndSetListInfo(std::vector<CString>& test_infos)
+{
+	_answer_manager.Load(_user.GetWorkingFolder() + _T("\\") + _user.GetUid() + _T(".xml"));
+	std::for_each(test_infos.begin(), test_infos.end(), [&, this](CString item) {
+		CString temp = item.Right(item.GetLength() - item.ReverseFind(_T('.')) - 1);
+		_scale_list.InsertScale(item, _answer_manager.ScaleFinished(temp)); });
+}
 
-void CTestOverviewDialog::OnEnChangeEditWorkingFolder()
+
+void CScaleOverviewDialog::OnEnChangeEditWorkingFolder()
 {
 	// TODO:  If this is a RICHEDIT control, the control will not
 	// send this notification unless you override the CDialogEx::OnInitDialog()
@@ -53,10 +71,14 @@ void CTestOverviewDialog::OnEnChangeEditWorkingFolder()
 	if (FileSystem::FileExists(_working_folder))
 	{
 		_scale_list.Clear();
-		FileSystem::ForEachFile(_working_folder, _T("*.scale"), false, [this](const CString& file) {
+		std::vector<CString> files;
+		FileSystem::ForEachFile(_working_folder, _T("*.scale"), false, [&](const CString& file) {
 			CString filename = FileSystem::GetFileNameFromPath(file);
-			this->_scale_list.InsertScale(filename, true);
+			files.push_back(filename);
 		});
+
+		std::sort(files.begin(), files.end(), IsShort);
+		GetTestInfoAndSetListInfo(files);
 
 		CRegKey regkey;
 		if (regkey.Open(HKEY_CURRENT_USER, _T("Software\\SKMR\\PsiScale"), KEY_WRITE) == ERROR_SUCCESS ||
@@ -68,7 +90,7 @@ void CTestOverviewDialog::OnEnChangeEditWorkingFolder()
 	}
 }
 
-BOOL CTestOverviewDialog::OnInitDialog()
+BOOL CScaleOverviewDialog::OnInitDialog()
 {
 	__super::OnInitDialog();
 
@@ -91,38 +113,54 @@ BOOL CTestOverviewDialog::OnInitDialog()
 	return TRUE;
 }
 
-void CTestOverviewDialog::OnOK()
+void CScaleOverviewDialog::OnOK()
 {
 	// __super::OnOK();
 }
 
-void CTestOverviewDialog::OnCancel()
+void CScaleOverviewDialog::OnCancel()
 {
 	if (AfxMessageBox(_T("确认退出？"), MB_OKCANCEL) == IDOK)
 	{
+		_answer_manager.Save(_user.GetWorkingFolder() + _T("\\") + _user.GetUid() + _T(".xml"));
 		__super::OnCancel();
 	}
 }
 
 
-void CTestOverviewDialog::OnBnClickedStart()
+void CScaleOverviewDialog::OnBnClickedStart()
 {
 	POSITION position = _scale_list.GetFirstSelectedItemPosition();
 	int index = _scale_list.GetNextSelectedItem(position);
 	
-	CTestManager test_manager;
-
 	CString file_path = _working_folder + _T("\\");
 	file_path += _scale_list.GetItemText(index, 0) + _T(".scale");
-	_scale = test_manager.LoadPsiScale(file_path);
 
 	if (!_scale)
+	{
+		try
+		{
+			_scale = shared_ptr<CPsiScale>(new CPsiScale);
+		}
+		catch (CMemoryException*)
+		{
+			return;
+		}
+	}
+
+	if (!_scale->Load(file_path))
 	{
 		AfxMessageBox(_T("无法打开量表文件。"));
 	}
 	else
 	{
-		CPsycologyTestDlg dlg(_scale);
+		CPsycologyTestDlg dlg(_scale, _answer_manager, m_hWnd);
 		dlg.DoModal();
 	}
+}
+
+LRESULT CScaleOverviewDialog::OnScaleFinished(WPARAM, LPARAM)
+{
+	_scale_list.ChangeScale(_scale->GetName(), true); //不起作用
+	return 0;
 }
