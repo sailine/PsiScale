@@ -181,6 +181,10 @@ void CScaleOverviewDialog::OnLvnItemchangedListScales(NMHDR *pNMHDR, LRESULT *pR
 	{
 		_start.EnableWindow(FALSE);
 	}
+	else
+	{
+		_start.EnableWindow(TRUE);
+	}
 
 	*pResult = 0;
 }
