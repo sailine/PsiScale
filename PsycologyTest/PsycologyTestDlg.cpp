@@ -118,6 +118,8 @@ BEGIN_MESSAGE_MAP(CPsycologyTestDlg, CDialogEx)
 	ON_WM_CLOSE()
 	ON_WM_TIMER()
 	ON_STN_CLICKED(IDC_TIMER, &CPsycologyTestDlg::OnStnClickedTimer)
+	ON_BN_CLICKED(ID_FIRST, &CPsycologyTestDlg::OnBnClickedFirst)
+	ON_BN_CLICKED(ID_LAST, &CPsycologyTestDlg::OnBnClickedLast)
 END_MESSAGE_MAP()
 
 
@@ -228,10 +230,7 @@ bool CPsycologyTestDlg::ShowQuestion(unsigned question_index)
 
 	if (_psi_scale->IsSameChoice())
 	{
-		if (_current_question_index == 0)
-		{
-			UpdateSelectionButtons(_psi_scale->Choices());
-		}
+		UpdateSelectionButtons(_psi_scale->Choices());
 	}
 	else
 	{
@@ -320,6 +319,17 @@ void CPsycologyTestDlg::OnBnClickedNext()
 	{
 		ShowQuestion(_current_question_index + 1);
 	}
+}
+
+void CPsycologyTestDlg::OnBnClickedFirst()
+{
+	ShowQuestion(0);
+}
+
+
+void CPsycologyTestDlg::OnBnClickedLast()
+{
+	ShowQuestion(_psi_scale->GetQuestionCount() - 1);
 }
 
 void CPsycologyTestDlg::ProcessAnswer(unsigned int answer)
@@ -412,6 +422,9 @@ void CPsycologyTestDlg::AdjustSize(int last_button)
 
 	MoveButtonUp(*GetDlgItem(ID_PREV), button_rect.bottom + 15);
 	MoveButtonUp(*GetDlgItem(ID_NEXT), button_rect.bottom + 15);
+	MoveButtonUp(*GetDlgItem(ID_FIRST), button_rect.bottom + 15);
+	MoveButtonUp(*GetDlgItem(ID_LAST), button_rect.bottom + 15);
+
 
 	GetClientRect(&clientrect);  // client area of the dialog
 	GetWindowRect(&dlgrect);	  // rectangle of the dialog window
@@ -472,3 +485,4 @@ void CPsycologyTestDlg::OnStnClickedTimer()
 {
 	// TODO: Add your control notification handler code here
 }
+
