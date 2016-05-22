@@ -6,10 +6,13 @@
 
 #include "afxwin.h"
 #include <memory>
+#include <vector>
 #include "AnswerManager.h"
 
 class CPsiScale;
 class CAnswerManager;
+struct CQuestionChoice;
+
 #define WM_SCALE_FINISHED WM_APP + 101
 // CPsycologyTestDlg dialog
 class CPsycologyTestDlg : public CDialogEx
@@ -37,6 +40,9 @@ protected:
 
 	// Generated message map functions
 	bool ShowQuestion(unsigned question_index);
+
+	void UpdateSelectionButtons(std::vector<CQuestionChoice> &choices);
+
 	bool ShowButtons(unsigned choice_count);
 	void MoveButtonUp(CWnd& button, unsigned int y_pos);
 
@@ -52,6 +58,9 @@ protected:
 	CString _question;
 
 	void ProcessAnswer(unsigned int answer);
+
+	CString _timer_text;
+	unsigned int _timer;
 public:
 	afx_msg void OnBnClickedButton1();
 	afx_msg void OnBnClickedButton2();
@@ -66,4 +75,7 @@ public:
 	void AdjustSize(int last_button);
 	CString _question_number;
 	HWND _notify_wnd;
+	afx_msg void OnClose();
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void OnStnClickedTimer();
 };
