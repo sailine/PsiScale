@@ -228,10 +228,7 @@ bool CPsycologyTestDlg::ShowQuestion(unsigned question_index)
 
 	if (_psi_scale->IsSameChoice())
 	{
-		if (_current_question_index == 0)
-		{
-			UpdateSelectionButtons(_psi_scale->Choices());
-		}
+		UpdateSelectionButtons(_psi_scale->Choices());
 	}
 	else
 	{
