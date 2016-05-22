@@ -530,8 +530,3 @@ void CPsiScaleEditorDlg::OnBnClickedExit()
 }
 
 
-void CPsiScaleEditorDlg::OnBnClickedButtonSave()
-{
-	_test_manager.SavePsiScale(_T("..\\PsycologyTest\\SaveTest.xml"), *_scale);
-	// TODO: Add your control notification handler code here
-}

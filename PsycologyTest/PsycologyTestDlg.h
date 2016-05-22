@@ -52,6 +52,9 @@ protected:
 	CString _question;
 
 	void ProcessAnswer(unsigned int answer);
+
+	CString _timer_text;
+	unsigned int _timer;
 public:
 	afx_msg void OnBnClickedButton1();
 	afx_msg void OnBnClickedButton2();
@@ -66,4 +69,7 @@ public:
 	void AdjustSize(int last_button);
 	CString _question_number;
 	HWND _notify_wnd;
+	afx_msg void OnClose();
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void OnStnClickedTimer();
 };
