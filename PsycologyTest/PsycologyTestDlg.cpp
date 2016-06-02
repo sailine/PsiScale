@@ -250,6 +250,7 @@ bool CPsycologyTestDlg::ShowQuestion(unsigned question_index)
 		_psi_scale->GetQuestionCount());
 
 	UpdateData(FALSE);
+	_start = clock();
 
 	return true;
 }
@@ -334,8 +335,12 @@ void CPsycologyTestDlg::OnBnClickedLast()
 
 void CPsycologyTestDlg::ProcessAnswer(unsigned int answer)
 {
+	_end = clock();
+
+	ASSERT(_end > _start);
+
 	// 1. 记录
-	_answer_manager.AddAnswer(_psi_scale->GetName(), _current_question_index, answer);
+	_answer_manager.AddAnswer(_psi_scale->GetName(), _current_question_index, answer, (_end - _start) * 1000 / CLOCKS_PER_SEC);
 	_answer_manager.SetScore(_psi_scale->GetName(), _psi_scale->GetQuestion(_current_question_index).GetGroup(), 0); // 分值定义尚未定义。
 	// 2. 下一道题。
 	if (_current_question_index < _psi_scale->GetQuestionCount() - 1)
