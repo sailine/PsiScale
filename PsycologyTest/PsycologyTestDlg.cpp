@@ -352,6 +352,8 @@ void CPsycologyTestDlg::ProcessAnswer(unsigned int answer)
 			{
 				_answer_manager.FinishScale(_psi_scale->GetName());
 				::SendMessage(_notify_wnd, WM_SCALE_FINISHED, 0, 0);
+
+
 				__super::OnOK();
 			}
 		}
@@ -428,9 +430,6 @@ void CPsycologyTestDlg::AdjustSize(int last_button)
 
 	GetClientRect(&clientrect);  // client area of the dialog
 	GetWindowRect(&dlgrect);	  // rectangle of the dialog window
-
-								  // get height of the title bar
-								  //int offset = dlgrect.Width() - clientrect.right ;
 
 	CRect next_button_rect;
 	auto next_button = GetDlgItem(ID_NEXT);
