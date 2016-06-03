@@ -6,12 +6,19 @@
 #include "PsiAnswerViewer.h"
 #include "PsiAnswerViewerDlg.h"
 #include "afxdialogex.h"
+#include <afxstr.h>
+#include <vector>
+#include "..\Utilities\FileSystem.h"
+#include <algorithm>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-
+bool IsShort(const CString& s1, const CString& s2)
+{
+	return (_ttoi(s1.Left(s1.Find(_T("."))).GetBuffer()) < _ttoi(s2.Left(s2.Find(_T("."))).GetBuffer()));
+}
 // CAboutDlg dialog used for App About
 
 class CAboutDlg : public CDialogEx
@@ -53,6 +60,7 @@ CPsiAnswerViewerDlg::CPsiAnswerViewerDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_PSIANSWERVIEWER_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	_working_folder.Format(_T("D:\\Code\\PsiScale\\Scales"));
 }
 
 void CPsiAnswerViewerDlg::DoDataExchange(CDataExchange* pDX)
@@ -101,25 +109,20 @@ BOOL CPsiAnswerViewerDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
-	for (int t = 0; t < 10; ++t)
-	{
-		CString str;
-		str.Format(_T("%d"), t);
-		_combo_scale.AddString(str);
-	}
-	
+	InitialScaleList();
+
 
 	// 试写
 	CRect mRect;
 	answer_table.GetWindowRect(&mRect);     //获取控件矩形区域
 	int kuan = mRect.Width();
-	answer_table.InsertColumn(0, _T("序号"), LVCFMT_LEFT, kuan / 7, -1);
-	answer_table.InsertColumn(1, _T("姓名"), LVCFMT_CENTER, kuan / 7, -1);
-	answer_table.InsertColumn(2, _T("年龄"), LVCFMT_CENTER, kuan / 7, -1);
-	answer_table.InsertColumn(3, _T("班级"), LVCFMT_CENTER, kuan / 7, -1);
-	answer_table.InsertColumn(4, _T("学号"), LVCFMT_CENTER, kuan / 7, -1);
-	answer_table.InsertColumn(5, _T("籍贯"), LVCFMT_CENTER, kuan / 7, -1);
-	answer_table.InsertColumn(6, _T("性别"), LVCFMT_CENTER, kuan / 7, -1);
+	answer_table.InsertColumn(0, _T("编号"), LVCFMT_LEFT, kuan / 7, -1);
+	answer_table.InsertColumn(1, _T("出生年月"), LVCFMT_CENTER, kuan / 7, -1);
+	answer_table.InsertColumn(2, _T("性别"), LVCFMT_CENTER, kuan / 7, -1);
+	answer_table.InsertColumn(3, _T("民族"), LVCFMT_CENTER, kuan / 7, -1);
+	answer_table.InsertColumn(4, _T("体重"), LVCFMT_CENTER, kuan / 7, -1);
+	answer_table.InsertColumn(5, _T("填表日期"), LVCFMT_CENTER, kuan / 7, -1);
+	answer_table.InsertColumn(6, _T("填表时间"), LVCFMT_CENTER, kuan / 7, -1);
 	DWORD dwStyle = answer_table.GetExtendedStyle(); //获取当前扩展样式
 	dwStyle |= LVS_EX_FULLROWSELECT; //选中某行使整行高亮（report风格时）
 	dwStyle |= LVS_EX_GRIDLINES; //网格线（report风格时）
@@ -176,5 +179,23 @@ void CPsiAnswerViewerDlg::OnPaint()
 HCURSOR CPsiAnswerViewerDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
+}
+
+bool CPsiAnswerViewerDlg::InitialScaleList()
+{
+	std::vector<CString> files;
+	FileSystem::ForEachFile(_working_folder, _T("*.scale"), false, [&](const CString& file) {
+		CString filename = FileSystem::GetFileNameFromPath(file);
+		files.push_back(filename);
+	});
+
+	std::sort(files.begin(), files.end(), IsShort);
+
+	for (auto iter = files.begin(); iter != files.end(); ++iter)
+	{
+		_combo_scale.AddString(*iter);
+	}
+
+	return true;
 }
 

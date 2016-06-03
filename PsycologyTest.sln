@@ -23,6 +23,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PsiCommon", "PsiCommon\PsiC
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PsiAnswerViewer", "PsiAnswerViewer\PsiAnswerViewer.vcxproj", "{F875FC47-E1A5-4A6F-AB54-708B95280593}"
+	ProjectSection(ProjectDependencies) = postProject
+		{79217E5A-9BD3-4B53-A818-811BF5E452CC} = {79217E5A-9BD3-4B53-A818-811BF5E452CC}
+		{E16DDA60-3E14-4E06-92DC-2F28832E7D88} = {E16DDA60-3E14-4E06-92DC-2F28832E7D88}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -33,6 +33,10 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+
+
+	bool InitialScaleList();
+	CString _working_folder;
 public:
 	CListCtrl answer_table;
 	CComboBox _combo_scale;
