@@ -96,7 +96,6 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <AdditionalDependencies>$(Solutiondir)debug\utilities.lib;$(Solutiondir)debug\psiCommon.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalOptions>/FORCE:MULTIPLE %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -217,6 +216,7 @@
     <ClCompile Include="TestOverviewDialog.cpp" />
     <ClCompile Include="User.cpp" />
     <ClCompile Include="UserManager.cpp" />
+    <ClCompile Include="xml_name_space.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="PsycologyTest.rc" />

@@ -5,10 +5,10 @@
 #include "stdafx.h"
 #include "PsiAnswerViewer.h"
 #include "PsiAnswerViewerDlg.h"
-#include "afxdialogex.h"
+#include "..\Utilities\FileSystem.h"
+#include "..\PsiCommon\PsiScale.h"
 #include <afxstr.h>
 #include <vector>
-#include "..\Utilities\FileSystem.h"
 #include <algorithm>
 
 #ifdef _DEBUG
@@ -57,7 +57,8 @@ END_MESSAGE_MAP()
 
 
 CPsiAnswerViewerDlg::CPsiAnswerViewerDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(IDD_PSIANSWERVIEWER_DIALOG, pParent)
+	: CDialogEx(IDD_PSIANSWERVIEWER_DIALOG, pParent),
+	_list_exist(false)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	_working_folder.Format(_T("../Scales"));
@@ -66,7 +67,7 @@ CPsiAnswerViewerDlg::CPsiAnswerViewerDlg(CWnd* pParent /*=NULL*/)
 void CPsiAnswerViewerDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_ANSWER_TABLE, answer_table);
+	DDX_Control(pDX, IDC_ANSWER_TABLE, _answer_table);
 	DDX_Control(pDX, IDC_COMBO_SCALE, _combo_scale);
 }
 
@@ -74,6 +75,8 @@ BEGIN_MESSAGE_MAP(CPsiAnswerViewerDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_WM_SIZE()
+	ON_CBN_SELCHANGE(IDC_COMBO_SCALE, &CPsiAnswerViewerDlg::OnCbnSelchangeComboScale)
 END_MESSAGE_MAP()
 
 
@@ -110,24 +113,7 @@ BOOL CPsiAnswerViewerDlg::OnInitDialog()
 
 	// TODO: Add extra initialization here
 	InitialScaleList();
-
-
-	// 试写
-	CRect mRect;
-	answer_table.GetWindowRect(&mRect);     //获取控件矩形区域
-	int kuan = mRect.Width();
-	answer_table.InsertColumn(0, _T("编号"), LVCFMT_LEFT, kuan / 7, -1);
-	answer_table.InsertColumn(1, _T("出生年月"), LVCFMT_CENTER, kuan / 7, -1);
-	answer_table.InsertColumn(2, _T("性别"), LVCFMT_CENTER, kuan / 7, -1);
-	answer_table.InsertColumn(3, _T("民族"), LVCFMT_CENTER, kuan / 7, -1);
-	answer_table.InsertColumn(4, _T("体重"), LVCFMT_CENTER, kuan / 7, -1);
-	answer_table.InsertColumn(5, _T("填表日期"), LVCFMT_CENTER, kuan / 7, -1);
-	answer_table.InsertColumn(6, _T("填表时间"), LVCFMT_CENTER, kuan / 7, -1);
-	DWORD dwStyle = answer_table.GetExtendedStyle(); //获取当前扩展样式
-	dwStyle |= LVS_EX_FULLROWSELECT; //选中某行使整行高亮（report风格时）
-	dwStyle |= LVS_EX_GRIDLINES; //网格线（report风格时）
-	dwStyle |= LVS_EX_CHECKBOXES; //item前生成checkbox控件
-	answer_table.SetExtendedStyle(dwStyle); //设置扩展风格
+	_list_exist = true;
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -196,6 +182,52 @@ bool CPsiAnswerViewerDlg::InitialScaleList()
 		_combo_scale.AddString(*iter);
 	}
 
+	CRect mRect;
+	_answer_table.GetWindowRect(&mRect);     //获取控件矩形区域
+	int kuan = mRect.Width();
+	_answer_table.InsertColumn(0, _T("编号"), LVCFMT_LEFT, 100, -1);
+	_answer_table.InsertColumn(1, _T("出生年月"), LVCFMT_CENTER, 100, -1);
+	_answer_table.InsertColumn(2, _T("性别"), LVCFMT_CENTER, 100, -1);
+	_answer_table.InsertColumn(3, _T("民族"), LVCFMT_CENTER, 100, -1);
+	_answer_table.InsertColumn(4, _T("体重"), LVCFMT_CENTER, 100, -1);
+	_answer_table.InsertColumn(5, _T("填表日期"), LVCFMT_CENTER, 100, -1);
+	_answer_table.InsertColumn(6, _T("填表时间"), LVCFMT_CENTER, 100, -1);
+	DWORD dwStyle = _answer_table.GetExtendedStyle(); //获取当前扩展样式
+	dwStyle |= LVS_EX_FULLROWSELECT; //选中某行使整行高亮（report风格时）
+	dwStyle |= LVS_EX_GRIDLINES; //网格线（report风格时）
+	dwStyle |= LVS_EX_CHECKBOXES; //item前生成checkbox控件
+	_answer_table.SetExtendedStyle(dwStyle); //设置扩展风格
+
 	return true;
 }
 
+//
+//
+void CPsiAnswerViewerDlg::OnSize(UINT nType, int cx, int cy)
+{
+	CDialogEx::OnSize(nType, cx, cy);
+
+	if (_list_exist)
+	{
+		CRect rect;
+		GetClientRect(rect);
+		_answer_table.MoveWindow(10, 70, cx - 20, cy - 80);
+	}
+}
+
+
+void CPsiAnswerViewerDlg::OnCbnSelchangeComboScale()
+{
+	int index = _combo_scale.GetCurSel();
+	CString content;
+	_combo_scale.GetLBText(index, content);
+	
+
+
+	UpdateScale();
+}
+
+void CPsiAnswerViewerDlg::UpdateScale()
+{
+	_answer_table.DeleteAllItems();
+}

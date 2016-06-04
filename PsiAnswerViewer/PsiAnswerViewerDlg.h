@@ -6,7 +6,6 @@
 #include "afxcmn.h"
 #include "afxwin.h"
 
-
 // CPsiAnswerViewerDlg dialog
 class CPsiAnswerViewerDlg : public CDialogEx
 {
@@ -36,8 +35,14 @@ protected:
 
 
 	bool InitialScaleList();
-	CString _working_folder;
-public:
-	CListCtrl answer_table;
+	void UpdateScale();
+
+	CListCtrl _answer_table;
 	CComboBox _combo_scale;
+	CString _working_folder;
+	bool _list_exist;
+
+public:
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnCbnSelchangeComboScale();
 };
