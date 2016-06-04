@@ -15,6 +15,12 @@
 #define new DEBUG_NEW
 #endif
 
+BEGIN_EASYSIZE_MAP(CPsiAnswerViewerDlg)
+	EASYSIZE(IDC_EDIT_WORKING_FOLDER, ES_BORDER, ES_BORDER, ES_KEEPSIZE, ES_KEEPSIZE, 0)
+	EASYSIZE(IDC_COMBO_SCALE, ES_BORDER, ES_BORDER, ES_KEEPSIZE, ES_KEEPSIZE, 0)
+	EASYSIZE(IDC_ANSWER_TABLE, ES_BORDER, ES_BORDER, ES_BORDER, ES_BORDER, 0)
+END_EASYSIZE_MAP
+
 bool IsShort(const CString& s1, const CString& s2)
 {
 	return (_ttoi(s1.Left(s1.Find(_T("."))).GetBuffer()) < _ttoi(s2.Left(s2.Find(_T("."))).GetBuffer()));
@@ -57,7 +63,7 @@ END_MESSAGE_MAP()
 
 
 CPsiAnswerViewerDlg::CPsiAnswerViewerDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(IDD_PSIANSWERVIEWER_DIALOG, pParent)
+	: CEasySizeDialog(IDD_PSIANSWERVIEWER_DIALOG, L"PsiAnswerViewer", pParent, true)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	_working_folder.Format(_T("D:\\Code\\PsiScale\\Scales"));
@@ -65,12 +71,12 @@ CPsiAnswerViewerDlg::CPsiAnswerViewerDlg(CWnd* pParent /*=NULL*/)
 
 void CPsiAnswerViewerDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialogEx::DoDataExchange(pDX);
+	__super::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_ANSWER_TABLE, answer_table);
 	DDX_Control(pDX, IDC_COMBO_SCALE, _combo_scale);
 }
 
-BEGIN_MESSAGE_MAP(CPsiAnswerViewerDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CPsiAnswerViewerDlg, CEasySizeDialog)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
@@ -81,7 +87,7 @@ END_MESSAGE_MAP()
 
 BOOL CPsiAnswerViewerDlg::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
+	__super::OnInitDialog();
 
 	// Add "About..." menu item to system menu.
 
@@ -141,7 +147,7 @@ void CPsiAnswerViewerDlg::OnSysCommand(UINT nID, LPARAM lParam)
 	}
 	else
 	{
-		CDialogEx::OnSysCommand(nID, lParam);
+		__super::OnSysCommand(nID, lParam);
 	}
 }
 
@@ -170,7 +176,7 @@ void CPsiAnswerViewerDlg::OnPaint()
 	}
 	else
 	{
-		CDialogEx::OnPaint();
+		__super::OnPaint();
 	}
 }
 

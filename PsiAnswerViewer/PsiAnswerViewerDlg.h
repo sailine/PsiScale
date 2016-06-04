@@ -5,10 +5,11 @@
 #pragma once
 #include "afxcmn.h"
 #include "afxwin.h"
+#include "..\Utilities\EasySizeDialog.h"
 
 
 // CPsiAnswerViewerDlg dialog
-class CPsiAnswerViewerDlg : public CDialogEx
+class CPsiAnswerViewerDlg : public CEasySizeDialog
 {
 // Construction
 public:
@@ -34,6 +35,7 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 
+	DECLARE_EASYSIZE;
 
 	bool InitialScaleList();
 	CString _working_folder;
