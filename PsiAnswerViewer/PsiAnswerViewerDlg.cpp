@@ -1,19 +1,41 @@
+Skip to content
+This repository
+Search
+Pull requests
+Issues
+Gist
+@salan668
+Watch 3
+Star 0
+Fork 11 MR - algorithms / PsiScale
+Code  Issues 12  Pull requests 0  Wiki  Pulse  Graphs
+Branch : master Find file Copy pathPsiScale / PsiAnswerViewer / PsiAnswerViewerDlg.cpp
+	40fa91d  19 minutes ago
+	@yg88 yg88 增加了对可调整大小的对话框的支持。
+	2 contributors @salan668 @yg88
+	RawBlameHistory     208 lines(165 sloc)  5.27 KB
 
-// PsiAnswerViewerDlg.cpp : implementation file
-//
+	// PsiAnswerViewerDlg.cpp : implementation file
+	//
 
 #include "stdafx.h"
 #include "PsiAnswerViewer.h"
 #include "PsiAnswerViewerDlg.h"
-#include "..\Utilities\FileSystem.h"
-#include "..\PsiCommon\PsiScale.h"
+#include "afxdialogex.h"
 #include <afxstr.h>
 #include <vector>
+#include "..\Utilities\FileSystem.h"
 #include <algorithm>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
+BEGIN_EASYSIZE_MAP(CPsiAnswerViewerDlg)
+	EASYSIZE(IDC_EDIT_WORKING_FOLDER, ES_BORDER, ES_BORDER, ES_KEEPSIZE, ES_KEEPSIZE, 0)
+	EASYSIZE(IDC_COMBO_SCALE, ES_BORDER, ES_BORDER, ES_KEEPSIZE, ES_KEEPSIZE, 0)
+	EASYSIZE(IDC_ANSWER_TABLE, ES_BORDER, ES_BORDER, ES_BORDER, ES_BORDER, 0)
+END_EASYSIZE_MAP
 
 bool IsShort(const CString& s1, const CString& s2)
 {
@@ -26,15 +48,15 @@ class CAboutDlg : public CDialogEx
 public:
 	CAboutDlg();
 
-// Dialog Data
+	// Dialog Data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_ABOUTBOX };
 #endif
 
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
-// Implementation
+														// Implementation
 protected:
 	DECLARE_MESSAGE_MAP()
 };
@@ -57,26 +79,23 @@ END_MESSAGE_MAP()
 
 
 CPsiAnswerViewerDlg::CPsiAnswerViewerDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(IDD_PSIANSWERVIEWER_DIALOG, pParent),
-	_list_exist(false)
+	: CEasySizeDialog(IDD_PSIANSWERVIEWER_DIALOG, L"PsiAnswerViewer", pParent, true)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
-	_working_folder.Format(_T("../Scales"));
+	_working_folder.Format(_T("D:\\Code\\PsiScale\\Scales"));
 }
 
 void CPsiAnswerViewerDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_ANSWER_TABLE, _answer_table);
+	__super::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_ANSWER_TABLE, answer_table);
 	DDX_Control(pDX, IDC_COMBO_SCALE, _combo_scale);
 }
 
-BEGIN_MESSAGE_MAP(CPsiAnswerViewerDlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CPsiAnswerViewerDlg, CEasySizeDialog)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_WM_SIZE()
-	ON_CBN_SELCHANGE(IDC_COMBO_SCALE, &CPsiAnswerViewerDlg::OnCbnSelchangeComboScale)
 END_MESSAGE_MAP()
 
 
@@ -84,7 +103,7 @@ END_MESSAGE_MAP()
 
 BOOL CPsiAnswerViewerDlg::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
+	__super::OnInitDialog();
 
 	// Add "About..." menu item to system menu.
 
@@ -111,9 +130,26 @@ BOOL CPsiAnswerViewerDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
-	// TODO: Add extra initialization here
+									// TODO: Add extra initialization here
 	InitialScaleList();
-	_list_exist = true;
+
+
+	// 试写
+	CRect mRect;
+	answer_table.GetWindowRect(&mRect);     //获取控件矩形区域
+	int kuan = mRect.Width();
+	answer_table.InsertColumn(0, _T("编号"), LVCFMT_LEFT, kuan / 7, -1);
+	answer_table.InsertColumn(1, _T("出生年月"), LVCFMT_CENTER, kuan / 7, -1);
+	answer_table.InsertColumn(2, _T("性别"), LVCFMT_CENTER, kuan / 7, -1);
+	answer_table.InsertColumn(3, _T("民族"), LVCFMT_CENTER, kuan / 7, -1);
+	answer_table.InsertColumn(4, _T("体重"), LVCFMT_CENTER, kuan / 7, -1);
+	answer_table.InsertColumn(5, _T("填表日期"), LVCFMT_CENTER, kuan / 7, -1);
+	answer_table.InsertColumn(6, _T("填表时间"), LVCFMT_CENTER, kuan / 7, -1);
+	DWORD dwStyle = answer_table.GetExtendedStyle(); //获取当前扩展样式
+	dwStyle |= LVS_EX_FULLROWSELECT; //选中某行使整行高亮（report风格时）
+	dwStyle |= LVS_EX_GRIDLINES; //网格线（report风格时）
+	dwStyle |= LVS_EX_CHECKBOXES; //item前生成checkbox控件
+	answer_table.SetExtendedStyle(dwStyle); //设置扩展风格
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -127,7 +163,7 @@ void CPsiAnswerViewerDlg::OnSysCommand(UINT nID, LPARAM lParam)
 	}
 	else
 	{
-		CDialogEx::OnSysCommand(nID, lParam);
+		__super::OnSysCommand(nID, lParam);
 	}
 }
 
@@ -156,7 +192,7 @@ void CPsiAnswerViewerDlg::OnPaint()
 	}
 	else
 	{
-		CDialogEx::OnPaint();
+		__super::OnPaint();
 	}
 }
 
@@ -182,52 +218,5 @@ bool CPsiAnswerViewerDlg::InitialScaleList()
 		_combo_scale.AddString(*iter);
 	}
 
-	CRect mRect;
-	_answer_table.GetWindowRect(&mRect);     //获取控件矩形区域
-	int kuan = mRect.Width();
-	_answer_table.InsertColumn(0, _T("编号"), LVCFMT_LEFT, 100, -1);
-	_answer_table.InsertColumn(1, _T("出生年月"), LVCFMT_CENTER, 100, -1);
-	_answer_table.InsertColumn(2, _T("性别"), LVCFMT_CENTER, 100, -1);
-	_answer_table.InsertColumn(3, _T("民族"), LVCFMT_CENTER, 100, -1);
-	_answer_table.InsertColumn(4, _T("体重"), LVCFMT_CENTER, 100, -1);
-	_answer_table.InsertColumn(5, _T("填表日期"), LVCFMT_CENTER, 100, -1);
-	_answer_table.InsertColumn(6, _T("填表时间"), LVCFMT_CENTER, 100, -1);
-	DWORD dwStyle = _answer_table.GetExtendedStyle(); //获取当前扩展样式
-	dwStyle |= LVS_EX_FULLROWSELECT; //选中某行使整行高亮（report风格时）
-	dwStyle |= LVS_EX_GRIDLINES; //网格线（report风格时）
-	dwStyle |= LVS_EX_CHECKBOXES; //item前生成checkbox控件
-	_answer_table.SetExtendedStyle(dwStyle); //设置扩展风格
-
 	return true;
-}
-
-//
-//
-void CPsiAnswerViewerDlg::OnSize(UINT nType, int cx, int cy)
-{
-	CDialogEx::OnSize(nType, cx, cy);
-
-	if (_list_exist)
-	{
-		CRect rect;
-		GetClientRect(rect);
-		_answer_table.MoveWindow(10, 70, cx - 20, cy - 80);
-	}
-}
-
-
-void CPsiAnswerViewerDlg::OnCbnSelchangeComboScale()
-{
-	int index = _combo_scale.GetCurSel();
-	CString content;
-	_combo_scale.GetLBText(index, content);
-	
-
-
-	UpdateScale();
-}
-
-void CPsiAnswerViewerDlg::UpdateScale()
-{
-	_answer_table.DeleteAllItems();
 }

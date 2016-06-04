@@ -1,28 +1,26 @@
-
-// PsiAnswerViewerDlg.h : header file
-//
-
 #pragma once
 #include "afxcmn.h"
 #include "afxwin.h"
+#include "..\Utilities\EasySizeDialog.h"
 
-// CPsiAnswerViewerDlg dialog
-class CPsiAnswerViewerDlg : public CDialogEx
+
+	// CPsiAnswerViewerDlg dialog
+	class CPsiAnswerViewerDlg : public CEasySizeDialog
 {
-// Construction
+	// Construction
 public:
 	CPsiAnswerViewerDlg(CWnd* pParent = NULL);	// standard constructor
 
-// Dialog Data
+												// Dialog Data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_PSIANSWERVIEWER_DIALOG };
 #endif
 
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 
 
-// Implementation
+														// Implementation
 protected:
 	HICON m_hIcon;
 
@@ -33,16 +31,11 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 
+	DECLARE_EASYSIZE;
 
 	bool InitialScaleList();
-	void UpdateScale();
-
-	CListCtrl _answer_table;
-	CComboBox _combo_scale;
 	CString _working_folder;
-	bool _list_exist;
-
 public:
-	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnCbnSelchangeComboScale();
+	CListCtrl answer_table;
+	CComboBox _combo_scale;
 };
