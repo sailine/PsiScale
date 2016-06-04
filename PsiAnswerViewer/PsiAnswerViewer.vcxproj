@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{324ED141-6473-46EA-BF96-925EE8EBD103}</ProjectGuid>
-    <RootNamespace>PsiScaleEditor</RootNamespace>
+    <ProjectGuid>{F875FC47-E1A5-4A6F-AB54-708B95280593}</ProjectGuid>
+    <RootNamespace>PsiAnswerViewer</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
     <Keyword>MFCProj</Keyword>
   </PropertyGroup>
@@ -94,7 +94,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>$(Solutiondir)debug\utilities.lib;$(Solutiondir)debug\psiCommon.lib;</AdditionalDependencies>
+      <AdditionalDependencies>D:\Code\PsiScale\Debug\Utilities.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -102,7 +102,7 @@
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </Midl>
     <ResourceCompile>
-      <Culture>0x0804</Culture>
+      <Culture>0x0409</Culture>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
@@ -123,7 +123,7 @@
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </Midl>
     <ResourceCompile>
-      <Culture>0x0804</Culture>
+      <Culture>0x0409</Culture>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
@@ -148,7 +148,7 @@
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </Midl>
     <ResourceCompile>
-      <Culture>0x0804</Culture>
+      <Culture>0x0409</Culture>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
@@ -173,7 +173,7 @@
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </Midl>
     <ResourceCompile>
-      <Culture>0x0804</Culture>
+      <Culture>0x0409</Culture>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
@@ -182,23 +182,15 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ChoiceList.h" />
-    <ClInclude Include="GroupList.h" />
-    <ClInclude Include="PsiScaleEditor.h" />
-    <ClInclude Include="PsiScaleEditorDlg.h" />
-    <ClInclude Include="QuestionEditorDlg.h" />
-    <ClInclude Include="QuestionListBox.h" />
+    <ClInclude Include="PsiAnswerViewer.h" />
+    <ClInclude Include="PsiAnswerViewerDlg.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ChoiceList.cpp" />
-    <ClCompile Include="GroupList.cpp" />
-    <ClCompile Include="PsiScaleEditor.cpp" />
-    <ClCompile Include="PsiScaleEditorDlg.cpp" />
-    <ClCompile Include="QuestionEditorDlg.cpp" />
-    <ClCompile Include="QuestionListBox.cpp" />
+    <ClCompile Include="PsiAnswerViewer.cpp" />
+    <ClCompile Include="PsiAnswerViewerDlg.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -207,23 +199,20 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="PsiScaleEditor.rc" />
+    <ResourceCompile Include="PsiAnswerViewer.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\PsiScaleEditor.rc2" />
+    <None Include="res\PsiAnswerViewer.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\PsiScaleEditor.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Manifest Include="res\PsiScaleEditor.manifest" />
+    <Image Include="res\PsiAnswerViewer.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties RESOURCE_FILE="PsiScaleEditor.rc" />
+      <UserProperties RESOURCE_FILE="PsiAnswerViewer.rc" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

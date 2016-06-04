@@ -162,6 +162,8 @@ void CScaleOverviewDialog::OnBnClickedStart()
 			CPsycologyTestDlg dlg(_scale, _answer_manager, m_hWnd);
 			dlg.DoModal();
 		}
+
+		_answer_manager.Save(_user.GetWorkingFolder() + _T("\\") + _user.GetUid() + _T(".xml"));
 		ShowWindow(SW_SHOW);
 	}
 }
