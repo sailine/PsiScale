@@ -60,7 +60,7 @@ CPsiAnswerViewerDlg::CPsiAnswerViewerDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_PSIANSWERVIEWER_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
-	_working_folder.Format(_T("D:\\Code\\PsiScale\\Scales"));
+	_working_folder.Format(_T("../Scales"));
 }
 
 void CPsiAnswerViewerDlg::DoDataExchange(CDataExchange* pDX)

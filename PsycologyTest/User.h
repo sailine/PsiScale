@@ -26,8 +26,8 @@ public:
 	CUser(const CString& name, const CString& password);
 	CString CreateUid();
 
-	const CString& GetName() const;
-	void SetName(const CString& val);
+	const CString& GetUserId() const;
+	void SetUserId(const CString& val);
 
 	const CString& GetPassword() const;
 	void SetPassword(const CString& passoword);
@@ -39,7 +39,7 @@ public:
 	const PersonalInfo& GetInfo() const;
 	void SetInfo(const PersonalInfo& info);
 protected:
-	CString _name;
+	CString _user_id;
 	CString _password;
 	CString _uid;
 	CString _working_folder;

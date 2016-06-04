@@ -96,6 +96,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <AdditionalDependencies>$(Solutiondir)debug\utilities.lib;$(Solutiondir)debug\psiCommon.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/FORCE:MULTIPLE %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -198,6 +199,7 @@
     <ClInclude Include="TestOverviewDialog.h" />
     <ClInclude Include="User.h" />
     <ClInclude Include="UserManager.h" />
+    <ClInclude Include="xml_name_space.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnswerManager.cpp" />

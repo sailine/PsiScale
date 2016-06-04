@@ -4,16 +4,10 @@
 #include "..\Utilities\macros.h"
 #include "..\Utilities\xml.h"
 #include "..\Utilities\FileSystem.h"
-
+#include "xml_name_space.h"
 #include <algorithm>
-namespace UserInfo
-{ 
-	const TCHAR* XML_USERS_INFO = _T("UsersInfo");
-	const TCHAR* XML_USER_INFO = _T("UserInfo");
-	const TCHAR* XML_NAME = _T("Name");
-	const TCHAR* XML_PASSWORD = _T("Password");
-	const TCHAR* XML_UID = _T("UID");
-}
+
+
 //const TCHAR* TESTS = _T("Tests");
 //const TCHAR* TABLE = _T("Table");
 //const TCHAR* ID = _T("Id");
@@ -21,6 +15,7 @@ namespace UserInfo
 
 using namespace std;
 using namespace UserInfo;
+
 CUserManager::CUserManager()
 {
 	_user_info_path = FileSystem::GetStartPath() + _T("\\..\\Scales\\TestUsers\\UserInfo.xml");

@@ -126,7 +126,7 @@ void CScaleOverviewDialog::OnCancel()
 {
 	if (AfxMessageBox(_T("È·ÈÏÍË³ö£¿"), MB_OKCANCEL) == IDOK)
 	{
-		_answer_manager.Save(_user.GetWorkingFolder() + _T("\\") + _user.GetUid() + _T(".xml"));
+		_answer_manager.Save(_user.GetWorkingFolder() + _T("\\") + _user.GetUid() + _T(".xml"), _user);
 		__super::OnCancel();
 	}
 }
@@ -165,7 +165,7 @@ void CScaleOverviewDialog::OnBnClickedStart()
 			dlg.DoModal();
 		}
 
-		_answer_manager.Save(_user.GetWorkingFolder() + _T("\\") + _user.GetUid() + _T(".xml"));
+		_answer_manager.Save(_user.GetWorkingFolder() + _T("\\") + _user.GetUid() + _T(".xml"), _user);
 		ShowWindow(SW_SHOW);
 	}
 }
