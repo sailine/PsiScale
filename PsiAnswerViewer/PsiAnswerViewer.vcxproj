@@ -94,7 +94,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>D:\Code\PsiScale\Debug\Utilities.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(Solutiondir)debug\utilities.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
