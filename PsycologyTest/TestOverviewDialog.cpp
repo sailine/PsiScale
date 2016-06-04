@@ -57,7 +57,7 @@ END_MESSAGE_MAP()
 
 void CScaleOverviewDialog::GetTestInfoAndSetListInfo(std::vector<CString>& test_infos)
 {
-	_answer_manager.Load(_user.GetWorkingFolder() + _T("\\") + _user.GetUid() + _T(".xml"));
+	_answer_manager.Load(_user.GetWorkingFolder() + _T("\\") + _user.GetUid() + _T(".xml"), _user);
 	std::for_each(test_infos.begin(), test_infos.end(), [&, this](CString item) {
 		CString temp = item.Right(item.GetLength() - item.ReverseFind(_T('.')) - 1);
 		_scale_list.InsertScale(item, _answer_manager.ScaleFinished(temp)); });

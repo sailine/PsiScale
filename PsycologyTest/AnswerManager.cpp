@@ -109,6 +109,7 @@ unsigned CAnswerManager::GetTotalScore(const CString& scale_name, const CString&
 bool CAnswerManager::LoadScaleItem(Utilities::CXmlElement* scale_xml)
 {
 	CString scale_name = scale_xml->GetAttrib(XML_TEST_NAME);
+
 	auto answers_element = scale_xml->GetElement(XML_TEST_ANSWERS);
 	auto answer_items = answers_element->GetChildElements();
 	std::map<unsigned int, Answer> answer_item;
@@ -163,7 +164,7 @@ bool CAnswerManager::SaveScaleItem(Utilities::CXmlElement* scale_xml, const CStr
 	return true;
 }
 
-bool CAnswerManager::Load(const CString& test_info_path)
+bool CAnswerManager::Load(const CString& test_info_path, CUser& user)
 {
 	Utilities::CXml xml;
 	if (!xml.Load(test_info_path))
@@ -171,8 +172,23 @@ bool CAnswerManager::Load(const CString& test_info_path)
 		return false;
 	}
 	_subject_uid = xml.GetAttrib(XML_TEST_PARTICIPANT_UID);
+	
+	auto temp_user = xml.GetElement(XML_USER_INFO);
+	user.SetPassword(temp_user->GetAttrib(XML_USER_PASSWORD));
+	user.SetUid(temp_user->GetAttrib(XML_USER_USERID));
+	PersonalInfo info;
+	info.name = temp_user->GetAttrib(XML_USER_NAME);
+	info.name_pinyin = temp_user->GetAttrib(XML_USER_PINYIN);
+	info.nationality = temp_user->GetAttrib(XML_USER_NATIONALITY);
+	info.birth_date = temp_user->GetOleDateTimeAttrib(XML_USER_BIRTHDATE);
+	info.sex = Sex(temp_user->GetIntegerAttrib(XML_USER_SEX));
+	info.weight = temp_user->GetIntegerAttrib(XML_USER_WEIGHT);
+	info.mobile = temp_user->GetAttrib(XML_USER_MOBILE);
+	info.email = temp_user->GetAttrib(XML_USER_EMAIL);
+	user.SetInfo(info);
+
 	auto scales = xml.GetChildElements();
-	for (unsigned int i = 0; i < scales.size(); ++i)
+	for (unsigned int i = 1; i < scales.size(); ++i)  // 从1开始是因为第一个是被试信息
 	{
 		auto scale_xml = scales[i];
 		_test_finished_info.insert(std::make_pair(scale_xml->GetAttrib(XML_TEST_NAME), (scale_xml->GetIntegerAttrib(XML_TEST_FINISHED) == 0) ? false : true));

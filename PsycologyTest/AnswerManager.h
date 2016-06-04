@@ -31,7 +31,8 @@ public:
 	unsigned GetTotalScore(const CString& scale_name, const CString& sub_scale_name);
 	bool LoadScaleItem(Utilities::CXmlElement* scale_xml);
 	bool SaveScaleItem(Utilities::CXmlElement* scale_xml, const CString& scale_name);
-	bool Load(const CString& test_info_path);
+	bool Load(const CString& test_info_path, CUser& user);
+
 	bool Save(const CString& test_info_path, CUser& user);
 	bool ScaleFinished(const CString& scale_name);
 	void FinishScale(const CString& scale_name);
