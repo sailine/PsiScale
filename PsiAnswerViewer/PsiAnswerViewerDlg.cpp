@@ -1,4 +1,3 @@
-
 // PsiAnswerViewerDlg.cpp : implementation file
 //
 
@@ -32,15 +31,15 @@ class CAboutDlg : public CDialogEx
 public:
 	CAboutDlg();
 
-// Dialog Data
+	// Dialog Data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_ABOUTBOX };
 #endif
 
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
-// Implementation
+														// Implementation
 protected:
 	DECLARE_MESSAGE_MAP()
 };
@@ -66,7 +65,7 @@ CPsiAnswerViewerDlg::CPsiAnswerViewerDlg(CWnd* pParent /*=NULL*/)
 	: CEasySizeDialog(IDD_PSIANSWERVIEWER_DIALOG, L"PsiAnswerViewer", pParent, true)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
-	_working_folder.Format(_T("D:\\Code\\PsiScale\\Scales"));
+	_working_folder.Format(_T("./PsiScale/Scales"));
 }
 
 void CPsiAnswerViewerDlg::DoDataExchange(CDataExchange* pDX)
@@ -114,26 +113,8 @@ BOOL CPsiAnswerViewerDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
-	// TODO: Add extra initialization here
+									// TODO: Add extra initialization here
 	InitialScaleList();
-
-
-	// 试写
-	CRect mRect;
-	answer_table.GetWindowRect(&mRect);     //获取控件矩形区域
-	int kuan = mRect.Width();
-	answer_table.InsertColumn(0, _T("编号"), LVCFMT_LEFT, kuan / 7, -1);
-	answer_table.InsertColumn(1, _T("出生年月"), LVCFMT_CENTER, kuan / 7, -1);
-	answer_table.InsertColumn(2, _T("性别"), LVCFMT_CENTER, kuan / 7, -1);
-	answer_table.InsertColumn(3, _T("民族"), LVCFMT_CENTER, kuan / 7, -1);
-	answer_table.InsertColumn(4, _T("体重"), LVCFMT_CENTER, kuan / 7, -1);
-	answer_table.InsertColumn(5, _T("填表日期"), LVCFMT_CENTER, kuan / 7, -1);
-	answer_table.InsertColumn(6, _T("填表时间"), LVCFMT_CENTER, kuan / 7, -1);
-	DWORD dwStyle = answer_table.GetExtendedStyle(); //获取当前扩展样式
-	dwStyle |= LVS_EX_FULLROWSELECT; //选中某行使整行高亮（report风格时）
-	dwStyle |= LVS_EX_GRIDLINES; //网格线（report风格时）
-	dwStyle |= LVS_EX_CHECKBOXES; //item前生成checkbox控件
-	answer_table.SetExtendedStyle(dwStyle); //设置扩展风格
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -201,7 +182,23 @@ bool CPsiAnswerViewerDlg::InitialScaleList()
 	{
 		_combo_scale.AddString(*iter);
 	}
+	
+	// 试写
+	CRect mRect;
+	answer_table.GetWindowRect(&mRect);     //获取控件矩形区域
+	int kuan = mRect.Width();
+	answer_table.InsertColumn(0, _T("编号"), LVCFMT_LEFT, kuan / 7, -1);
+	answer_table.InsertColumn(1, _T("出生年月"), LVCFMT_CENTER, kuan / 7, -1);
+	answer_table.InsertColumn(2, _T("性别"), LVCFMT_CENTER, kuan / 7, -1);
+	answer_table.InsertColumn(3, _T("民族"), LVCFMT_CENTER, kuan / 7, -1);
+	answer_table.InsertColumn(4, _T("体重"), LVCFMT_CENTER, kuan / 7, -1);
+	answer_table.InsertColumn(5, _T("填表日期"), LVCFMT_CENTER, kuan / 7, -1);
+	answer_table.InsertColumn(6, _T("填表时间"), LVCFMT_CENTER, kuan / 7, -1);
+	DWORD dwStyle = answer_table.GetExtendedStyle(); //获取当前扩展样式
+	dwStyle |= LVS_EX_FULLROWSELECT; //选中某行使整行高亮（report风格时）
+	dwStyle |= LVS_EX_GRIDLINES; //网格线（report风格时）
+	dwStyle |= LVS_EX_CHECKBOXES; //item前生成checkbox控件
+	answer_table.SetExtendedStyle(dwStyle); //设置扩展风格
 
 	return true;
 }
-
