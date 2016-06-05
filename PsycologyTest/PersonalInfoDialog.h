@@ -1,5 +1,6 @@
 #pragma once
 #include "User.h"
+#include "ATLComTime.h"
 
 
 class CPersonalInfoDialog : public CDialogEx
@@ -15,18 +16,24 @@ public:
 	enum { IDD = IDD_PERSONAL_INFO_DIALOG };
 #endif
 
-	void SetInfo(const PersonalInfo& info);
-	PersonalInfo GetInfo() const;
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	CString _name;
-	CString _name_pinyin;
-	COleDateTime _birth_date;
-	int _sex;	// 0 male, 1 female
-	CString _nationality;
-	unsigned int _weight;
-	CString _mobile;
-	CString _email;
 
+public:
+	void SetInfo(const PersonalInfo& info);
+	PersonalInfo GetInfo() const;
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnBnClickedOk();
+	CString name;
+	CString pinyin;
+	CString nationality;
+	COleDateTime birth_date;
+	int sex;
+	UINT weight;
+	CString mobile;
+	CString email;
+	afx_msg void OnEnKillfocusEditMobile();
+	afx_msg void OnEnKillfocusEditEmail();
+	afx_msg void OnEnKillfocusEditWeight();
 };
