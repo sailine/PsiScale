@@ -3,23 +3,10 @@
 #include "..\PsiCommon\PsiScale.h"
 #include <algorithm>
 #include "..\Utilities\xml.h"
-namespace TestInfo
-{
-	const TCHAR* XML_TEST = _T("Test");
-	const TCHAR* XML_SCALE = _T("Scale");
-	const TCHAR* XML_PARTICIPANT_UID = _T("PaticipantUid");
-	const TCHAR* XML_NAME = _T("Name");
-	const TCHAR* XML_FINISHED = _T("Finished");
-	const TCHAR* XML_ANSWERS = _T("Answers");
-	const TCHAR* XML_ITEM = _T("Item");
-	const TCHAR* XML_ID = _T("Id");
-	const TCHAR* XML_ANSWER = _T("Answer");
-	const TCHAR* XML_TIME = _T("Time");
-	const TCHAR* XML_SUBSCALES = _T("SubScales");
-	const TCHAR* XML_SUBSCALE = _T("SubScale");
-	const TCHAR* XML_SCORE = _T("Score");
-}
-using namespace TestInfo;
+#include "xml_name_space.h"
+
+using namespace XMLNameSpace;
+
 CAnswerManager::CAnswerManager()
 {
 }
@@ -121,25 +108,26 @@ unsigned CAnswerManager::GetTotalScore(const CString& scale_name, const CString&
 // 每个scale绑定一个answermanager，暂时的设计
 bool CAnswerManager::LoadScaleItem(Utilities::CXmlElement* scale_xml)
 {
-	CString scale_name = scale_xml->GetAttrib(XML_NAME);
-	auto answers_element = scale_xml->GetElement(XML_ANSWERS);
+	CString scale_name = scale_xml->GetAttrib(XML_TEST_NAME);
+
+	auto answers_element = scale_xml->GetElement(XML_TEST_ANSWERS);
 	auto answer_items = answers_element->GetChildElements();
 	std::map<unsigned int, Answer> answer_item;
 	for_each(answer_items.begin(), answer_items.end(), [&](Utilities::CXmlElement* item) {
-		unsigned id = item->GetIntegerAttrib(XML_ID);
-		unsigned answer_name = item->GetIntegerAttrib(XML_ANSWER);
-		unsigned time = item->GetIntegerAttrib(XML_TIME);
+		unsigned id = item->GetIntegerAttrib(XML_TEST_ID);
+		unsigned answer_name = item->GetIntegerAttrib(XML_TEST_ANSWER);
+		unsigned time = item->GetIntegerAttrib(XML_TEST_TIME);
 		Answer answer;
 		answer.answer = answer_name;
 		answer.time = time;
 		answer_item.insert(std::make_pair(id, answer));
 	});
 	_answers[scale_name] = answer_item;
-	auto subscales_element = scale_xml->GetElement(XML_SUBSCALES);
+	auto subscales_element = scale_xml->GetElement(XML_TEST_SUBSCALES);
 	auto subscales_items = subscales_element->GetChildElements();
 	std::map<CString, unsigned int> scores;
 	for_each(subscales_items.begin(), subscales_items.end(), [&](Utilities::CXmlElement* item) {
-		scores.insert(std::make_pair(item->GetAttrib(XML_NAME), item->GetIntegerAttrib(XML_SCORE))); });
+		scores.insert(std::make_pair(item->GetAttrib(XML_TEST_NAME), item->GetIntegerAttrib(XML_TEST_SCORE))); });
 	_scores[scale_name] = scores;
 	return true;
 }
@@ -150,60 +138,90 @@ bool CAnswerManager::SaveScaleItem(Utilities::CXmlElement* scale_xml, const CStr
 
 	if (scale_iter != _answers.end())
 	{
-		auto answers_xml = scale_xml->AddElement(XML_ANSWERS); 
+		auto answers_xml = scale_xml->AddElement(XML_TEST_ANSWERS);
 		int i = 0; 
 		for (auto iter = scale_iter->second.begin(); iter != scale_iter->second.end(); ++iter, ++i)
 		{
-			auto item = answers_xml->AddElement(XML_ITEM);
-			item->SetIntegerAttrib(XML_ID, iter->first);
-			item->SetIntegerAttrib(XML_ANSWER, iter->second.answer);
-			item->SetIntegerAttrib(XML_TIME, iter->second.time);
+			auto item = answers_xml->AddElement(XML_TEST_ITEM);
+			item->SetIntegerAttrib(XML_TEST_ID, iter->first);
+			item->SetIntegerAttrib(XML_TEST_ANSWER, iter->second.answer);
+			item->SetIntegerAttrib(XML_TEST_TIME, iter->second.time);
 		}
 	}
 
 	auto subscale_iter = _scores.find(scale_name);
 	if (subscale_iter != _scores.end())
 	{
-		auto subscales_xml = scale_xml->AddElement(XML_SUBSCALES);
+		auto subscales_xml = scale_xml->AddElement(XML_TEST_SUBSCALES);
 		for (auto iter = subscale_iter->second.begin(); iter != subscale_iter->second.end(); ++iter)
 		{
-			auto item = subscales_xml->AddElement(XML_SUBSCALE);
-			item->SetAttrib(XML_NAME, iter->first);
-			item->SetIntegerAttrib(XML_SCORE, iter->second);
+			auto item = subscales_xml->AddElement(XML_TEST_SUBSCALE);
+			item->SetAttrib(XML_TEST_NAME, iter->first);
+			item->SetIntegerAttrib(XML_TEST_SCORE, iter->second);
 		}
 	}
 
 	return true;
 }
 
-bool CAnswerManager::Load(const CString& test_info_path)
+bool CAnswerManager::Load(const CString& test_info_path, CUser& user)
 {
 	Utilities::CXml xml;
 	if (!xml.Load(test_info_path))
 	{
 		return false;
 	}
-	_subject_uid = xml.GetAttrib(XML_PARTICIPANT_UID);
+	_subject_uid = xml.GetAttrib(XML_TEST_PARTICIPANT_UID);
+	
+	auto temp_user = xml.GetElement(XML_USER_INFO);
+	user.SetPassword(temp_user->GetAttrib(XML_USER_PASSWORD));
+	user.SetUid(temp_user->GetAttrib(XML_USER_USERID));
+	PersonalInfo info;
+	info.name = temp_user->GetAttrib(XML_USER_NAME);
+	info.name_pinyin = temp_user->GetAttrib(XML_USER_PINYIN);
+	info.nationality = temp_user->GetAttrib(XML_USER_NATIONALITY);
+	info.birth_date = temp_user->GetOleDateTimeAttrib(XML_USER_BIRTHDATE);
+	info.sex = Sex(temp_user->GetIntegerAttrib(XML_USER_SEX));
+	info.weight = temp_user->GetIntegerAttrib(XML_USER_WEIGHT);
+	info.mobile = temp_user->GetAttrib(XML_USER_MOBILE);
+	info.email = temp_user->GetAttrib(XML_USER_EMAIL);
+	user.SetInfo(info);
+
 	auto scales = xml.GetChildElements();
-	for (unsigned int i = 0; i < scales.size(); ++i)
+	for (unsigned int i = 1; i < scales.size(); ++i)  // 从1开始是因为第一个是被试信息
 	{
 		auto scale_xml = scales[i];
-		_test_finished_info.insert(std::make_pair(scale_xml->GetAttrib(XML_NAME), (scale_xml->GetIntegerAttrib(XML_FINISHED) == 0) ? false : true));
+		_test_finished_info.insert(std::make_pair(scale_xml->GetAttrib(XML_TEST_NAME), (scale_xml->GetIntegerAttrib(XML_TEST_FINISHED) == 0) ? false : true));
 		LoadScaleItem(scale_xml);
 	}
 
 	return true;
 }
 
-bool CAnswerManager::Save(const CString& test_info_path)
+bool CAnswerManager::Save(const CString& test_info_path, CUser& user)
 {
 	Utilities::CXml xml(XML_TEST);
-	xml.SetAttrib(XML_PARTICIPANT_UID, _subject_uid);
+	xml.SetAttrib(XML_TEST_PARTICIPANT_UID, _subject_uid);
+
+	// 在答案中保存用户信息
+	auto user_info_xml = xml.AddElement(XML_USER_INFO);
+	user_info_xml->SetAttrib(XML_USER_USERID, user.GetUserId());
+	user_info_xml->SetAttrib(XML_USER_PASSWORD, user.GetPassword());
+	user_info_xml->SetAttrib(XML_USER_UID, user.GetUid());
+	user_info_xml->SetAttrib(XML_USER_NAME, user.GetInfo().name);
+	user_info_xml->SetAttrib(XML_USER_PINYIN, user.GetInfo().name_pinyin);
+	user_info_xml->SetAttrib(XML_USER_NATIONALITY, user.GetInfo().nationality);
+	user_info_xml->SetOleDateTimeAttrib(XML_USER_BIRTHDATE, user.GetInfo().birth_date);
+	user_info_xml->SetIntegerAttrib(XML_USER_SEX, user.GetInfo().sex);
+	user_info_xml->SetIntegerAttrib(XML_USER_WEIGHT, user.GetInfo().weight);
+	user_info_xml->SetAttrib(XML_USER_MOBILE, user.GetInfo().mobile);
+	user_info_xml->SetAttrib(XML_USER_EMAIL, user.GetInfo().email);
+
 	for (auto iter = _test_finished_info.begin(); iter != _test_finished_info.end(); ++iter)
 	{
-		auto scale_xml = xml.AddElement(XML_SCALE);
-		scale_xml->SetAttrib(XML_NAME, iter->first);
-		scale_xml->SetIntegerAttrib(XML_FINISHED, iter->second);
+		auto scale_xml = xml.AddElement(XML_TEST_SCALE);
+		scale_xml->SetAttrib(XML_TEST_NAME, iter->first);
+		scale_xml->SetIntegerAttrib(XML_TEST_FINISHED, iter->second);
 		this->SaveScaleItem(scale_xml, iter->first);
 	}
 

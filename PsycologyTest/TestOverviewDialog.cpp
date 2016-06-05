@@ -57,7 +57,7 @@ END_MESSAGE_MAP()
 
 void CScaleOverviewDialog::GetTestInfoAndSetListInfo(std::vector<CString>& test_infos)
 {
-	_answer_manager.Load(_user.GetWorkingFolder() + _T("\\") + _user.GetUid() + _T(".xml"));
+	_answer_manager.Load(_user.GetWorkingFolder() + _T("\\") + _user.GetUid() + _T(".xml"), _user);
 	std::for_each(test_infos.begin(), test_infos.end(), [&, this](CString item) {
 		CString temp = item.Right(item.GetLength() - item.ReverseFind(_T('.')) - 1);
 		_scale_list.InsertScale(item, _answer_manager.ScaleFinished(temp)); });
@@ -126,7 +126,7 @@ void CScaleOverviewDialog::OnCancel()
 {
 	if (AfxMessageBox(_T("È·ÈÏÍË³ö£¿"), MB_OKCANCEL) == IDOK)
 	{
-		_answer_manager.Save(_user.GetWorkingFolder() + _T("\\") + _user.GetUid() + _T(".xml"));
+		_answer_manager.Save(_user.GetWorkingFolder() + _T("\\") + _user.GetUid() + _T(".xml"), _user);
 		__super::OnCancel();
 	}
 }
@@ -165,7 +165,7 @@ void CScaleOverviewDialog::OnBnClickedStart()
 			dlg.DoModal();
 		}
 
-		_answer_manager.Save(_user.GetWorkingFolder() + _T("\\") + _user.GetUid() + _T(".xml"));
+		_answer_manager.Save(_user.GetWorkingFolder() + _T("\\") + _user.GetUid() + _T(".xml"), _user);
 		ShowWindow(SW_SHOW);
 	}
 }

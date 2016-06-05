@@ -1,30 +1,26 @@
-
-// PsiAnswerViewerDlg.h : header file
-//
-
 #pragma once
 #include "afxcmn.h"
 #include "afxwin.h"
 #include "..\Utilities\EasySizeDialog.h"
 
 
-// CPsiAnswerViewerDlg dialog
-class CPsiAnswerViewerDlg : public CEasySizeDialog
+	// CPsiAnswerViewerDlg dialog
+	class CPsiAnswerViewerDlg : public CEasySizeDialog
 {
-// Construction
+	// Construction
 public:
 	CPsiAnswerViewerDlg(CWnd* pParent = NULL);	// standard constructor
 
-// Dialog Data
+												// Dialog Data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_PSIANSWERVIEWER_DIALOG };
 #endif
 
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 
 
-// Implementation
+														// Implementation
 protected:
 	HICON m_hIcon;
 

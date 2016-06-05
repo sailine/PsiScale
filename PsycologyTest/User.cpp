@@ -5,7 +5,7 @@
 using namespace std;
 
 CUser::CUser(const CString& name, const CString& password) :
-	_name(name), 
+	_user_id(name), 
 	_password(password)
 {
 }
@@ -13,17 +13,17 @@ CUser::CUser(const CString& name, const CString& password) :
 CString CUser::CreateUid()
 {
 	auto now = COleDateTime::GetCurrentTime();
-	return _name + now.Format(_T("_%Y%m%d%H%M%S"));
+	return _user_id + now.Format(_T("_%Y%m%d%H%M%S"));
 }
 
-const CString& CUser::GetName() const
+const CString& CUser::GetUserId() const
 {
-	return _name;
+	return _user_id;
 }
 
-void CUser::SetName(const CString& val)
+void CUser::SetUserId(const CString& val)
 {
-	_name = val;
+	_user_id = val;
 }
 
 const CString& CUser::GetPassword() const
