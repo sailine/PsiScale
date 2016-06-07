@@ -2,6 +2,9 @@
 #include "afxcmn.h"
 #include "afxwin.h"
 #include "..\Utilities\EasySizeDialog.h"
+#include "..\PsiCommon\PsiScale.h"
+#include <memory>
+
 
 
 	// CPsiAnswerViewerDlg dialog
@@ -34,8 +37,12 @@ protected:
 	DECLARE_EASYSIZE;
 
 	bool InitialScaleList();
-	CString _working_folder;
-public:
+	void UpdateAnswerScale();
+
 	CListCtrl answer_table;
 	CComboBox _combo_scale;
+	CString _working_folder;
+	std::shared_ptr<CPsiScale> _scale;
+public:
+	afx_msg void OnCbnSelchangeComboScale();
 };

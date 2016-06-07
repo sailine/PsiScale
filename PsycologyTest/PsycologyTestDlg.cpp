@@ -339,7 +339,7 @@ void CPsycologyTestDlg::ProcessAnswer(unsigned int answer)
 
 	ASSERT(_end > _start);
 
-	::SetFocus(_notify_wnd);
+	::SetFocus(_notify_wnd); //为了让选项失去焦点, 但感觉可能有点问题.
 
 	// 1. 记录
 	_answer_manager.AddAnswer(_psi_scale->GetName(), _current_question_index, answer, (_end - _start) * 1000 / CLOCKS_PER_SEC);
