@@ -339,6 +339,8 @@ void CPsycologyTestDlg::ProcessAnswer(unsigned int answer)
 
 	ASSERT(_end > _start);
 
+	::SetFocus(_notify_wnd);
+
 	// 1. 记录
 	_answer_manager.AddAnswer(_psi_scale->GetName(), _current_question_index, answer, (_end - _start) * 1000 / CLOCKS_PER_SEC);
 	_answer_manager.SetScore(_psi_scale->GetName(), _psi_scale->GetQuestion(_current_question_index).GetGroup(), 0); // 分值定义尚未定义。
@@ -401,6 +403,7 @@ void CPsycologyTestDlg::OnBnClickedButton4()
 void CPsycologyTestDlg::OnBnClickedButton5()
 {
 	ProcessAnswer(5);
+	
 }
 
 void CPsycologyTestDlg::OnBnClickedButton6()
