@@ -260,7 +260,7 @@ void CPsycologyTestDlg::UpdateSelectionButtons(std::vector<CQuestionChoice> &cho
 	for (unsigned int i = 0; i < choices.size(); ++i)
 	{
 		CString button_text;
-		button_text.Format(_T("    %c. %s"), _T('A') + i, choices[i].text);
+		button_text.Format(_T("   %s"), choices[i].text);
 		GetDlgItem(buttons[i])->SetWindowText(button_text);
 	}
 	ShowButtons(choices.size());
