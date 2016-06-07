@@ -194,11 +194,11 @@ void CScaleOverviewDialog::OnLvnItemchangedListScales(NMHDR *pNMHDR, LRESULT *pR
 
 void CScaleOverviewDialog::OnBnClickedModifyPersonalInfo()
 {
-	CPersonalInfoDialog dlg;
-	dlg.SetInfo(_user.GetInfo());
+	CPersonalInfoDialog Info_dlg;
+	Info_dlg.SetInfo(_user.GetInfo());
 
-	if (dlg.DoModal() == IDOK)
+	if (Info_dlg.DoModal() == IDOK)
 	{
-		_user.SetInfo(dlg.GetInfo());
+		_user.SetInfo(Info_dlg.GetInfo());
 	}
 }
