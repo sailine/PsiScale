@@ -174,8 +174,9 @@ bool CAnswerManager::Load(const CString& test_info_path, CUser& user)
 	_subject_uid = xml.GetAttrib(XML_TEST_PARTICIPANT_UID);
 	
 	auto temp_user = xml.GetElement(XML_USER_INFO);
+	user.SetUserId(temp_user->GetAttrib(XML_USER_USERID));
 	user.SetPassword(temp_user->GetAttrib(XML_USER_PASSWORD));
-	user.SetUid(temp_user->GetAttrib(XML_USER_USERID));
+	user.SetUid(temp_user->GetAttrib(XML_USER_UID));
 	PersonalInfo info;
 	info.name = temp_user->GetAttrib(XML_USER_NAME);
 	info.name_pinyin = temp_user->GetAttrib(XML_USER_PINYIN);
