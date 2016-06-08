@@ -39,7 +39,7 @@ protected:
 	bool InitialScaleList();
 	void UpdateAnswerScale();
 
-	CListCtrl answer_table;
+	CListCtrl _answer_table;
 	CComboBox _combo_scale;
 	CString _working_folder;
 	std::shared_ptr<CPsiScale> _scale;

@@ -74,7 +74,7 @@ CPsiAnswerViewerDlg::CPsiAnswerViewerDlg(CWnd* pParent /*=NULL*/)
 void CPsiAnswerViewerDlg::DoDataExchange(CDataExchange* pDX)
 {
 	__super::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_ANSWER_TABLE, answer_table);
+	DDX_Control(pDX, IDC_ANSWER_TABLE, _answer_table);
 	DDX_Control(pDX, IDC_COMBO_SCALE, _combo_scale);
 }
 
@@ -193,44 +193,44 @@ bool CPsiAnswerViewerDlg::InitialScaleList()
 
 void CPsiAnswerViewerDlg::UpdateAnswerScale()
 {
-	int num_columns = answer_table.GetHeaderCtrl()->GetItemCount();
+	//删除表格中的原有信息
+	unsigned int num_columns = _answer_table.GetHeaderCtrl()->GetItemCount();
 	for (unsigned int i = 0; i < num_columns; ++i)
 	{
-		answer_table.DeleteColumn(0);
+		_answer_table.DeleteColumn(0);
 	}
 
 	CRect mRect;
-	answer_table.GetWindowRect(&mRect);     //获取控件矩形区域
+	_answer_table.GetWindowRect(&mRect);     //获取控件矩形区域
 	int kuan = mRect.Width();
-	answer_table.InsertColumn(0, _T("编号"), LVCFMT_LEFT, 60, -1);
-	answer_table.InsertColumn(1, _T("出生年月"), LVCFMT_CENTER, 120, -1);
-	answer_table.InsertColumn(2, _T("性别"), LVCFMT_CENTER, 60, -1);
-	answer_table.InsertColumn(3, _T("民族"), LVCFMT_CENTER, 60, -1);
-	answer_table.InsertColumn(4, _T("体重"), LVCFMT_CENTER, 60, -1);
-	answer_table.InsertColumn(5, _T("填表日期"), LVCFMT_CENTER, 120, -1);
-	answer_table.InsertColumn(6, _T("填表时间"), LVCFMT_CENTER, 120, -1);
-	DWORD dwStyle = answer_table.GetExtendedStyle(); //获取当前扩展样式
+	_answer_table.InsertColumn(0, _T("编号"), LVCFMT_LEFT, 60, -1);
+	_answer_table.InsertColumn(1, _T("出生年月"), LVCFMT_CENTER, 120, -1);
+	_answer_table.InsertColumn(2, _T("性别"), LVCFMT_CENTER, 60, -1);
+	_answer_table.InsertColumn(3, _T("民族"), LVCFMT_CENTER, 60, -1);
+	_answer_table.InsertColumn(4, _T("体重"), LVCFMT_CENTER, 60, -1);
+	_answer_table.InsertColumn(5, _T("填表日期"), LVCFMT_CENTER, 120, -1);
+	_answer_table.InsertColumn(6, _T("填表时间"), LVCFMT_CENTER, 120, -1);
+	DWORD dwStyle = _answer_table.GetExtendedStyle(); //获取当前扩展样式
 	dwStyle |= LVS_EX_FULLROWSELECT; //选中某行使整行高亮（report风格时）
 	dwStyle |= LVS_EX_GRIDLINES; //网格线（report风格时）
 	dwStyle |= LVS_EX_CHECKBOXES; //item前生成checkbox控件
-	answer_table.SetExtendedStyle(dwStyle); //设置扩展风格
+	_answer_table.SetExtendedStyle(dwStyle); //设置扩展风格
 
 	for (unsigned int i = 0; i < _scale->GetQuestionCount(); ++i)
 	{
 		CString str; 
 		str.Format(_T("No.%d"), i + 1);
-		answer_table.InsertColumn(i + 7,str, LVCFMT_LEFT, 60, -1);
+		_answer_table.InsertColumn(i + 7,str, LVCFMT_LEFT, 60, -1);
 	}
 
 	for (unsigned int i = 0; i < _scale->GetGroupCount(); ++i)
 	{
 		CString str;
 		str.Format(_T("Group.%d"), i + 1);
-		answer_table.InsertColumn(i + 7 + _scale->GetQuestionCount(), str, LVCFMT_LEFT, 120, -1);
+		_answer_table.InsertColumn(i + 7 + _scale->GetQuestionCount(), str, LVCFMT_LEFT, 120, -1);
 	}
 
-	answer_table.InsertColumn(7 + _scale->GetQuestionCount() + _scale->GetGroupCount(), _T("Total"), LVCFMT_LEFT, 120, -1);
-	
+	_answer_table.InsertColumn(7 + _scale->GetQuestionCount() + _scale->GetGroupCount(), _T("Total"), LVCFMT_LEFT, 120, -1);
 }
 
 void CPsiAnswerViewerDlg::OnCbnSelchangeComboScale()
