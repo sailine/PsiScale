@@ -10,6 +10,11 @@ CUser::CUser(const CString& name, const CString& password) :
 {
 }
 
+CUser::CUser()
+{
+
+}
+
 CString CUser::CreateUid()
 {
 	auto now = COleDateTime::GetCurrentTime();
