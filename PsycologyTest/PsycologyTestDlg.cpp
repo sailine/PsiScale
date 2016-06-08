@@ -260,7 +260,7 @@ void CPsycologyTestDlg::UpdateSelectionButtons(std::vector<CQuestionChoice> &cho
 	for (unsigned int i = 0; i < choices.size(); ++i)
 	{
 		CString button_text;
-		button_text.Format(_T("    %c. %s"), _T('A') + i, choices[i].text);
+		button_text.Format(_T("   %s"), choices[i].text);
 		GetDlgItem(buttons[i])->SetWindowText(button_text);
 	}
 	ShowButtons(choices.size());
@@ -339,6 +339,8 @@ void CPsycologyTestDlg::ProcessAnswer(unsigned int answer)
 
 	ASSERT(_end > _start);
 
+	::SetFocus(_notify_wnd); //为了让选项失去焦点, 但感觉可能有点问题.
+
 	// 1. 记录
 	_answer_manager.AddAnswer(_psi_scale->GetName(), _current_question_index, answer, (_end - _start) * 1000 / CLOCKS_PER_SEC);
 	_answer_manager.SetScore(_psi_scale->GetName(), _psi_scale->GetQuestion(_current_question_index).GetGroup(), 0); // 分值定义尚未定义。
@@ -401,6 +403,7 @@ void CPsycologyTestDlg::OnBnClickedButton4()
 void CPsycologyTestDlg::OnBnClickedButton5()
 {
 	ProcessAnswer(5);
+	
 }
 
 void CPsycologyTestDlg::OnBnClickedButton6()
