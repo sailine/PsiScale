@@ -172,28 +172,33 @@ bool CAnswerManager::Load(const CString& test_info_path, CUser& user)
 		return false;
 	}
 	_subject_uid = xml.GetAttrib(XML_TEST_PARTICIPANT_UID);
-	
 	auto temp_user = xml.GetElement(XML_USER_INFO);
-	user.SetUserId(temp_user->GetAttrib(XML_USER_USERID));
-	user.SetPassword(temp_user->GetAttrib(XML_USER_PASSWORD));
-	user.SetUid(temp_user->GetAttrib(XML_USER_UID));
-	PersonalInfo info;
-	info.name = temp_user->GetAttrib(XML_USER_NAME);
-	info.name_pinyin = temp_user->GetAttrib(XML_USER_PINYIN);
-	info.nationality = temp_user->GetAttrib(XML_USER_NATIONALITY);
-	info.birth_date = temp_user->GetOleDateTimeAttrib(XML_USER_BIRTHDATE);
-	info.sex = Sex(temp_user->GetIntegerAttrib(XML_USER_SEX));
-	info.weight = temp_user->GetIntegerAttrib(XML_USER_WEIGHT);
-	info.mobile = temp_user->GetAttrib(XML_USER_MOBILE);
-	info.email = temp_user->GetAttrib(XML_USER_EMAIL);
-	user.SetInfo(info);
+	if (temp_user != nullptr)
+	{
+		user.SetUserId(temp_user->GetAttrib(XML_USER_USERID));
+		user.SetPassword(temp_user->GetAttrib(XML_USER_PASSWORD));
+		user.SetUid(temp_user->GetAttrib(XML_USER_UID));
+		PersonalInfo info;
+		info.name = temp_user->GetAttrib(XML_USER_NAME);
+		info.name_pinyin = temp_user->GetAttrib(XML_USER_PINYIN);
+		info.nationality = temp_user->GetAttrib(XML_USER_NATIONALITY);
+		info.birth_date = temp_user->GetOleDateTimeAttrib(XML_USER_BIRTHDATE);
+		info.sex = Sex(temp_user->GetIntegerAttrib(XML_USER_SEX));
+		info.weight = temp_user->GetIntegerAttrib(XML_USER_WEIGHT);
+		info.mobile = temp_user->GetAttrib(XML_USER_MOBILE);
+		info.email = temp_user->GetAttrib(XML_USER_EMAIL);
+		user.SetInfo(info);
+	}
 
 	auto scales = xml.GetChildElements();
-	for (unsigned int i = 1; i < scales.size(); ++i)  // 从1开始是因为第一个是被试信息
+	for (unsigned int i = 0; i < scales.size(); ++i)  // 从1开始是因为第一个是被试信息
 	{
 		auto scale_xml = scales[i];
-		_test_finished_info.insert(std::make_pair(scale_xml->GetAttrib(XML_TEST_NAME), (scale_xml->GetIntegerAttrib(XML_TEST_FINISHED) == 0) ? false : true));
-		LoadScaleItem(scale_xml);
+		if ((scale_xml->GetName()) != XML_USER_INFO)
+		{
+			_test_finished_info.insert(std::make_pair(scale_xml->GetAttrib(XML_TEST_NAME), (scale_xml->GetIntegerAttrib(XML_TEST_FINISHED) == 0) ? false : true));
+			LoadScaleItem(scale_xml);
+		}
 	}
 
 	return true;
