@@ -23,6 +23,7 @@ struct PersonalInfo
 class CUser
 {
 public:
+	CUser();
 	CUser(const CString& name, const CString& password);
 	CString CreateUid();
 
