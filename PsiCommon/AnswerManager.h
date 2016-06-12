@@ -24,6 +24,7 @@ public:
 	unsigned GetAnswer(const CString& scale_name, unsigned question_id);
 	bool SetScore(const CString& scale_name, const CString& sub_scale_name, unsigned score);
 	bool IsAnswered(const CString& scale_name, unsigned question_id);
+	bool IsAllAnswered(const CString& scale_name);
 
 	void SetSubjectId(const TCHAR* subject_id);
 	const CString& GetSubjectId() const;

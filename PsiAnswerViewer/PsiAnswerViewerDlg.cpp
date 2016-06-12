@@ -222,6 +222,7 @@ void CPsiAnswerViewerDlg::UpdateAnswerScale()
 	{
 		_answer_table.DeleteColumn(0);
 	}
+	_answer_table.DeleteAllItems();
 
 	CRect mRect;
 	_answer_table.GetWindowRect(&mRect);     //获取控件矩形区域
@@ -346,18 +347,22 @@ void CPsiAnswerViewerDlg::OnBnClickedButtonAdd()
 	int nIndex = _combo_person.GetCurSel();
 	if (nIndex != -1)
 	{
-		CString scale_name;
-		_combo_person.GetLBText(nIndex, scale_name);
+		CString user_uid;
+		_combo_person.GetLBText(nIndex, user_uid);
 
-		CString file_path = _working_folder + _T("/TestUsers/Answers/") + scale_name + _T(".xml");
+		CString file_path = _working_folder + _T("/TestUsers/Answers/") + user_uid + _T(".xml");
 
 		CAnswerManager answer_manager;
 		CUser user(L"Temp", L"0");
-		if (answer_manager.Load(file_path, user))
+		if (answer_manager.Load(file_path, user) && answer_manager.IsAllAnswered(_scale->GetName()))
 		{
 			InsertInfo(user);
 			InsertAnswer(answer_manager);
 			++_row;
+		}
+		else
+		{
+			AfxMessageBox(_T("选择有错, 请重新选择."));
 		}
 	}
 }

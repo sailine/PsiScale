@@ -53,6 +53,24 @@ bool CAnswerManager::IsAnswered(const CString& scale_name, unsigned question_id)
 	return (table->second.find(question_id) != table->second.end());
 }
 
+bool CAnswerManager::IsAllAnswered(const CString& scale_name)
+{
+	auto answer = _answers.find(scale_name);
+	if (answer == _answers.end())
+	{
+		return false;
+	}
+
+	for (unsigned int i = 0; i < answer->second.size(); ++i)
+	{
+		if (!IsAnswered(scale_name, i))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
 void CAnswerManager::SetSubjectId(const TCHAR* subject_id)
 {
 	_subject_uid = subject_id;
