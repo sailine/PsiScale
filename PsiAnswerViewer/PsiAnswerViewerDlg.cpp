@@ -6,10 +6,13 @@
 #include "PsiAnswerViewerDlg.h"
 #include "afxdialogex.h"
 #include "..\Utilities\FileSystem.h"
+#include "..\Utilities\macros.h"
+#include "..\PsiCommon\PsiScale.h"
+#include "..\PsiCommon\AnswerManager.h"
+#include "..\PsiCommon\User.h"
 #include <afxstr.h>
 #include <vector>
 #include <algorithm>
-
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -22,6 +25,8 @@ BEGIN_EASYSIZE_MAP(CPsiAnswerViewerDlg)
 END_EASYSIZE_MAP
 
 using namespace std;
+
+const unsigned int num_info = 7;
 
 bool IsShort(const CString& s1, const CString& s2)
 {
@@ -62,10 +67,9 @@ END_MESSAGE_MAP()
 
 // CPsiAnswerViewerDlg dialog
 
-
-
 CPsiAnswerViewerDlg::CPsiAnswerViewerDlg(CWnd* pParent /*=NULL*/)
-	: CEasySizeDialog(IDD_PSIANSWERVIEWER_DIALOG, L"PsiAnswerViewer", pParent, true)
+	: CEasySizeDialog(IDD_PSIANSWERVIEWER_DIALOG, L"PsiAnswerViewer", pParent, true),
+	_row(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	_working_folder.Format(_T("../Scales"));
@@ -76,6 +80,7 @@ void CPsiAnswerViewerDlg::DoDataExchange(CDataExchange* pDX)
 	__super::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_ANSWER_TABLE, _answer_table);
 	DDX_Control(pDX, IDC_COMBO_SCALE, _combo_scale);
+	DDX_Control(pDX, IDC_COMBO_PERSON, _combo_person);
 }
 
 BEGIN_MESSAGE_MAP(CPsiAnswerViewerDlg, CEasySizeDialog)
@@ -83,8 +88,8 @@ BEGIN_MESSAGE_MAP(CPsiAnswerViewerDlg, CEasySizeDialog)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_CBN_SELCHANGE(IDC_COMBO_SCALE, &CPsiAnswerViewerDlg::OnCbnSelchangeComboScale)
+	ON_BN_CLICKED(IDC_BUTTON_ADD, &CPsiAnswerViewerDlg::OnBnClickedButtonAdd)
 END_MESSAGE_MAP()
-
 
 // CPsiAnswerViewerDlg message handlers
 
@@ -119,6 +124,7 @@ BOOL CPsiAnswerViewerDlg::OnInitDialog()
 
 									// TODO: Add extra initialization here
 	InitialScaleList();
+	InitialPersonCombo();
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -174,6 +180,7 @@ HCURSOR CPsiAnswerViewerDlg::OnQueryDragIcon()
 
 bool CPsiAnswerViewerDlg::InitialScaleList()
 {
+	TODO(working_folerÊÇÓ²±àÂë);
 	std::vector<CString> files;
 	FileSystem::ForEachFile(_working_folder, _T("*.scale"), false, [&](const CString& file) {
 		CString filename = FileSystem::GetFileNameFromPath(file);
@@ -185,6 +192,22 @@ bool CPsiAnswerViewerDlg::InitialScaleList()
 	for (auto iter = files.begin(); iter != files.end(); ++iter)
 	{
 		_combo_scale.AddString(*iter);
+	}
+
+	return true;
+}
+
+bool CPsiAnswerViewerDlg::InitialPersonCombo()
+{
+	std::vector<CString> files;
+	FileSystem::ForEachFile(_working_folder + _T("/TestUsers/Answers"), _T("*.xml"), false, [&](const CString& file) {
+		CString filename = FileSystem::GetFileNameFromPath(file);
+		files.push_back(filename);
+	});
+
+	for (auto iter = files.begin(); iter != files.end(); ++iter)
+	{
+		_combo_person.AddString(*iter);
 	}
 
 	return true;
@@ -220,17 +243,71 @@ void CPsiAnswerViewerDlg::UpdateAnswerScale()
 	{
 		CString str; 
 		str.Format(_T("No.%d"), i + 1);
-		_answer_table.InsertColumn(i + 7,str, LVCFMT_LEFT, 60, -1);
+		_answer_table.InsertColumn(i + num_info,str, LVCFMT_LEFT, 60, -1);
 	}
 
 	for (unsigned int i = 0; i < _scale->GetGroupCount(); ++i)
 	{
 		CString str;
 		str.Format(_T("Group.%d"), i + 1);
-		_answer_table.InsertColumn(i + 7 + _scale->GetQuestionCount(), str, LVCFMT_LEFT, 120, -1);
+		_answer_table.InsertColumn(i + num_info + _scale->GetQuestionCount(), str, LVCFMT_LEFT, 120, -1);
 	}
 
 	_answer_table.InsertColumn(7 + _scale->GetQuestionCount() + _scale->GetGroupCount(), _T("Total"), LVCFMT_LEFT, 120, -1);
+}
+
+bool CPsiAnswerViewerDlg::InsertAnswer(CAnswerManager& answer_manager)
+{
+	for (unsigned int i = 0; i < _scale->GetQuestionCount(); ++i)
+	{
+		CString str;
+		str.Format(_T("%d"), answer_manager.GetAnswer(_scale->GetName(), i));
+		_answer_table.SetItemText(_row, num_info + i, str);
+	}
+
+	//for (unsigned int i = 0; i < _scale->GetGroupCount(); ++i)
+	//{
+	//	CString str;
+	//	str.Format(_T("%d"), answer_manager.);
+	//	_answer_table.InsertColumn(i + num_info + _scale->GetQuestionCount(), str, LVCFMT_LEFT, 120, -1);
+	//}
+
+	CString str;
+	str.Format(_T("%d"), answer_manager.GetTotalScore(_scale->GetName(), L""));
+	_answer_table.SetItemText(_row, num_info + _scale->GetQuestionCount() + _scale->GetGroupCount(), str);
+
+	return true;
+}
+
+bool CPsiAnswerViewerDlg::InsertInfo(CUser& user)
+{
+	_answer_table.InsertItem(_row, L"1");
+	_answer_table.SetItemText(_row, 1, user.GetInfo().birth_date.Format(_T("%Y-%M")));
+
+	CString sex;
+	switch (Sex(user.GetInfo().sex))
+	{
+	case Sex::SexMale:
+		sex.Format(_T("ÄÐ"));
+		break;
+	case Sex::SexFemale:
+		sex.Format(_T("Å®"));
+		break;
+	case Sex::SexUnknown:
+		sex.Format(_T("Î´Öª"));
+		break;
+	default:
+		break;
+	}
+	_answer_table.SetItemText(_row, 2, sex);
+
+	_answer_table.SetItemText(_row, 3, user.GetInfo().nationality);
+
+	CString weight; 
+	weight.Format(_T("%d"), user.GetInfo().weight);
+	_answer_table.SetItemText(_row, 4, weight);
+
+	return true;
 }
 
 void CPsiAnswerViewerDlg::OnCbnSelchangeComboScale()
@@ -260,5 +337,27 @@ void CPsiAnswerViewerDlg::OnCbnSelchangeComboScale()
 	else
 	{
 		UpdateAnswerScale();
+	}
+}
+
+
+void CPsiAnswerViewerDlg::OnBnClickedButtonAdd()
+{
+	int nIndex = _combo_person.GetCurSel();
+	if (nIndex != -1)
+	{
+		CString scale_name;
+		_combo_person.GetLBText(nIndex, scale_name);
+
+		CString file_path = _working_folder + _T("/TestUsers/Answers/") + scale_name + _T(".xml");
+
+		CAnswerManager answer_manager;
+		CUser user(L"Temp", L"0");
+		if (answer_manager.Load(file_path, user))
+		{
+			InsertInfo(user);
+			InsertAnswer(answer_manager);
+			++_row;
+		}
 	}
 }

@@ -7,7 +7,7 @@
 #include "afxwin.h"
 #include <memory>
 #include <vector>
-#include "AnswerManager.h"
+#include "..\PsiCommon\AnswerManager.h"
 
 class CPsiScale;
 class CAnswerManager;

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "AnswerManager.h"
-#include "..\PsiCommon\PsiScale.h"
+#include "PsiScale.h"
 #include <algorithm>
 #include "..\Utilities\xml.h"
 #include "xml_name_space.h"
@@ -155,9 +155,11 @@ bool CAnswerManager::SaveScaleItem(Utilities::CXmlElement* scale_xml, const CStr
 		auto subscales_xml = scale_xml->AddElement(XML_TEST_SUBSCALES);
 		for (auto iter = subscale_iter->second.begin(); iter != subscale_iter->second.end(); ++iter)
 		{
+			auto sub_score = GetTotalScore(scale_name, iter->first);
+
 			auto item = subscales_xml->AddElement(XML_TEST_SUBSCALE);
 			item->SetAttrib(XML_TEST_NAME, iter->first);
-			item->SetIntegerAttrib(XML_TEST_SCORE, iter->second);
+			item->SetIntegerAttrib(XML_TEST_SCORE, sub_score);
 		}
 	}
 
