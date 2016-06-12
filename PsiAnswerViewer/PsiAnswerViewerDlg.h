@@ -54,4 +54,5 @@ public:
 	afx_msg void OnCbnSelchangeComboScale();
 	
 	afx_msg void OnBnClickedButtonAdd();
+	afx_msg void OnBnClickedButtonRemove();
 	};

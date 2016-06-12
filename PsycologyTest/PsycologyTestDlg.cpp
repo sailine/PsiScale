@@ -241,6 +241,7 @@ bool CPsycologyTestDlg::ShowQuestion(unsigned question_index)
 	if (_answer_manager.IsAnswered(_psi_scale->GetName(), _current_question_index))
 	{
 		Check(_answer_manager.GetAnswer(_psi_scale->GetName(), 
+
 			_current_question_index) - 1);
 	}
 	else

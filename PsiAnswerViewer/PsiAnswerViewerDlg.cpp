@@ -89,6 +89,7 @@ BEGIN_MESSAGE_MAP(CPsiAnswerViewerDlg, CEasySizeDialog)
 	ON_WM_QUERYDRAGICON()
 	ON_CBN_SELCHANGE(IDC_COMBO_SCALE, &CPsiAnswerViewerDlg::OnCbnSelchangeComboScale)
 	ON_BN_CLICKED(IDC_BUTTON_ADD, &CPsiAnswerViewerDlg::OnBnClickedButtonAdd)
+	ON_BN_CLICKED(IDC_BUTTON_REMOVE, &CPsiAnswerViewerDlg::OnBnClickedButtonRemove)
 END_MESSAGE_MAP()
 
 // CPsiAnswerViewerDlg message handlers
@@ -356,13 +357,43 @@ void CPsiAnswerViewerDlg::OnBnClickedButtonAdd()
 		CUser user(L"Temp", L"0");
 		if (answer_manager.Load(file_path, user) && answer_manager.IsAllAnswered(_scale->GetName()))
 		{
-			InsertInfo(user);
-			InsertAnswer(answer_manager);
-			++_row;
+			if (InsertInfo(user))
+			{
+				if (InsertAnswer(answer_manager))
+				{
+					++_row;
+				}
+				else
+					AfxMessageBox(_T("插入答案有错."));
+			}
+			else
+			{
+				AfxMessageBox(_T("插入用户信息有错."));
+			}
 		}
 		else
 		{
-			AfxMessageBox(_T("选择有错, 请重新选择."));
+			AfxMessageBox(_T("载入错误或者该被试并未答题."));
 		}
+	}
+}
+
+
+void CPsiAnswerViewerDlg::OnBnClickedButtonRemove()
+{
+	_answer_table.SetExtendedStyle(LVS_EX_CHECKBOXES);
+	vector<unsigned int> checked_line;
+	for (int i = 0; i < _answer_table.GetItemCount(); i++)
+	{
+		if (_answer_table.GetItemState(i, LVIS_SELECTED) == LVIS_SELECTED || _answer_table.GetCheck(i))
+		{
+			checked_line.push_back(i);
+		}
+	}
+
+	for (unsigned int i = 0; i < checked_line.size(); ++i)
+	{
+		_answer_table.DeleteItem(checked_line[i] - i);
+		--_row;
 	}
 }
