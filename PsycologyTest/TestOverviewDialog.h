@@ -3,7 +3,7 @@
 #include "afxcmn.h"
 #include "ScaleList.h"
 #include <memory>
-#include "AnswerManager.h"
+#include "..\PsiCommon\AnswerManager.h"
 #include "afxwin.h"
 
 class CPsiScale;

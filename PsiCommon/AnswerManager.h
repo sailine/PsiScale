@@ -14,6 +14,13 @@ struct Answer
 	long time;
 };
 
+struct ScaleTime
+{
+	ScaleTime(const CString& d, const CString& t): date(d), time(t) {}
+	CString date;	//2016-01-01
+	CString time;	//12:01
+};
+
 class CAnswerManager
 {
 public:
@@ -36,11 +43,15 @@ public:
 	bool Save(const CString& test_info_path, CUser& user);
 	bool ScaleFinished(const CString& scale_name);
 	void FinishScale(const CString& scale_name);
+
+	void SetScaleTime(const CString& scale_name, const CString& date, const CString& time);
+	const ScaleTime GetScaleTime(const CString& sacle_name);
 private:
 	std::map<CString, std::map<unsigned, Answer>> _answers;
 	std::map<CString, std::map<CString, unsigned>> _scores; // 用结构是不是更好
 	std::map<CString, bool> _test_finished_info;
-	
+	std::map<CString, ScaleTime> _scale_time;
+
 	// 被试uid
 	CString _subject_uid;
 };
