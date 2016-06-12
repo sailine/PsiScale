@@ -3,6 +3,7 @@
 #include "afxwin.h"
 #include "..\Utilities\EasySizeDialog.h"
 #include <memory>
+#include "afxeditbrowsectrl.h"
 
 class CPsiScale;
 class CAnswerManager;
@@ -46,6 +47,7 @@ protected:
 	CListCtrl _answer_table;
 	CComboBox _combo_scale;
 	CString _working_folder;
+	CMFCEditBrowseCtrl _working_folder_edit;
 	std::shared_ptr<CPsiScale> _scale;
 	
 	CComboBox _combo_person;
@@ -55,4 +57,5 @@ public:
 	
 	afx_msg void OnBnClickedButtonAdd();
 	afx_msg void OnBnClickedButtonRemove();
+	afx_msg void OnEnChangeEditWorkingFolder();
 	};

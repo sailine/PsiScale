@@ -69,10 +69,11 @@ END_MESSAGE_MAP()
 
 CPsiAnswerViewerDlg::CPsiAnswerViewerDlg(CWnd* pParent /*=NULL*/)
 	: CEasySizeDialog(IDD_PSIANSWERVIEWER_DIALOG, L"PsiAnswerViewer", pParent, true),
-	_row(0)
+	_row(0),
+	_working_folder(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
-	_working_folder.Format(_T("../Scales"));
+	//_working_folder.Format(_T("../Scales"));
 }
 
 void CPsiAnswerViewerDlg::DoDataExchange(CDataExchange* pDX)
@@ -81,6 +82,8 @@ void CPsiAnswerViewerDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_ANSWER_TABLE, _answer_table);
 	DDX_Control(pDX, IDC_COMBO_SCALE, _combo_scale);
 	DDX_Control(pDX, IDC_COMBO_PERSON, _combo_person);
+	DDX_Control(pDX, IDC_EDIT_WORKING_FOLDER, _working_folder_edit);
+	DDX_Text(pDX, IDC_EDIT_WORKING_FOLDER, _working_folder);
 }
 
 BEGIN_MESSAGE_MAP(CPsiAnswerViewerDlg, CEasySizeDialog)
@@ -90,6 +93,7 @@ BEGIN_MESSAGE_MAP(CPsiAnswerViewerDlg, CEasySizeDialog)
 	ON_CBN_SELCHANGE(IDC_COMBO_SCALE, &CPsiAnswerViewerDlg::OnCbnSelchangeComboScale)
 	ON_BN_CLICKED(IDC_BUTTON_ADD, &CPsiAnswerViewerDlg::OnBnClickedButtonAdd)
 	ON_BN_CLICKED(IDC_BUTTON_REMOVE, &CPsiAnswerViewerDlg::OnBnClickedButtonRemove)
+	ON_EN_CHANGE(IDC_EDIT_WORKING_FOLDER, &CPsiAnswerViewerDlg::OnEnChangeEditWorkingFolder)
 END_MESSAGE_MAP()
 
 // CPsiAnswerViewerDlg message handlers
@@ -123,8 +127,24 @@ BOOL CPsiAnswerViewerDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
+	_working_folder_edit.EnableFolderBrowseButton();
+
+	CRegKey regkey;
+	if (regkey.Open(HKEY_CURRENT_USER, _T("Software\\SKMR\\PsiScale"), KEY_READ) == ERROR_SUCCESS)
+	{
+		static TCHAR buffer[512];
+		ULONG count = 512;
+		if (regkey.QueryStringValue(_T("TestFolder"), buffer, &count) == ERROR_SUCCESS)
+		{
+			if (FileSystem::FileExists(buffer))
+			{
+				_working_folder_edit.SetWindowText(buffer);
+			}
+		}
+	}
 									// TODO: Add extra initialization here
 	InitialScaleList();
+	TODO(被试信息路径是硬编码);
 	InitialPersonCombo();
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
@@ -181,20 +201,6 @@ HCURSOR CPsiAnswerViewerDlg::OnQueryDragIcon()
 
 bool CPsiAnswerViewerDlg::InitialScaleList()
 {
-	TODO(working_foler是硬编码);
-	std::vector<CString> files;
-	FileSystem::ForEachFile(_working_folder, _T("*.scale"), false, [&](const CString& file) {
-		CString filename = FileSystem::GetFileNameFromPath(file);
-		files.push_back(filename);
-	});
-
-	std::sort(files.begin(), files.end(), IsShort);
-
-	for (auto iter = files.begin(); iter != files.end(); ++iter)
-	{
-		_combo_scale.AddString(*iter);
-	}
-
 	return true;
 }
 
@@ -402,5 +408,30 @@ void CPsiAnswerViewerDlg::OnBnClickedButtonRemove()
 	{
 		_answer_table.DeleteItem(checked_line[i] - i);
 		--_row;
+	}
+}
+
+
+void CPsiAnswerViewerDlg::OnEnChangeEditWorkingFolder()
+{
+	// TODO:  If this is a RICHEDIT control, the control will not
+	// send this notification unless you override the CEasySizeDialog::OnInitDialog()
+	// function and call CRichEditCtrl().SetEventMask()
+	// with the ENM_CHANGE flag ORed into the mask.
+
+	// TODO:  Add your control notification handler code here
+
+	UpdateData();
+	std::vector<CString> files;
+	FileSystem::ForEachFile(_working_folder, _T("*.scale"), false, [&](const CString& file) {
+		CString filename = FileSystem::GetFileNameFromPath(file);
+		files.push_back(filename);
+	});
+
+	std::sort(files.begin(), files.end(), IsShort);
+
+	for (auto iter = files.begin(); iter != files.end(); ++iter)
+	{
+		_combo_scale.AddString(*iter);
 	}
 }
