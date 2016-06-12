@@ -360,9 +360,16 @@ void CPsycologyTestDlg::ProcessAnswer(unsigned int answer)
 			if (AfxMessageBox(_T("您已经完成了该问卷，点击“确认”按钮返回。"), MB_OKCANCEL) ==
 				IDOK)
 			{
+				SYSTEMTIME sys;
+				GetLocalTime(&sys);
+				CString date;
+				CString time;
+				date.Format(_T("%4d-%02d-%02d"), sys.wYear, sys.wMonth, sys.wDay);
+				time.Format(_T("%02d:%02d"), sys.wHour, sys.wMinute);
+				_answer_manager.SetScaleTime(_psi_scale->GetName(), date, time);
 				_answer_manager.FinishScale(_psi_scale->GetName());
-				::SendMessage(_notify_wnd, WM_SCALE_FINISHED, 0, 0);
 
+				::SendMessage(_notify_wnd, WM_SCALE_FINISHED, 0, 0);
 
 				__super::OnOK();
 			}

@@ -4,8 +4,10 @@
 #include <algorithm>
 #include "..\Utilities\xml.h"
 #include "xml_name_space.h"
+#include <utility>
 
 using namespace XMLNameSpace;
+using namespace std;
 
 CAnswerManager::CAnswerManager()
 {
@@ -53,23 +55,6 @@ bool CAnswerManager::IsAnswered(const CString& scale_name, unsigned question_id)
 	return (table->second.find(question_id) != table->second.end());
 }
 
-bool CAnswerManager::IsAllAnswered(const CString& scale_name)
-{
-	auto answer = _answers.find(scale_name);
-	if (answer == _answers.end())
-	{
-		return false;
-	}
-
-	for (unsigned int i = 0; i < answer->second.size(); ++i)
-	{
-		if (!IsAnswered(scale_name, i))
-		{
-			return false;
-		}
-	}
-	return true;
-}
 
 void CAnswerManager::SetSubjectId(const TCHAR* subject_id)
 {
@@ -155,7 +140,7 @@ bool CAnswerManager::SaveScaleItem(Utilities::CXmlElement* scale_xml, const CStr
 	auto scale_iter = _answers.find(scale_name);
 
 	if (scale_iter != _answers.end())
-	{
+	{		
 		auto answers_xml = scale_xml->AddElement(XML_TEST_ANSWERS);
 		int i = 0; 
 		for (auto iter = scale_iter->second.begin(); iter != scale_iter->second.end(); ++iter, ++i)
@@ -216,7 +201,16 @@ bool CAnswerManager::Load(const CString& test_info_path, CUser& user)
 		auto scale_xml = scales[i];
 		if ((scale_xml->GetName()) != XML_USER_INFO)
 		{
-			_test_finished_info.insert(std::make_pair(scale_xml->GetAttrib(XML_TEST_NAME), (scale_xml->GetIntegerAttrib(XML_TEST_FINISHED) == 0) ? false : true));
+			auto name = scale_xml->GetAttrib(XML_TEST_NAME);
+			if (scale_xml->GetIntegerAttrib(XML_TEST_FINISHED) == 0)
+			{
+				_test_finished_info.insert(std::make_pair(name, false));
+			}
+			else
+			{
+				_test_finished_info.insert(std::make_pair(name, true));
+				_scale_time.insert(std::make_pair(name, ScaleTime(scale_xml->GetAttrib(XML_TEST_FINISHED_DATE), scale_xml->GetAttrib(XML_TEST_FINISHED_TIME))));
+			}
 			LoadScaleItem(scale_xml);
 		}
 	}
@@ -248,6 +242,13 @@ bool CAnswerManager::Save(const CString& test_info_path, CUser& user)
 		auto scale_xml = xml.AddElement(XML_TEST_SCALE);
 		scale_xml->SetAttrib(XML_TEST_NAME, iter->first);
 		scale_xml->SetIntegerAttrib(XML_TEST_FINISHED, iter->second);
+		
+		auto scale_time = _scale_time.find(iter->first);
+		if (scale_time !=_scale_time.end())
+		{
+			scale_xml->SetAttrib(XML_TEST_FINISHED_DATE, scale_time->second.date);
+			scale_xml->SetAttrib(XML_TEST_FINISHED_TIME, scale_time->second.time);
+		}
 		this->SaveScaleItem(scale_xml, iter->first);
 	}
 
@@ -268,4 +269,28 @@ bool CAnswerManager::ScaleFinished(const CString& scale_name)
 void CAnswerManager::FinishScale(const CString& scale_name)
 {
 	_test_finished_info[scale_name] = true;
+}
+
+void CAnswerManager::SetScaleTime(const CString& scale_name, const CString& date, const CString& time)
+{
+	ScaleTime scale_time(date, time);
+	auto iter = _scale_time.find(scale_name);
+	if (iter == _scale_time.end())
+	{
+		_scale_time.insert(make_pair(scale_name, scale_time));
+	}
+
+}
+
+const ScaleTime CAnswerManager::GetScaleTime(const CString& scale_name)
+{
+	auto iter = _scale_time.find(scale_name);
+	if (iter != _scale_time.end())
+	{
+		return iter->second;
+	}
+	else
+	{
+		return ScaleTime(_T(""), _T(""));
+	}
 }

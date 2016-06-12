@@ -260,6 +260,12 @@ void CPsiAnswerViewerDlg::UpdateAnswerScale()
 
 bool CPsiAnswerViewerDlg::InsertAnswer(CAnswerManager& answer_manager)
 {
+	CString date, time;
+	date = answer_manager.GetScaleTime(_scale->GetName()).date;
+	_answer_table.SetItemText(_row, num_info - 2, date);
+	time = answer_manager.GetScaleTime(_scale->GetName()).time;
+	_answer_table.SetItemText(_row, num_info - 1, time);
+
 	for (unsigned int i = 0; i < _scale->GetQuestionCount(); ++i)
 	{
 		CString str;
@@ -339,6 +345,7 @@ void CPsiAnswerViewerDlg::OnCbnSelchangeComboScale()
 	else
 	{
 		UpdateAnswerScale();
+		_row = 0;
 	}
 }
 
@@ -355,7 +362,7 @@ void CPsiAnswerViewerDlg::OnBnClickedButtonAdd()
 
 		CAnswerManager answer_manager;
 		CUser user(L"Temp", L"0");
-		if (answer_manager.Load(file_path, user) && answer_manager.IsAllAnswered(_scale->GetName()))
+		if (answer_manager.Load(file_path, user) && answer_manager.ScaleFinished(_scale->GetName()))
 		{
 			if (InsertInfo(user))
 			{
