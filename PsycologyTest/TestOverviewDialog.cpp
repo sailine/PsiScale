@@ -9,7 +9,8 @@
 #include "../PsiCommon/PsiScale.h"
 #include "PsycologyTestDlg.h"
 #include <algorithm>
-#include "User.h"
+#include "..\PsiCommon\User.h"
+#include "PersonalInfoDialog.h"
 
 using namespace std;
 
@@ -48,6 +49,7 @@ BEGIN_MESSAGE_MAP(CScaleOverviewDialog, CDialogEx)
 	ON_BN_CLICKED(IDC_START, &CScaleOverviewDialog::OnBnClickedStart)
 	ON_MESSAGE(WM_SCALE_FINISHED, OnScaleFinished)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST_SCALES, &CScaleOverviewDialog::OnLvnItemchangedListScales)
+	ON_BN_CLICKED(IDC_MODIFY_PERSONAL_INFO, &CScaleOverviewDialog::OnBnClickedModifyPersonalInfo)
 END_MESSAGE_MAP()
 
 
@@ -55,7 +57,7 @@ END_MESSAGE_MAP()
 
 void CScaleOverviewDialog::GetTestInfoAndSetListInfo(std::vector<CString>& test_infos)
 {
-	_answer_manager.Load(_user.GetWorkingFolder() + _T("\\") + _user.GetUid() + _T(".xml"));
+	_answer_manager.Load(_user.GetWorkingFolder() + _T("\\") + _user.GetUid() + _T(".xml"), _user);
 	std::for_each(test_infos.begin(), test_infos.end(), [&, this](CString item) {
 		CString temp = item.Right(item.GetLength() - item.ReverseFind(_T('.')) - 1);
 		_scale_list.InsertScale(item, _answer_manager.ScaleFinished(temp)); });
@@ -124,7 +126,7 @@ void CScaleOverviewDialog::OnCancel()
 {
 	if (AfxMessageBox(_T("确认退出？"), MB_OKCANCEL) == IDOK)
 	{
-		_answer_manager.Save(_user.GetWorkingFolder() + _T("\\") + _user.GetUid() + _T(".xml"));
+		_answer_manager.Save(_user.GetWorkingFolder() + _T("\\") + _user.GetUid() + _T(".xml"), _user);
 		__super::OnCancel();
 	}
 }
@@ -162,6 +164,8 @@ void CScaleOverviewDialog::OnBnClickedStart()
 			CPsycologyTestDlg dlg(_scale, _answer_manager, m_hWnd);
 			dlg.DoModal();
 		}
+
+		_answer_manager.Save(_user.GetWorkingFolder() + _T("\\") + _user.GetUid() + _T(".xml"), _user);
 		ShowWindow(SW_SHOW);
 	}
 }
@@ -185,4 +189,16 @@ void CScaleOverviewDialog::OnLvnItemchangedListScales(NMHDR *pNMHDR, LRESULT *pR
 	_start.EnableWindow(state != _T("完成"));
 
 	*pResult = 0;
+}
+
+
+void CScaleOverviewDialog::OnBnClickedModifyPersonalInfo()
+{
+	CPersonalInfoDialog Info_dlg;
+	Info_dlg.SetInfo(_user.GetInfo());
+
+	if (Info_dlg.DoModal() == IDOK)
+	{
+		_user.SetInfo(Info_dlg.GetInfo());
+	}
 }

@@ -70,18 +70,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Clipboard.cpp" />
+    <ClCompile Include="EasySizeDialog.cpp" />
     <ClCompile Include="FileSystem.cpp" />
     <ClCompile Include="Markup.cpp" />
+    <ClCompile Include="ResizableGrip.cpp" />
     <ClCompile Include="scrrun.c" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="xml.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Clipboard.h" />
+    <ClInclude Include="easysize.h" />
+    <ClInclude Include="EasySizeDialog.h" />
     <ClInclude Include="FileSystem.h" />
     <ClInclude Include="gdiplusHelper.h" />
     <ClInclude Include="macros.h" />
     <ClInclude Include="Markup.h" />
+    <ClInclude Include="ResizableGrip.h" />
     <ClInclude Include="scrrun.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="xml.h" />

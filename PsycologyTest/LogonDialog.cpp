@@ -7,7 +7,7 @@
 #include "afxdialogex.h"
 #include "UserManager.h"
 #include "TestOverviewDialog.h"
-#include "User.h"
+#include "..\PsiCommon\User.h"
 
 #include <memory>
 
@@ -123,6 +123,11 @@ void CLogonDialog::RunScale(std::shared_ptr<CUser> user)
 std::shared_ptr<CUser> CLogonDialog::GetUser()
 {
 	return _user;
+}
+
+bool CLogonDialog::IsFirstTime() const
+{
+	return _first_time != FALSE;
 }
 
 BOOL CLogonDialog::OnInitDialog()

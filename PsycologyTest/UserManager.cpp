@@ -1,26 +1,21 @@
 #include "stdafx.h"
 #include "UserManager.h"
-#include "User.h"
+#include "..\PsiCommon\User.h"
 #include "..\Utilities\macros.h"
 #include "..\Utilities\xml.h"
 #include "..\Utilities\FileSystem.h"
-
+#include "..\PsiCommon\xml_name_space.h"
 #include <algorithm>
-namespace UserInfo
-{ 
-	const TCHAR* XML_USERS_INFO = _T("UsersInfo");
-	const TCHAR* XML_USER_INFO = _T("UserInfo");
-	const TCHAR* XML_NAME = _T("Name");
-	const TCHAR* XML_PASSWORD = _T("Password");
-	const TCHAR* XML_UID = _T("UID");
-}
+
+
 //const TCHAR* TESTS = _T("Tests");
 //const TCHAR* TABLE = _T("Table");
 //const TCHAR* ID = _T("Id");
 //const TCHAR* PATH = _T("Path");
 
 using namespace std;
-using namespace UserInfo;
+using namespace XMLNameSpace;
+
 CUserManager::CUserManager()
 {
 	_user_info_path = FileSystem::GetStartPath() + _T("\\..\\Scales\\TestUsers\\UserInfo.xml");
@@ -94,10 +89,10 @@ bool CUserManager::Load()
 		for (unsigned int i = 0; i < child_elements.size(); ++i)
 		{
 			auto item = child_elements[i];
-			CString name = item->GetAttrib(XML_NAME);
-			std::shared_ptr<CUser> user(new CUser(name, item->GetAttrib(XML_PASSWORD)));
+			CString name = item->GetAttrib(XML_USER_NAME);
+			std::shared_ptr<CUser> user(new CUser(name, item->GetAttrib(XML_USER_PASSWORD)));
 			_users.insert(make_pair(name, user));
-			CString user_uid = item->GetAttrib(XML_UID);
+			CString user_uid = item->GetAttrib(XML_USER_UID);
 			user->SetUid(user_uid);
 			_user_name_to_uid.insert(make_pair(name, user_uid));
 			SetWorkingFolder(user);
@@ -117,9 +112,9 @@ bool CUserManager::Save()
 	for (auto iter = _users.begin(); iter != _users.end(); ++iter)
 	{
 		auto user_info_element = users_info.AddElement(XML_USER_INFO);
-		user_info_element->SetAttrib(XML_NAME, iter->first);
-		user_info_element->SetAttrib(XML_PASSWORD, iter->second->GetPassword());
-		user_info_element->SetAttrib(XML_UID, iter->second->GetUid());
+		user_info_element->SetAttrib(XML_USER_NAME, iter->first);
+		user_info_element->SetAttrib(XML_USER_PASSWORD, iter->second->GetPassword());
+		user_info_element->SetAttrib(XML_USER_UID, iter->second->GetUid());
 	}
 	bool result = users_info.Save(_user_info_path);
 	return result;
